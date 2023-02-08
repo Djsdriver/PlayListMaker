@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Playlist Maker</string>
+
+
+    <!-- текст вьюшек на главном активити -->
+    <string name="playlist_maker">Playlist maker</string>
+    <string name="TextSearchMainLayout">Поиск</string>
+    <string name="TextMediaMainLayout">Медиа</string>
+
+
+    <string name="TextSettingsMainLayout">Настройки</string>
+    <string name="TextSettings">Настройки</string>
+    <string name="blackThemeTextSettingActivity">Темная тема</string>
+    <string name="ShareTextSettingActivity">Поделиться приложением</string>
+    <string name="SupportTextSettingActivity">Написать в поддержку</string>
+    <string name="UserAgreementTextSettingActivity">Пользовательское соглашение</string>
+</resources>

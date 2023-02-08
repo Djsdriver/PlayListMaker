@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- текст  вьюшек на главном активити -->
+    <string name="playlist_maker">Playlist maker</string>
+    <string name="TextSearchMainLayout">Поиск</string>
+    <string name="TextMediaMainLayout">Медиа</string>
+
+    <string name="TextSettingsMainLayout">Настройки</string>
+    <string name="TextSettings">Настройки</string>
+    <string name="ShareTextSettingActivity">Поделиться приложением</string>
+    <string name="SupportTextSettingActivity">Написать в поддержку</string>
+    <string name="UserAgreementTextSettingActivity">Пользовательское соглашение</string>
+</resources>

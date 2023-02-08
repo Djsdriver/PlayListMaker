@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- расстояние на главном активити -->
+    <dimen name="iconTintActivityMain">10dp</dimen>
+    <dimen name="cornerRadiusActivityMain">16dp</dimen>
+    <dimen name="marginButtonSettingsLayout">20dp</dimen>
+</resources>
