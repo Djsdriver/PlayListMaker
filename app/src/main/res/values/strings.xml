@@ -14,4 +14,7 @@
     <string name="ShareTextSettingActivity">Поделиться приложением</string>
     <string name="SupportTextSettingActivity">Написать в поддержку</string>
     <string name="UserAgreementTextSettingActivity">Пользовательское соглашение</string>
+    <string name="nameSettingLayout">Настройки</string>
+    <string name="nameTitleSearchLayout">Поиск</string>
+    <string name="nameTitleMediaLayout">Медиа</string>
 </resources>
