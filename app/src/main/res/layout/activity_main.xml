@@ -1,18 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/MainBackgroundActivity"
+    android:padding="@dimen/paddingFrameLayoutMainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="@string/playlist_maker"
+            style="@style/MainTextActivityMain" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_search"
+            style="@style/MainLayoutButtonStyle"
+            android:text="@string/TextSearchMainLayout"
+            app:icon="@drawable/ic_search"
+            app:iconGravity="textStart"
+            app:iconPadding="@dimen/iconTintActivityMain"
+            app:iconTint="@color/iconTintActivityMain"
+            app:cornerRadius="@dimen/cornerRadiusActivityMain"
+            app:backgroundTint="@color/backgroundTintActivityMain"
+            android:foreground="?attr/selectableItemBackground"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_media"
+            style="@style/MainLayoutButtonStyle"
+            android:text="@string/TextMediaMainLayout"
+            app:icon="@drawable/ic_media"
+            app:iconGravity="textStart"
+            app:iconPadding="@dimen/iconTintActivityMain"
+            app:iconTint="@color/iconTintActivityMain"
+            app:cornerRadius="@dimen/cornerRadiusActivityMain"
+            app:backgroundTint="@color/backgroundTintActivityMain"
+            android:foreground="?attr/selectableItemBackground"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_setting"
+            style="@style/MainLayoutButtonStyle"
+            android:text="@string/TextSettingsMainLayout"
+            app:icon="@drawable/ic_setting"
+            app:iconGravity="textStart"
+            app:iconPadding="@dimen/iconTintActivityMain"
+            app:iconTint="@color/iconTintActivityMain"
+            app:cornerRadius="@dimen/cornerRadiusActivityMain"
+            app:backgroundTint="@color/backgroundTintActivityMain" />
+
+    </LinearLayout>
+
+</FrameLayout>
+
