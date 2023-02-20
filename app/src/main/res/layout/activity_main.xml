@@ -52,6 +52,7 @@
             app:cornerRadius="@dimen/cornerRadiusActivityMain"
             app:backgroundTint="@color/backgroundTintActivityMain" />
 
+
     </LinearLayout>
 
 </FrameLayout>

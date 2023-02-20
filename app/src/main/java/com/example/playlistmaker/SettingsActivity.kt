@@ -1,24 +1,64 @@
 package com.example.playlistmaker
 
+import android.content.Intent
+import android.content.res.Configuration
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MenuItem
-import android.widget.Toast
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
-    lateinit var binding: ActivitySettingsBinding
+
+    private val binding: ActivitySettingsBinding by lazy {
+        ActivitySettingsBinding.inflate(layoutInflater)
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbarSettings)
             //почему работает и без функции  onOptionsItemSelected если нажали кнопку назад
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        darkOrLightTheme()
 
-        binding.btnImShare.setOnClickListener { Toast.makeText(this,"Share", Toast.LENGTH_LONG).show() }
+        binding.btnImShare.setOnClickListener {
+
+            val shareIntent = Intent()
+            shareIntent.action = Intent.ACTION_SEND
+            shareIntent.type="text/plain"
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.send_to));
+            startActivity(Intent.createChooser(shareIntent,getString(R.string.send_to)))
+        }
+
+        binding.btnImSupport.setOnClickListener {
+            val supportIntent = Intent(Intent.ACTION_SENDTO);
+            supportIntent.data=Uri.parse("mailto:") // only email apps should handle this
+            supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("al.gracheff2015@yandex.ru"))
+            supportIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.TEXT_EXTRA_SUBJEC))
+            supportIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.BODY_EXTRA_TEXT));
+            startActivity(Intent.createChooser(supportIntent,""))
+        }
+        binding.btnImNext.setOnClickListener {
+            val nextIntent= Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.adress)))
+
+            startActivity(Intent.createChooser(nextIntent,""))
+        }
+
+    }
+
+    private fun darkOrLightTheme() {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        when (currentNightMode) {
+            Configuration.UI_MODE_NIGHT_NO -> {
+                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_color)
+            }
+            Configuration.UI_MODE_NIGHT_YES -> {
+                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_color)
+            }
+        }
     }
 
     /*override fun onOptionsItemSelected(item: MenuItem): Boolean {

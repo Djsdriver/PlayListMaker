@@ -4,20 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MediaScreen">
+    tools:context=".MediaScreen"
+    android:background="@color/ScreenBackgroundActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_media"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:backgroundTint="@color/white"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
-        app:title="@string/nameTitleMediaLayout"/>
+        app:title="@string/nameTitleMediaLayout"
+        app:titleTextColor="@color/TextColorToolBarScreen"
+        android:backgroundTint="@color/BackgroundColorToolBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
