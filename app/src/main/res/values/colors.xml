@@ -14,4 +14,5 @@
     <color name="backgroundTintActivityMain">#FFFFFF</color>
     <color name="MainBackgroundActivity">#3772E7</color>
     <color name="ImageSettingsColor">#1A1B22</color>
+    <color name="iconColorSettingLayout">#AEAFB4</color>
 </resources>

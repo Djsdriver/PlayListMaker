@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MainBackgroundActivity"
-    android:padding="17dp">
+    android:padding="@dimen/paddingFrameLayoutMainActivity">
 
 
     <LinearLayout
@@ -14,9 +14,7 @@
 
         <TextView
             android:text="@string/playlist_maker"
-            style="@style/MainTextActivityMain">
-
-        </TextView>
+            style="@style/MainTextActivityMain" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_search"

@@ -3,15 +3,17 @@ package com.example.playlistmaker
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import com.example.playlistmaker.databinding.ActivityMainBinding
 import com.example.playlistmaker.databinding.ActivityMediaScreenBinding
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 
 class MediaScreen : AppCompatActivity() {
-    lateinit var binding: ActivityMediaScreenBinding
+    private val binding: ActivityMediaScreenBinding by lazy {
+        ActivityMediaScreenBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding= ActivityMediaScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbarMedia).apply {

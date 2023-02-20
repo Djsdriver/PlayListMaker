@@ -13,7 +13,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:title="Настройки"
+        app:title="@string/nameSettingLayout"
         android:backgroundTint="@color/white"/>
 
     <LinearLayout
@@ -21,14 +21,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingTop="55dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:paddingHorizontal="@dimen/paddingHorizontalSettingLayout">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="@dimen/marginBottomSwitch"
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.SwitchCompat
@@ -38,7 +37,7 @@
                 android:layout_gravity="start"
                 android:fontFamily="@font/ys_text_medium_regular"
                 android:text="@string/blackThemeTextSettingActivity"
-                android:textSize="16sp"
+                android:textSize="@dimen/textSizeSwitchCompat"
                 android:textStyle="normal"
                 tools:ignore="UseSwitchCompatOrMaterialXml">
 
@@ -66,7 +65,7 @@
                 android:stateListAnimator="@null"
                 app:icon="@drawable/ic_baseline_share"
                 app:iconGravity="end"
-                app:iconTint="#AEAFB4"
+                app:iconTint="@color/iconColorSettingLayout"
                 tools:ignore="SpeakableTextPresentCheck" />
 
 
@@ -92,7 +91,7 @@
                 android:stateListAnimator="@null"
                 app:icon="@drawable/ic_baseline_support"
                 app:iconGravity="end"
-                app:iconTint="#AEAFB4"
+                app:iconTint="@color/iconColorSettingLayout"
                 tools:ignore="SpeakableTextPresentCheck" />
 
 
@@ -119,7 +118,7 @@
                 android:stateListAnimator="@null"
                 app:icon="@drawable/ic_baseline_navigate_next"
                 app:iconGravity="end"
-                app:iconTint="#AEAFB4"
+                app:iconTint="@color/iconColorSettingLayout"
                 tools:ignore="SpeakableTextPresentCheck" />
 
         </LinearLayout>
