@@ -36,7 +36,7 @@ class SettingsActivity : AppCompatActivity() {
         binding.btnImSupport.setOnClickListener {
             val supportIntent = Intent(Intent.ACTION_SENDTO);
             supportIntent.data=Uri.parse("mailto:") // only email apps should handle this
-            supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("al.gracheff2015@yandex.ru"))
+            supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.my_mail)))
             supportIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.TEXT_EXTRA_SUBJEC))
             supportIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.BODY_EXTRA_TEXT));
             startActivity(Intent.createChooser(supportIntent,""))

@@ -20,6 +20,14 @@ class SearchScreen : AppCompatActivity() {
 
     companion object {
         const val KEY_EDIT_TEXT = "KEY_EDIT_TEXT"
+
+        private fun viewVisible(s: CharSequence?): Int {
+            return if (s.isNullOrBlank()) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -96,13 +104,7 @@ class SearchScreen : AppCompatActivity() {
     }
 }
 
-private fun viewVisible(s: CharSequence?): Int {
-    return if (s.isNullOrBlank()) {
-        View.GONE
-    } else {
-        View.VISIBLE
-    }
-}
+
 
 
 
