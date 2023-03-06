@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="listTrackName">
+        <item>Рыжик</item>
+        <item>Барсик</item>
+        <item>Мурзик</item>
+    </string-array>
+
+
+</resources>
