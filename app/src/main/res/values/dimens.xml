@@ -8,4 +8,8 @@
     <dimen name="marginBottomSwitch">12dp</dimen>
     <dimen name="paddingFrameLayoutMainActivity">16dp</dimen>
     <dimen name="textSizeSwitchCompat">16sp</dimen>
+
+
+    <!-- закругление картинки трека -->
+    <dimen name="imageCornerRadius">10dp</dimen>
 </resources>
