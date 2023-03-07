@@ -4,17 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".SettingsActivity">
+    tools:context=".SettingsActivity"
+    android:background="@color/ScreenBackgroundActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:title="@string/nameSettingLayout"
-        android:backgroundTint="@color/white"/>
+        app:titleTextColor="@color/TextColorToolBarScreen"
+        android:backgroundTint="@color/BackgroundColorToolBar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,13 +34,16 @@
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switch_settings_dark_theme"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="start"
                 android:fontFamily="@font/ys_text_medium_regular"
                 android:text="@string/blackThemeTextSettingActivity"
                 android:textSize="@dimen/textSizeSwitchCompat"
                 android:textStyle="normal"
-                tools:ignore="UseSwitchCompatOrMaterialXml">
+                tools:ignore="UseSwitchCompatOrMaterialXml"
+                android:checked="true"
+                android:theme="@style/SCBSwitch"
+                android:textColor="@color/textColorSwitch">
 
             </androidx.appcompat.widget.SwitchCompat>
 
@@ -61,12 +65,13 @@
                 android:id="@+id/btn_im_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/backgroundTintButtonSetting"
                 android:stateListAnimator="@null"
                 app:icon="@drawable/ic_baseline_share"
                 app:iconGravity="end"
                 app:iconTint="@color/iconColorSettingLayout"
-                tools:ignore="SpeakableTextPresentCheck" />
+                tools:ignore="SpeakableTextPresentCheck"
+                />
 
 
         </LinearLayout>
@@ -87,7 +92,7 @@
                 android:id="@+id/btn_im_support"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/backgroundTintButtonSetting"
                 android:stateListAnimator="@null"
                 app:icon="@drawable/ic_baseline_support"
                 app:iconGravity="end"
@@ -114,7 +119,7 @@
                 android:id="@+id/btn_im_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/backgroundTintButtonSetting"
                 android:stateListAnimator="@null"
                 app:icon="@drawable/ic_baseline_navigate_next"
                 app:iconGravity="end"

@@ -4,20 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchScreen">
+    tools:context=".SearchScreen"
+    android:background="@color/ScreenBackgroundActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/BackgroundColorToolBar"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints"
-        app:title="@string/nameTitleSearchLayout"/>
+        app:title="@string/nameTitleSearchLayout"
+        app:titleTextColor="@color/TextColorToolBarScreen" />
+
+    <EditText
+        android:id="@+id/editTextSearch"
+        android:hint="@string/TextSearchMainLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_search"
+        tools:ignore="RtlSymmetry"
+        style="@style/EditViewSearchActivity" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/imClearEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:icon="@drawable/baseline_close"
+        app:iconTint="@color/hintTextSettingActivity"
+        app:iconGravity="end"
+        app:layout_constraintEnd_toEndOf="@+id/editTextSearch"
+        app:layout_constraintTop_toTopOf="@+id/editTextSearch"
+        tools:ignore="SpeakableTextPresentCheck"
+        android:stateListAnimator="@null"
+        android:background="?android:attr/selectableItemBackground"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

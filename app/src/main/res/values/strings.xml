@@ -17,4 +17,16 @@
     <string name="nameSettingLayout">Настройки</string>
     <string name="nameTitleSearchLayout">Поиск</string>
     <string name="nameTitleMediaLayout">Медиа</string>
+
+    <string name="send_to">https://practicum.yandex.ru/</string>
+
+    <string name="TEXT_EXTRA_SUBJEC">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+
+    <string name="BODY_EXTRA_TEXT">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+
+    <string name="adress">https://yandex.ru/legal/practicum_offer/</string>
+
+    <string name="my_mail">al.gracheff2015@yandex.ru</string>
+
+
 </resources>

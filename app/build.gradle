@@ -5,6 +5,7 @@ plugins {
 
 android {
     viewBinding.enabled = true
+    dataBinding.enabled= true
     namespace 'com.example.playlistmaker'
     compileSdk 33
 
@@ -30,6 +31,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    buildFeatures {
+        dataBinding true
+        viewBinding true
     }
 }
 
