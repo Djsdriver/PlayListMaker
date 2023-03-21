@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.databinding.ItemTrackBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TrackHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-
-   // lateinit var binding: ItemTrackBinding
 
     var trackName: TextView
     var artistName: TextView
@@ -22,20 +22,17 @@ class TrackHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         artistName=itemView.findViewById(R.id.artistName)
         trackTime=itemView.findViewById(R.id.trackTime)
         artworkUrl100=itemView.findViewById(R.id.imArtworkUrl100)
-    // binding= ItemTrackBinding.bind(itemView)
     }
 
     fun bind(track: Track){
+        val data= SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis.toInt())
         trackName.text=track.trackName
         artistName.text=track.artistName
-        trackTime.text=track.trackTime
-
+        trackTime.text=data
         Glide.with(itemView)
             .load(track.artworkUrl100)
-            .centerCrop()
-            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.imageCornerRadius)))
-            .placeholder(R.mipmap.ic_launcher)
-            .error(R.drawable.baseline_error_24)
+            .transform(RoundedCorners(10))
+            .placeholder(R.drawable.placeholder)
             .into(artworkUrl100)
 
     }

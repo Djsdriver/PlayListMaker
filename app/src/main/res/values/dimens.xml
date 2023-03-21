@@ -11,5 +11,5 @@
 
 
     <!-- закругление картинки трека -->
-    <dimen name="imageCornerRadius">10dp</dimen>
+    <dimen name="imageCornerRadius">3sp</dimen>
 </resources>

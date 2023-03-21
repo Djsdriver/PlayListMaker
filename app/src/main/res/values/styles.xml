@@ -92,4 +92,34 @@
         <item name="android:singleLine">true</item>
     </style>
 
+    <style name="SearchingActivityButtonUpdateStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="backgroundTint">@color/buttonUpdateSearchActivity</item>
+        <item name="cornerRadius">54dp</item>
+        <item name="android:textColor">@color/textColorButtonUpdate</item>
+        <item name="android:layout_marginTop">24dp</item>
+    </style>
+
+    <style name="textBadConnetion">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:lines">4</item>
+        <item name="android:textColor">@color/black_mode</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/ys_text_medium_regular</item>
+    </style>
+
+    <style name="textNotFound">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/black_mode</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/ys_text_medium_regular</item>
+    </style>
+
 </resources>
