@@ -16,4 +16,15 @@ class TrackAdapter : RecyclerView.Adapter<TrackHolder>() {
     override fun onBindViewHolder(holder: TrackHolder, position: Int) {
         holder.bind(track = tracks[position])
     }
+
+    fun clear(){
+        tracks.clear()
+        notifyDataSetChanged()
+    }
+
+    fun setTrackList(list: List<Track>){
+        tracks.clear()
+        tracks.addAll(list)
+        notifyDataSetChanged()
+    }
 }

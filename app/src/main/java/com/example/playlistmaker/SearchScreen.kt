@@ -29,7 +29,6 @@ class SearchScreen : AppCompatActivity() {
         ActivitySearchBinding.inflate(layoutInflater)
     }
     val adapter=TrackAdapter()
-    val listSong= ArrayList<Track>()
 
 
     companion object {
@@ -46,9 +45,6 @@ class SearchScreen : AppCompatActivity() {
 
         val retrofit= Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
         val itemTrack=retrofit.create(TrackApi::class.java)
-
-
-
     }
 
 
@@ -79,17 +75,10 @@ class SearchScreen : AppCompatActivity() {
 
         binding.recyclerViewSearch.layoutManager=LinearLayoutManager(this)
         binding.recyclerViewSearch.adapter=adapter
-        adapter.tracks=listSong
+            // adapter.tracks=listSong
 
 
-        binding.imClearEditText.setOnClickListener {
-            binding.editTextSearch.setText("")
-            listSong.clear()
-            adapter.notifyDataSetChanged()
-            val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(binding.editTextSearch.windowToken, 0)
-        }
+        buttonClearEditText()
 
         binding.updateButton.setOnClickListener {
             search()
@@ -126,6 +115,16 @@ class SearchScreen : AppCompatActivity() {
 
     }
 
+    private fun buttonClearEditText() {
+        binding.imClearEditText.setOnClickListener {
+            binding.editTextSearch.setText("")
+            adapter.clear()
+            val inputMethodManager =
+                getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+            inputMethodManager?.hideSoftInputFromWindow(binding.editTextSearch.windowToken, 0)
+        }
+    }
+
     private fun search() {
         itemTrack.getTrackByTerm(binding.editTextSearch.text.toString())
             .enqueue(object : Callback<TrackResultResponse> {
@@ -136,8 +135,7 @@ class SearchScreen : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             if (response.body()?.results?.isNotEmpty() == true) {
-                                listSong.addAll(response.body()?.results!!)
-                                adapter.notifyDataSetChanged()
+                                adapter.setTrackList(response.body()!!.results)
                                 showPlaceholder(null)
                             } else {
                                 showPlaceholder(true)
@@ -168,8 +166,7 @@ class SearchScreen : AppCompatActivity() {
                 badConnectionWidget.visibility = View.VISIBLE
                 badConnection.text = message
             }
-            listSong.clear()
-            adapter.notifyDataSetChanged()
+            adapter.clear()
         } else {
             notFoundWidget.visibility = View.GONE
             badConnectionWidget.visibility = View.GONE
