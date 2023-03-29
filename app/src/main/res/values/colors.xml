@@ -32,4 +32,10 @@
     <color name="hintTextSettingActivity">#AEAFB4</color>
     <color name="backgroundTintEditSearch">#E6E8EB</color>
     <color name="textColorHint">#1A1B22</color>
+
+    <color name="black_mode">#1A1B22</color>
+
+    <color name="buttonUpdateSearchActivity">#1A1B22</color>
+
+    <color name="textColorButtonUpdate">#FFFFFFFF</color>
 </resources>

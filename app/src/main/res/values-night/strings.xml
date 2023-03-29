@@ -13,4 +13,9 @@
     <string name="nameSettingLayout">Настройки</string>
     <string name="nameTitleSearchLayout">Поиск</string>
     <string name="nameTitleMediaLayout">Медиа</string>
+    <string name="server_error">Ошибка сервера</string>
+    <string name="bad_connection">Плохое соединение</string>
+    <string name="textBadConnetion">Проблема со связью \n \n Загрузка не удалась. Проверьте \n подключение к интернету</string>
+    <string name="textUpdateButton">Обновить</string>
+    <string name="textNitFound">Ничего не найдено</string>
 </resources>

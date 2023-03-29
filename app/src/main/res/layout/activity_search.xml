@@ -31,7 +31,8 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar_search"
         tools:ignore="RtlSymmetry"
         android:ellipsize="end"
-        android:singleLine="true">
+        android:singleLine="true"
+        android:imeOptions="actionDone">
 
     </EditText>
 
@@ -60,6 +61,68 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextSearch"
         app:layout_constraintVertical_bias="0.01999998" />
+
+    <LinearLayout
+        android:id="@+id/not_found_widget"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerViewSearch"
+        app:layout_constraintEnd_toEndOf="@+id/recyclerViewSearch"
+        app:layout_constraintStart_toStartOf="@+id/recyclerViewSearch"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewSearch">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="110dp"
+            app:srcCompat="@drawable/not_found_light_mode" />
+
+        <TextView
+            android:text="@string/textNitFound"
+            style="@style/textNotFound" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bad_connection_widget"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="110dp"
+            android:src="@drawable/bad_connection_light_mode"/>
+
+        <TextView
+            android:id="@+id/bad_connection"
+            android:text="@string/textBadConnetion"
+            style="@style/textBadConnetion" />
+
+        <Button
+            android:id="@+id/update_button"
+            style="@style/SearchingActivityButtonUpdateStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/textUpdateButton"
+            android:textAllCaps="false"
+            android:textSize="@dimen/textSizeSwitchCompat"
+             />
+    </LinearLayout>
+
+
 
 
 

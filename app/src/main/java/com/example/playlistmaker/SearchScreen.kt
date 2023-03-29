@@ -8,22 +8,32 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.retrofit.TrackApi
+import com.example.playlistmaker.retrofit.TrackResultResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 class SearchScreen : AppCompatActivity() {
     private val binding: ActivitySearchBinding by lazy {
         ActivitySearchBinding.inflate(layoutInflater)
     }
+    val adapter=TrackAdapter()
 
 
     companion object {
         const val KEY_EDIT_TEXT = "KEY_EDIT_TEXT"
+        const val BASE_URL = "https://itunes.apple.com"
 
         private fun viewVisible(s: CharSequence?): Int {
             return if (s.isNullOrBlank()) {
@@ -33,26 +43,8 @@ class SearchScreen : AppCompatActivity() {
             }
         }
 
-
-//лучше создавать фиксированный список???
-        val listTrackName = listOf(
-            "Smells Like Teen Spirit",
-            "Billie Jean",
-            "Stayin' Alive",
-            "Whole Lotta Love",
-            "Sweet Child O'Mine"
-        )
-        val listArtistName =
-            listOf("Nirvana", "Michael Jackson", "Bee Gees", "Led Zeppelin", "Guns N' Roses")
-        val listTrackTime = listOf("5:01", "4:35", "4:10", "5:33", "5:03")
-        val listArtworkUrl100 = listOf(
-            "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg",
-            "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-        )
-
+        val retrofit= Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
+        val itemTrack=retrofit.create(TrackApi::class.java)
     }
 
 
@@ -81,30 +73,15 @@ class SearchScreen : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         darkOrLightTheme()
 
-        //или лучше держать массив в ресурсах?
-        val TrackName =resources.getStringArray(R.array.listTrackName)
-        val ArtistName =resources.getStringArray(R.array.listArtistName)
-        val TrackTime =resources.getStringArray(R.array.listTrackTime)
-        val ArtworkUrl100 =resources.getStringArray(R.array.listArtworkUrl100)
+        binding.recyclerViewSearch.layoutManager=LinearLayoutManager(this)
+        binding.recyclerViewSearch.adapter=adapter
+            // adapter.tracks=listSong
 
 
+        buttonClearEditText()
 
-
-
-        binding.recyclerViewSearch.adapter = TrackAdapter(List(5) {
-            Track(
-                TrackName[it].toString(), ArtistName[it].toString(), TrackTime[it].toString(), ArtworkUrl100[it].toString()
-            )
-        } as ArrayList<Track>)
-
-        binding.recyclerViewSearch.layoutManager = LinearLayoutManager(this)
-
-
-        binding.imClearEditText.setOnClickListener {
-            binding.editTextSearch.setText("")
-            val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(binding.editTextSearch.windowToken, 0)
+        binding.updateButton.setOnClickListener {
+            search()
         }
 
         val simpleWatcher = object : TextWatcher {
@@ -129,6 +106,71 @@ class SearchScreen : AppCompatActivity() {
         }
         binding.editTextSearch.addTextChangedListener(simpleWatcher)
 
+        binding.editTextSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                search()
+            }
+            false
+        }
+
+    }
+
+    private fun buttonClearEditText() {
+        binding.imClearEditText.setOnClickListener {
+            binding.editTextSearch.setText("")
+            adapter.clear()
+            val inputMethodManager =
+                getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+            inputMethodManager?.hideSoftInputFromWindow(binding.editTextSearch.windowToken, 0)
+        }
+    }
+
+    private fun search() {
+        itemTrack.getTrackByTerm(binding.editTextSearch.text.toString())
+            .enqueue(object : Callback<TrackResultResponse> {
+                override fun onResponse(
+                    call: Call<TrackResultResponse>,
+                    response: Response<TrackResultResponse>
+                ) {
+                    when (response.code()) {
+                        200 -> {
+                            if (response.body()?.results?.isNotEmpty() == true) {
+                                adapter.setTrackList(response.body()!!.results)
+                                showPlaceholder(null)
+                            } else {
+                                showPlaceholder(true)
+                            }
+                        }
+                        else -> {
+                            showPlaceholder(false, getString(R.string.server_error))
+                        }
+                    }
+
+                }
+
+                override fun onFailure(call: Call<TrackResultResponse>, t: Throwable) {
+                    showPlaceholder(false, getString(R.string.bad_connection))
+                }
+
+            })
+        true
+    }
+
+    fun showPlaceholder(flag: Boolean?, message: String = "") = with(binding){
+        if (flag != null) {
+            if (flag == true) {
+                badConnectionWidget.visibility = View.GONE
+                notFoundWidget.visibility = View.VISIBLE
+            } else {
+                notFoundWidget.visibility = View.GONE
+                badConnectionWidget.visibility = View.VISIBLE
+                badConnection.text = message
+            }
+            adapter.clear()
+        } else {
+            notFoundWidget.visibility = View.GONE
+            badConnectionWidget.visibility = View.GONE
+        }
     }
 
     private fun darkOrLightTheme() {
