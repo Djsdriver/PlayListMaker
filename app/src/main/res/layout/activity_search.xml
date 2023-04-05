@@ -51,6 +51,26 @@
         android:background="?android:attr/selectableItemBackground"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/recyclerViewSearch"
+        app:layout_constraintStart_toStartOf="@+id/recyclerViewSearch"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSearch" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ClearHistory"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewHistory">
+
+    </Button>
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSearch"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -59,8 +79,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextSearch"
-        app:layout_constraintVertical_bias="0.01999998" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextSearch" />
+
+
 
     <LinearLayout
         android:id="@+id/not_found_widget"
@@ -122,9 +143,62 @@
              />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/listHistory"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerViewSearch"
+        app:layout_constraintEnd_toEndOf="@+id/recyclerViewSearch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSearch">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="@string/youSearch"
+            android:layout_gravity="center"
+            android:textSize="@dimen/youSearchText"
+            android:fontFamily="@font/ys_text_medium_regular"
+            android:textColor="@color/black_mode"/>
 
+        <TextView
+            android:id="@+id/showMessageHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_gravity="center"
+            android:lines="2"
+            android:visibility="gone"
+            android:text="@string/messageIsEmptyListHistory"
+            >
 
+        </TextView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcHistory"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/clearHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/textButtonClearHistoryList"
+            app:cornerRadius="@dimen/cornerRadiusButtonHistoryList"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/black_mode"/>
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

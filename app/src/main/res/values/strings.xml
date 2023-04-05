@@ -32,6 +32,9 @@
     <string name="textBadConnetion">Проблема со связью \n \n Загрузка не удалась. Проверьте \n подключение к интернету</string>
     <string name="textUpdateButton">Обновить</string>
     <string name="textNitFound">Ничего не найдено</string>
+    <string name="youSearch">Вы искали</string>
+    <string name="messageIsEmptyListHistory">Здесь будет музыка, \n которую вы искали</string>
+    <string name="textButtonClearHistoryList">Очистить</string>
 
 
 </resources>
