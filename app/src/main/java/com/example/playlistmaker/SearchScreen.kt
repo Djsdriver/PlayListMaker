@@ -26,8 +26,8 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
     private val binding: ActivitySearchBinding by lazy {
         ActivitySearchBinding.inflate(layoutInflater)
     }
-    val adapter=TrackAdapter(this)
-    val adapterHistoryList=TrackAdapter(this)
+    val adapter = TrackAdapter(this)
+    val adapterHistoryList = TrackAdapter(this)
 
     private lateinit var searchHistory: SearchHistory
 
@@ -42,8 +42,9 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             }
         }
 
-        val retrofit= Retrofit.Builder().baseUrl(Const.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
-        val itemTrack=retrofit.create(TrackApi::class.java)
+        val retrofit = Retrofit.Builder().baseUrl(Const.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create()).build()
+        val itemTrack = retrofit.create(TrackApi::class.java)
     }
 
 
@@ -65,7 +66,6 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
     }
 
 
-
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,13 +75,17 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         darkOrLightTheme()
 
-        binding.recyclerViewSearch.layoutManager=LinearLayoutManager(this)
-        binding.recyclerViewSearch.adapter=adapter
+        binding.recyclerViewSearch.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewSearch.adapter = adapter
 
-        val sharedPreferences = getSharedPreferences(Const.SHARED_PREFERENCES_HISTORY_LIST, MODE_PRIVATE)
-        searchHistory= SearchHistory(sharedPreferences)
-        binding.rcHistory.adapter=adapterHistoryList
-        binding.rcHistory.layoutManager=LinearLayoutManager(this)
+        val sharedPreferences =
+            getSharedPreferences(Const.SHARED_PREFERENCES_HISTORY_LIST, MODE_PRIVATE)
+        searchHistory = SearchHistory(sharedPreferences)
+        binding.rcHistory.adapter = adapterHistoryList
+        binding.rcHistory.layoutManager = LinearLayoutManager(this)
+
+
+        displayingTheHistoryList() // отображение списка при загрузке
 
 
         buttonClearEditText()
@@ -91,15 +95,17 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         }
 
         binding.editTextSearch.setOnFocusChangeListener { view, hasFocus ->
-            binding.listHistory.visibility = if (hasFocus && binding.editTextSearch.text.isEmpty()) View.VISIBLE else View.GONE
+            binding.listHistory.visibility =
+                if (hasFocus && binding.editTextSearch.text.isEmpty()) View.VISIBLE else View.GONE
             adapterHistoryList.tracks = searchHistory.loadData()
-            if (searchHistory.historyList.isEmpty()){
-              binding.showMessageHistory.visibility=View.VISIBLE
-            } else{
-                binding.showMessageHistory.visibility=View.GONE
+            if (searchHistory.historyList.isEmpty()) {
+                binding.showMessageHistory.visibility = View.VISIBLE
+                binding.clearHistory.visibility = View.INVISIBLE
+            } else {
+                binding.showMessageHistory.visibility = View.GONE
+                binding.clearHistory.visibility = View.VISIBLE
                 adapterHistoryList.notifyDataSetChanged()
             }
-
 
 
         }
@@ -108,7 +114,9 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             binding.editTextSearch.setText("")
             searchHistory.clearHistoryList()
             adapterHistoryList.notifyDataSetChanged()
-            binding.showMessageHistory.visibility=View.VISIBLE
+            binding.showMessageHistory.visibility = View.VISIBLE
+            binding.listHistory.visibility = View.VISIBLE
+            binding.clearHistory.visibility = View.GONE
 
         }
 
@@ -126,12 +134,25 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
                         binding.imClearEditText.visibility = viewVisible(s)
                     }
                 }
-                binding.listHistory.visibility = if (binding.editTextSearch.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
+                binding.listHistory.visibility =
+                    if (binding.editTextSearch.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
                 adapterHistoryList.tracks = searchHistory.loadData()
-                if (searchHistory.historyList.isEmpty()){
-                    binding.showMessageHistory.visibility=View.VISIBLE
-                } else{
-                    binding.showMessageHistory.visibility=View.GONE
+
+                if (s?.isEmpty() == true) {
+                    binding.recyclerViewSearch.visibility = View.INVISIBLE
+                    adapter.clear()
+                } else {
+                    binding.recyclerViewSearch.visibility = View.VISIBLE
+                }
+
+
+                if (searchHistory.historyList.isNullOrEmpty() and s.isNullOrEmpty()) {
+                    binding.showMessageHistory.visibility = View.VISIBLE
+                    binding.clearHistory.visibility = View.INVISIBLE
+
+                } else {
+                    binding.clearHistory.visibility = View.VISIBLE
+                    binding.showMessageHistory.visibility = View.GONE
                     adapterHistoryList.notifyDataSetChanged()
                 }
             }
@@ -149,6 +170,17 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             false
         }
 
+    }
+
+    private fun displayingTheHistoryList() {
+        if (searchHistory.loadData().isEmpty()) {
+            binding.listHistory.visibility = View.VISIBLE
+            binding.showMessageHistory.visibility = View.VISIBLE
+            binding.clearHistory.visibility = View.INVISIBLE
+        } else {
+            adapterHistoryList.tracks = searchHistory.loadData()
+            binding.listHistory.visibility = View.VISIBLE
+        }
     }
 
     private fun buttonClearEditText() {
@@ -192,7 +224,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         true
     }
 
-    fun showPlaceholder(flag: Boolean?, message: String = "") = with(binding){
+    fun showPlaceholder(flag: Boolean?, message: String = "") = with(binding) {
         if (flag != null) {
             if (flag == true) {
                 badConnectionWidget.visibility = View.GONE
@@ -232,10 +264,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         adapterHistoryList.notifyDataSetChanged()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
 
-    }
 }
 
 

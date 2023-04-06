@@ -51,26 +51,6 @@
         android:background="?android:attr/selectableItemBackground"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewHistory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/recyclerViewSearch"
-        app:layout_constraintStart_toStartOf="@+id/recyclerViewSearch"
-        app:layout_constraintTop_toBottomOf="@+id/editTextSearch" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ClearHistory"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewHistory">
-
-    </Button>
-
-    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSearch"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -79,7 +59,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextSearch"
+        tools:listitem="@layout/item_track"/>
 
 
 
@@ -150,12 +131,14 @@
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone"
+        android:layout_marginTop="50dp"
         app:layout_constraintBottom_toBottomOf="@+id/recyclerViewSearch"
         app:layout_constraintEnd_toEndOf="@+id/recyclerViewSearch"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextSearch">
 
         <TextView
+            android:id="@+id/txtYouSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"

@@ -1,9 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.SharedPreferences
-import android.util.Log
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -32,7 +30,9 @@ class SearchHistory(val sharedPreferences: SharedPreferences) {
 
     fun clearHistoryList() {
         historyList.clear()
-        sharedPreferences.edit().clear().apply()
+        sharedPreferences.edit{
+            clear()
+        }
     }
 
     private fun shiftElementToTopOfHistoryList(index: Int) {
@@ -42,7 +42,6 @@ class SearchHistory(val sharedPreferences: SharedPreferences) {
     }
 
     fun loadData(): ArrayList<Track> {
-
         val json =sharedPreferences.getString(Const.KEY_HISTORY_LIST,"[]")
         val type = object : TypeToken<List<Track>>() {}.type
         historyList= Gson().fromJson(json, type)
@@ -52,7 +51,9 @@ class SearchHistory(val sharedPreferences: SharedPreferences) {
 
      fun saveData() {
         val json = Gson().toJson(historyList)
-        sharedPreferences.edit().putString(Const.KEY_HISTORY_LIST, json).apply()
+         sharedPreferences.edit {
+             putString(Const.KEY_HISTORY_LIST, json)
+         }
     }
 }
 

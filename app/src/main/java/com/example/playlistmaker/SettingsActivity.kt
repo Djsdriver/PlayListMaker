@@ -12,7 +12,9 @@ class SettingsActivity : AppCompatActivity() {
     private val binding: ActivitySettingsBinding by lazy {
         ActivitySettingsBinding.inflate(layoutInflater)
     }
-    val switch=App()
+    val switch by lazy {
+        application as App
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
