@@ -40,7 +40,8 @@
             <TextView
                 android:id="@+id/artistName"
                 style="@style/ItemArtistNAmeAndTime"
-                android:text="The Beatles"></TextView>
+                android:text="The Beatles"
+                android:layout_weight="1"></TextView>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -55,7 +56,8 @@
                 style="@style/ItemArtistNAmeAndTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2:55">
+                android:text="2:55"
+                android:layout_weight="1">
 
             </TextView>
 

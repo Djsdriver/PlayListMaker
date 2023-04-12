@@ -12,7 +12,9 @@ class SettingsActivity : AppCompatActivity() {
     private val binding: ActivitySettingsBinding by lazy {
         ActivitySettingsBinding.inflate(layoutInflater)
     }
-
+    val switch by lazy {
+        application as App
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,9 +22,20 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbarSettings)
-            //почему работает и без функции  onOptionsItemSelected если нажали кнопку назад
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         darkOrLightTheme()
+
+        val sharedPrefs = getSharedPreferences(Const.PRACTICUM_EXAMPLE_PREFERENCES, MODE_PRIVATE)
+        val isTurn=sharedPrefs.getBoolean(Const.SWITCH_KEY,false)
+        binding.switchSettingsDarkTheme.isChecked=isTurn
+        switch.switchTheme(isTurn)
+
+
+        binding.switchSettingsDarkTheme.setOnCheckedChangeListener { switcher, checked ->
+            sharedPrefs.edit().putBoolean(Const.SWITCH_KEY,checked).apply()
+            (applicationContext as App).switchTheme(checked)
+        }
+
 
         binding.btnImShare.setOnClickListener {
 

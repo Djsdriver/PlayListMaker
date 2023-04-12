@@ -12,4 +12,6 @@
 
     <!-- закругление картинки трека -->
     <dimen name="imageCornerRadius">3sp</dimen>
+    <dimen name="youSearchText">20sp</dimen>
+    <dimen name="cornerRadiusButtonHistoryList">54dp</dimen>
 </resources>

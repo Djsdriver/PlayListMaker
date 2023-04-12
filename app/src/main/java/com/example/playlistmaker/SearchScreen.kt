@@ -1,6 +1,6 @@
 package com.example.playlistmaker
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -10,8 +10,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
@@ -24,16 +22,17 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class SearchScreen : AppCompatActivity() {
+class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
     private val binding: ActivitySearchBinding by lazy {
         ActivitySearchBinding.inflate(layoutInflater)
     }
-    val adapter=TrackAdapter()
+    val adapter = TrackAdapter(this)
+    val adapterHistoryList = TrackAdapter(this)
+
+    private lateinit var searchHistory: SearchHistory
 
 
     companion object {
-        const val KEY_EDIT_TEXT = "KEY_EDIT_TEXT"
-        const val BASE_URL = "https://itunes.apple.com"
 
         private fun viewVisible(s: CharSequence?): Int {
             return if (s.isNullOrBlank()) {
@@ -43,14 +42,15 @@ class SearchScreen : AppCompatActivity() {
             }
         }
 
-        val retrofit= Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
-        val itemTrack=retrofit.create(TrackApi::class.java)
+        val retrofit = Retrofit.Builder().baseUrl(Const.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create()).build()
+        val itemTrack = retrofit.create(TrackApi::class.java)
     }
 
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(KEY_EDIT_TEXT, binding.editTextSearch.toString())
+        outState.putString(Const.KEY_EDIT_TEXT, binding.editTextSearch.toString())
     }
 
     override fun onRestoreInstanceState(
@@ -59,12 +59,14 @@ class SearchScreen : AppCompatActivity() {
     ) {
         super.onRestoreInstanceState(savedInstanceState, persistentState)
         if (savedInstanceState != null) {
-            val editText = savedInstanceState.getString(KEY_EDIT_TEXT)
+            val editText = savedInstanceState.getString(Const.KEY_EDIT_TEXT)
             binding.editTextSearch.setText(editText)
         }
 
     }
 
+
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -73,15 +75,49 @@ class SearchScreen : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         darkOrLightTheme()
 
-        binding.recyclerViewSearch.layoutManager=LinearLayoutManager(this)
-        binding.recyclerViewSearch.adapter=adapter
-            // adapter.tracks=listSong
+        binding.recyclerViewSearch.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewSearch.adapter = adapter
+
+        val sharedPreferences =
+            getSharedPreferences(Const.SHARED_PREFERENCES_HISTORY_LIST, MODE_PRIVATE)
+        searchHistory = SearchHistory(sharedPreferences)
+        binding.rcHistory.adapter = adapterHistoryList
+        binding.rcHistory.layoutManager = LinearLayoutManager(this)
+
+
+        displayingTheHistoryList() // отображение списка при загрузке
 
 
         buttonClearEditText()
 
         binding.updateButton.setOnClickListener {
             search()
+        }
+
+        binding.editTextSearch.setOnFocusChangeListener { view, hasFocus ->
+            binding.listHistory.visibility =
+                if (hasFocus && binding.editTextSearch.text.isEmpty()) View.VISIBLE else View.GONE
+            adapterHistoryList.tracks = searchHistory.loadData()
+            if (searchHistory.historyList.isEmpty()) {
+                binding.showMessageHistory.visibility = View.VISIBLE
+                binding.clearHistory.visibility = View.INVISIBLE
+            } else {
+                binding.showMessageHistory.visibility = View.GONE
+                binding.clearHistory.visibility = View.VISIBLE
+                adapterHistoryList.notifyDataSetChanged()
+            }
+
+
+        }
+
+        binding.clearHistory.setOnClickListener {
+            binding.editTextSearch.setText("")
+            searchHistory.clearHistoryList()
+            adapterHistoryList.notifyDataSetChanged()
+            binding.showMessageHistory.visibility = View.VISIBLE
+            binding.listHistory.visibility = View.VISIBLE
+            binding.clearHistory.visibility = View.GONE
+
         }
 
         val simpleWatcher = object : TextWatcher {
@@ -98,6 +134,27 @@ class SearchScreen : AppCompatActivity() {
                         binding.imClearEditText.visibility = viewVisible(s)
                     }
                 }
+                binding.listHistory.visibility =
+                    if (binding.editTextSearch.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
+                adapterHistoryList.tracks = searchHistory.loadData()
+
+                if (s?.isEmpty() == true) {
+                    binding.recyclerViewSearch.visibility = View.INVISIBLE
+                    adapter.clear()
+                } else {
+                    binding.recyclerViewSearch.visibility = View.VISIBLE
+                }
+
+
+                if (searchHistory.historyList.isNullOrEmpty() and s.isNullOrEmpty()) {
+                    binding.showMessageHistory.visibility = View.VISIBLE
+                    binding.clearHistory.visibility = View.INVISIBLE
+
+                } else {
+                    binding.clearHistory.visibility = View.VISIBLE
+                    binding.showMessageHistory.visibility = View.GONE
+                    adapterHistoryList.notifyDataSetChanged()
+                }
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -113,6 +170,17 @@ class SearchScreen : AppCompatActivity() {
             false
         }
 
+    }
+
+    private fun displayingTheHistoryList() {
+        if (searchHistory.loadData().isEmpty()) {
+            binding.listHistory.visibility = View.VISIBLE
+            binding.showMessageHistory.visibility = View.VISIBLE
+            binding.clearHistory.visibility = View.INVISIBLE
+        } else {
+            adapterHistoryList.tracks = searchHistory.loadData()
+            binding.listHistory.visibility = View.VISIBLE
+        }
     }
 
     private fun buttonClearEditText() {
@@ -156,7 +224,7 @@ class SearchScreen : AppCompatActivity() {
         true
     }
 
-    fun showPlaceholder(flag: Boolean?, message: String = "") = with(binding){
+    fun showPlaceholder(flag: Boolean?, message: String = "") = with(binding) {
         if (flag != null) {
             if (flag == true) {
                 badConnectionWidget.visibility = View.GONE
@@ -189,6 +257,14 @@ class SearchScreen : AppCompatActivity() {
         if (item.itemId == android.R.id.home) finish()
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onClick(track: Track) {
+        searchHistory.addTrack(track = track)
+        searchHistory.saveData()
+        adapterHistoryList.notifyDataSetChanged()
+    }
+
+
 }
 
 
