@@ -29,4 +29,6 @@
 
 
     <color name="textColorButtonUpdate">#1A1B22</color>
+    <color name="color_fab_player">#ffffff</color>
+    <color name="color_fab_play_button">#1A1B22</color>
 </resources>

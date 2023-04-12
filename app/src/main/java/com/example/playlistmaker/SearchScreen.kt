@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -262,6 +263,8 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         searchHistory.addTrack(track = track)
         searchHistory.saveData()
         adapterHistoryList.notifyDataSetChanged()
+
+        startActivity(Intent(this,AudioPlayerActivity::class.java))
     }
 
 

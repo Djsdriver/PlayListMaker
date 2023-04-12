@@ -38,4 +38,7 @@
     <color name="buttonUpdateSearchActivity">#1A1B22</color>
 
     <color name="textColorButtonUpdate">#FFFFFFFF</color>
+    <color name="color_fab_player">#FFFFFF</color>
+    <color name="color_fab_play_button">#FFFFFF</color>
+
 </resources>
