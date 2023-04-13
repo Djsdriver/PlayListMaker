@@ -35,6 +35,9 @@
     <string name="youSearch">Вы искали</string>
     <string name="messageIsEmptyListHistory">Здесь будет музыка, \n которую вы искали</string>
     <string name="textButtonClearHistoryList">Очистить</string>
+    <string name="trackNameText">Yesterday (Remastered 2009)</string>
+    <string name="artistNameText">The Beatles</string>
+    <string name="durationTrackText">2:55</string>
 
 
 </resources>

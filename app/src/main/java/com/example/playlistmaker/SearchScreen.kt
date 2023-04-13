@@ -264,7 +264,9 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         searchHistory.saveData()
         adapterHistoryList.notifyDataSetChanged()
 
-        startActivity(Intent(this,AudioPlayerActivity::class.java))
+        startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
+            putExtra("item", track)
+        })
     }
 
 

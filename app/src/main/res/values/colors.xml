@@ -40,5 +40,6 @@
     <color name="textColorButtonUpdate">#FFFFFFFF</color>
     <color name="color_fab_player">#FFFFFF</color>
     <color name="color_fab_play_button">#FFFFFF</color>
+    <color name="backgroundFabPlaylistAndFavorite">#AEAFB4</color>
 
 </resources>

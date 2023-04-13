@@ -21,4 +21,5 @@
     <string name="youSearch">Вы искали</string>
     <string name="messageIsEmptyListHistory">Здесь будет музыка, \n которую вы искали</string>
     <string name="textButtonClearHistoryList">Очистить</string>
+    <string name="durationTrackText">2:55</string>
 </resources>
