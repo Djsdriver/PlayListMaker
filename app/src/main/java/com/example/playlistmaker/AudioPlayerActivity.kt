@@ -6,10 +6,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.RoundedCorner
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,13 +28,13 @@ class AudioPlayerActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         darkOrLightTheme()
 
-        binding.trackNamePlayer.isSelected=true
+        binding.trackNamePlayer.isSelected = true
 
         // val track=intent.getSerializableExtra("item") as Track
         val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra("item", Track::class.java)
+            intent.getSerializableExtra(Const.PUT_EXTRA_TRACK, Track::class.java)
         } else {
-            @Suppress("DEPRECATION") intent.getSerializableExtra("item") as Track
+            @Suppress("DEPRECATION") intent.getSerializableExtra(Const.PUT_EXTRA_TRACK) as Track
         }
 
         if (track != null) {
@@ -44,13 +42,17 @@ class AudioPlayerActivity : AppCompatActivity() {
                 .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
                 .placeholder(R.drawable.placeholder)
                 .centerCrop()
-                .transform(RoundedCorners(resources.getDimensionPixelSize(
-                    R.dimen.track_album_corner_radius
-                )))
+                .transform(
+                    RoundedCorners(
+                        resources.getDimensionPixelSize(
+                            R.dimen.track_album_corner_radius
+                        )
+                    )
+                )
                 .into(binding.coverTrack)
 
             with(binding) {
-                timeTrack.text = track.trackTimeMillis?.let {
+                timeTrack.text = track.trackTimeMillis.let {
                     SimpleDateFormat(
                         "mm:ss",
                         Locale.getDefault()
@@ -58,18 +60,17 @@ class AudioPlayerActivity : AppCompatActivity() {
                 }
                 trackNamePlayer.text = track.trackName
                 artistNamePlayer.text = track.artistName
-                duration.text = track.trackTimeMillis?.let {
+                duration.text = track.trackTimeMillis.let {
                     SimpleDateFormat(
                         "mm:ss",
                         Locale.getDefault()
                     ).format(track.trackTimeMillis.toLong())
                 }
-                album.text = track.collectionName?.let { track.collectionName }
-                year.text = track.releaseDate?.let { track.releaseDate.substringBefore("-") }
-                genre.text = track.primaryGenreName?.let { track.primaryGenreName }
-                country.text = track.country?.let { track.country }
+                album.text = track.collectionName.let { track.collectionName }
+                year.text = track.releaseDate.let { track.releaseDate.substringBefore("-") }
+                genre.text = track.primaryGenreName.let { track.primaryGenreName }
+                country.text = track.country.let { track.country }
             }
-
 
         }
 
