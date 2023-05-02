@@ -13,4 +13,5 @@
     <dimen name="imageCornerRadius">10dp</dimen>
     <dimen name="youSearchText">20sp</dimen>
     <dimen name="cornerRadiusButtonHistoryList">54dp</dimen>
+    <dimen name="track_album_corner_radius">8dp</dimen>
 </resources>

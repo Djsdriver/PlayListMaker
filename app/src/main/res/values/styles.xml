@@ -80,7 +80,7 @@
     </style>
 
     <style name="ItemArtistNAmeAndTime" >
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/iconColorSettingLayout</item>
         <item name="android:textSize">12sp</item>
@@ -88,7 +88,7 @@
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:maxLines">1</item>
-        <item name="android:ellipsize">end</item>
+        <item name="android:ellipsize">marquee</item>
         <item name="android:singleLine">true</item>
     </style>
 
@@ -120,6 +120,71 @@
         <item name="android:textColor">@color/black_mode</item>
         <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">@font/ys_text_medium_regular</item>
+    </style>
+
+    <style name="coverTrack">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+
+    <style name="trackNamePlayer">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:fontFamily">@font/ys_text_medium_regular</item>
+        <item name="android:textColor">@color/black_mode</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="artistNameTextPlayer">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:textColor">@color/black_mode</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="durationTrackPlay">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:fontFamily">@font/ys_text_medium_regular</item>
+        <item name="android:textColor">@color/black_mode</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="durationTrack">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">end</item>
+        <item name="android:fontFamily">@font/ys_text_medium_regular</item>
+        <item name="android:textColor">@color/black_mode</item>
+    </style>
+
+    <style name="album">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/ys_text_medium_regular</item>
+        <item name="android:textColor">@color/black_mode</item>
+    </style>
+
+    <style name="yearTrack">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">end</item>
+        <item name="android:fontFamily">@font/ys_text_medium_regular</item>
+        <item name="android:textColor">@color/black_mode</item>
     </style>
 
 </resources>

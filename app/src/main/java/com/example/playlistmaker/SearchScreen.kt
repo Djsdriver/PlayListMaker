@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -87,7 +88,6 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
 
         displayingTheHistoryList() // отображение списка при загрузке
 
-
         buttonClearEditText()
 
         binding.updateButton.setOnClickListener {
@@ -155,7 +155,9 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
                     binding.showMessageHistory.visibility = View.GONE
                     adapterHistoryList.notifyDataSetChanged()
                 }
+                showPlaceholder(null,"false")
             }
+
 
             override fun afterTextChanged(p0: Editable?) {
 
@@ -190,6 +192,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             val inputMethodManager =
                 getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.editTextSearch.windowToken, 0)
+            showPlaceholder(null,"false")
         }
     }
 
@@ -262,6 +265,10 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         searchHistory.addTrack(track = track)
         searchHistory.saveData()
         adapterHistoryList.notifyDataSetChanged()
+
+        startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
+            putExtra(Const.PUT_EXTRA_TRACK, track)
+        })
     }
 
 
