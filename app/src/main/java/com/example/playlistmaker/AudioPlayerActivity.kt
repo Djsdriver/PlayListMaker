@@ -106,6 +106,39 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     }
 
+
+    private fun threadTime() {
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                if (mediaPlayer.isPlaying) {
+                    try {
+                        binding.timeTrack.text = SimpleDateFormat(
+                            "mm:ss",
+                            Locale.getDefault()
+                        ).format(mediaPlayer.currentPosition)
+                        handler.postDelayed(this, Const.DELAY_TIME)
+                    } catch (e: java.lang.Exception) {
+                        binding.timeTrack.text = Const.DEFAULT_TIME
+                    }
+                }
+
+            }
+        }, 0)
+    }
+    /*private fun startTimer(): Runnable {
+        return object : Runnable {
+            override fun run() {
+                if (playerState == STATE_PLAYING) {
+                    binding.timeTrack.text = SimpleDateFormat(
+                        "mm:ss",
+                        Locale.getDefault()
+                    ).format(mediaPlayer.currentPosition)
+                    handler.postDelayed(this, Const.DELAY_TIME)
+                }
+            }
+        }
+    }*/
+
     @RequiresApi(Build.VERSION_CODES.M)
     private fun playbackControl() {
         when (playerState) {
@@ -114,7 +147,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             }
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
-                handler.removeCallbacks { startTimer() }
+                handler.removeCallbacks { threadTime() }
             }
         }
     }
@@ -128,35 +161,21 @@ class AudioPlayerActivity : AppCompatActivity() {
                 playerState = STATE_PREPARED
             }
             setOnCompletionListener {
-                handler.removeCallbacks { startTimer() }
+                handler.removeCallbacks { threadTime() }
                 playerState = STATE_PREPARED
                 binding.timeTrack.text = Const.DEFAULT_TIME
                 setFabIcon()
-                Log.d("MyLog", "${setFabIcon()}")
+                Log.d("MyLog", "${binding.timeTrack.text}")
             }
         }
 
-    }
-
-    private fun startTimer(): Runnable {
-        return object : Runnable {
-            override fun run() {
-                if (playerState == STATE_PLAYING) {
-                    binding.timeTrack.text = SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(mediaPlayer.currentPosition)
-                    handler.postDelayed(this, Const.DELAY_TIME)
-                }
-            }
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun startPlayer() {
         mediaPlayer.start()
         playerState = STATE_PLAYING
-        handler.post(startTimer())
+        threadTime()
         setFabIcon()
 
 
@@ -166,7 +185,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun pausePlayer() {
         mediaPlayer.pause()
         playerState = STATE_PAUSED
-        handler.removeCallbacks { startTimer() }
         setFabIcon()
 
     }
@@ -180,7 +198,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mediaPlayer.release()
-        handler.removeCallbacks { startTimer() }
+        handler.removeCallbacks { threadTime() }
     }
 
 
