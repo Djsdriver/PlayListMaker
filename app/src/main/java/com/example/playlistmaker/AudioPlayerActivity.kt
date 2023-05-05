@@ -8,11 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.MenuItem
+import androidx.annotation.RequiresApi
+import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
-import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,13 +24,12 @@ class AudioPlayerActivity : AppCompatActivity() {
     private val binding: ActivityAudioPlayerBinding by lazy {
         ActivityAudioPlayerBinding.inflate(layoutInflater)
     }
-    private lateinit var track: Track
+    private val mediaPlayer = MediaPlayer()
+    lateinit var handler: Handler
 
 
     companion object {
 
-        private val handler = Handler(Looper.getMainLooper())
-        private val mediaPlayer = MediaPlayer()
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
@@ -39,26 +40,29 @@ class AudioPlayerActivity : AppCompatActivity() {
     private var playerState = STATE_DEFAULT
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        handler = Handler(Looper.getMainLooper())
 
 
         setSupportActionBar(binding.toolbarPlayer)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         darkOrLightTheme()
 
+
         binding.trackNamePlayer.isSelected = true
-
-        // val track=intent.getSerializableExtra("item") as Track
-
-        /*val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getSerializableExtra(Const.PUT_EXTRA_TRACK, Track::class.java)
         } else {
             @Suppress("DEPRECATION") intent.getSerializableExtra(Const.PUT_EXTRA_TRACK) as Track
-        }*/
-        val track = Gson().fromJson(intent.getStringExtra("item"), Track::class.java)
-        preparePlayer()
+        }
+
+
+        if (track != null) {
+            preparePlayer(track)
+
 
             Glide.with(this)
                 .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
@@ -93,48 +97,30 @@ class AudioPlayerActivity : AppCompatActivity() {
                 genre.text = track.primaryGenreName.let { track.primaryGenreName }
                 country.text = track.country.let { track.country }
             }
-
-
-
+        }
 
         binding.playFab.setOnClickListener {
             playbackControl()
-            when (playerState) {
-                STATE_PLAYING -> {
-                    binding.timeTrack.text = SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(mediaPlayer.currentPosition)
-                    handler.postDelayed({ this }, 300L)
-                }
-                STATE_PAUSED -> {
-                    handler.removeCallbacks { this }
-                }
-                STATE_PREPARED -> {
-                    handler.removeCallbacks({ this })
-                    binding.timeTrack.text = "00:00"
-                }
-            }
-
         }
+
 
     }
 
-    /*private fun preparePlayer(track: Track) {
-        mediaPlayer.setDataSource(track.previewUrl)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            binding.playFab.isEnabled = true
-            playerState = STATE_PREPARED
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun playbackControl() {
+        when (playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+                handler.removeCallbacks { startTimer() }
+            }
         }
-        mediaPlayer.setOnCompletionListener {
-            binding.playFab.setImageResource(R.drawable.play_button)
+    }
 
-            playerState = STATE_PREPARED
-        }
-
-    }*/
-    private fun preparePlayer() {
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun preparePlayer(track: Track) {
         mediaPlayer.apply {
             setDataSource(track.previewUrl)
             prepareAsync()
@@ -142,24 +128,50 @@ class AudioPlayerActivity : AppCompatActivity() {
                 playerState = STATE_PREPARED
             }
             setOnCompletionListener {
-                binding.playFab.setImageResource(R.drawable.play_button)
+                handler.removeCallbacks { startTimer() }
                 playerState = STATE_PREPARED
+                binding.timeTrack.text = Const.DEFAULT_TIME
+                setFabIcon()
+                Log.d("MyLog", "${setFabIcon()}")
+            }
+        }
+
+    }
+
+    private fun startTimer(): Runnable {
+        return object : Runnable {
+            override fun run() {
+                if (playerState == STATE_PLAYING) {
+                    binding.timeTrack.text = SimpleDateFormat(
+                        "mm:ss",
+                        Locale.getDefault()
+                    ).format(mediaPlayer.currentPosition)
+                    handler.postDelayed(this, Const.DELAY_TIME)
+                }
             }
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun startPlayer() {
         mediaPlayer.start()
-        binding.playFab.setImageResource(R.drawable.pause)
         playerState = STATE_PLAYING
+        handler.post(startTimer())
+        setFabIcon()
+
+
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun pausePlayer() {
         mediaPlayer.pause()
-        binding.playFab.setImageResource(R.drawable.play_button)
         playerState = STATE_PAUSED
+        handler.removeCallbacks { startTimer() }
+        setFabIcon()
+
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onPause() {
         super.onPause()
         pausePlayer()
@@ -168,22 +180,14 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mediaPlayer.release()
-        handler.removeCallbacks { this }
+        handler.removeCallbacks { startTimer() }
     }
 
-    private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
-        }
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) finish()
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -197,6 +201,16 @@ class AudioPlayerActivity : AppCompatActivity() {
                 supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_color)
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun setFabIcon() = when (playerState) {
+        STATE_PLAYING -> binding.playFab.foreground =
+            ResourcesCompat.getDrawable(resources, R.drawable.pause_button, null)
+        STATE_PAUSED -> binding.playFab.foreground =
+            ResourcesCompat.getDrawable(resources, R.drawable.play_button, null)
+        else -> binding.playFab.foreground =
+            ResourcesCompat.getDrawable(resources, R.drawable.play_button, null)
     }
 }
 

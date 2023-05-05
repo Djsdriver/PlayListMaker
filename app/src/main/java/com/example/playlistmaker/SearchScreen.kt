@@ -303,14 +303,14 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         adapterHistoryList.notifyDataSetChanged()
 
        if (clickDebounce()){
-            /*startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
+            startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
                 putExtra(Const.PUT_EXTRA_TRACK, track)
-            })*/
-           val intent = Intent(this, AudioPlayerActivity::class.java).apply {
+            })
+           /*val intent = Intent(this, AudioPlayerActivity::class.java).apply {
                putExtra("item", Gson().toJson(track))
            }
-           startActivity(intent)
-        Log.d("MyLog", "${track.previewUrl}")
+           startActivity(intent)*/
+        Log.d("MyLog",  "${track.trackName}  ${track.previewUrl}")
        }
 
     }
