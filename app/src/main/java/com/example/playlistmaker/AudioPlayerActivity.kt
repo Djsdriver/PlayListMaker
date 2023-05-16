@@ -125,19 +125,6 @@ class AudioPlayerActivity : AppCompatActivity() {
             }
         }, 0)
     }
-    /*private fun startTimer(): Runnable {
-        return object : Runnable {
-            override fun run() {
-                if (playerState == STATE_PLAYING) {
-                    binding.timeTrack.text = SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(mediaPlayer.currentPosition)
-                    handler.postDelayed(this, Const.DELAY_TIME)
-                }
-            }
-        }
-    }*/
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun playbackControl() {
@@ -225,8 +212,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun setFabIcon() = when (playerState) {
         STATE_PLAYING -> binding.playFab.foreground =
             ResourcesCompat.getDrawable(resources, R.drawable.pause_button, null)
-        STATE_PAUSED -> binding.playFab.foreground =
-            ResourcesCompat.getDrawable(resources, R.drawable.play_button, null)
         else -> binding.playFab.foreground =
             ResourcesCompat.getDrawable(resources, R.drawable.play_button, null)
     }
