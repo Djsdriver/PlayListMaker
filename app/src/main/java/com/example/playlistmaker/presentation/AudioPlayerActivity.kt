@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
 
 import android.content.res.Configuration
@@ -8,13 +8,18 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.Const
+import com.example.playlistmaker.R
+import com.example.playlistmaker.Track
+import com.example.playlistmaker.data.AudioPlayerRepositoryImpl
+import com.example.playlistmaker.data.PlayerState
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.domain.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,17 +32,11 @@ class AudioPlayerActivity : AppCompatActivity() {
     private val mediaPlayer = MediaPlayer()
     lateinit var handler: Handler
 
-
-    companion object {
-
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
-    }
-
-    private var playerState = STATE_DEFAULT
+    private val audioPlayerRepositoryImpl = AudioPlayerRepositoryImpl(mediaPlayer)
+    private val startPlayerUseCase = StartPlayerUseCase(audioPlayerRepositoryImpl)
+    private val pausePlayerUseCase = PausePlayerUseCase(audioPlayerRepositoryImpl)
+    private val getCurrentStateUseCase = GetCurrentStateUseCase(audioPlayerRepositoryImpl)
+    private val plaBackCurrentStateUseCase=PlayBackControlUseCase(audioPlayerRepositoryImpl)
 
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -61,9 +60,8 @@ class AudioPlayerActivity : AppCompatActivity() {
 
 
         if (track != null) {
-            preparePlayer(track)
-
-
+            val prepareUseCase = PrepareUseCase(audioPlayerRepositoryImpl, track)
+            prepareUseCase.prepare()
             Glide.with(this)
                 .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
                 .placeholder(R.drawable.placeholder)
@@ -100,26 +98,34 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         binding.playFab.setOnClickListener {
-            playbackControl()
+            plaBackCurrentStateUseCase.playBackControl()
+            threadTime()
+            setFabIcon()
         }
 
+        audioPlayerRepositoryImpl.setOnCompletionListener {
+            handler.removeCallbacks { threadTime() }
+        }
 
     }
 
-
     private fun threadTime() {
         handler.postDelayed(object : Runnable {
+            @RequiresApi(Build.VERSION_CODES.M)
             override fun run() {
-                if (mediaPlayer.isPlaying) {
+                if (audioPlayerRepositoryImpl.getCurrentState() == PlayerState.STATE_PLAYING) {
                     try {
                         binding.timeTrack.text = SimpleDateFormat(
                             "mm:ss",
                             Locale.getDefault()
-                        ).format(mediaPlayer.currentPosition)
+                        ).format(audioPlayerRepositoryImpl.getCurrentTime())
                         handler.postDelayed(this, Const.DELAY_TIME)
                     } catch (e: java.lang.Exception) {
                         binding.timeTrack.text = Const.DEFAULT_TIME
                     }
+                } else if (audioPlayerRepositoryImpl.getCurrentState() == PlayerState.STATE_PREPARED) {
+                    binding.timeTrack.text = Const.DEFAULT_TIME
+                    setFabIcon()
                 }
 
             }
@@ -127,59 +133,9 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-                handler.removeCallbacks { threadTime() }
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun preparePlayer(track: Track) {
-        mediaPlayer.apply {
-            setDataSource(track.previewUrl)
-            prepareAsync()
-            setOnPreparedListener {
-                playerState = STATE_PREPARED
-            }
-            setOnCompletionListener {
-                handler.removeCallbacks { threadTime() }
-                playerState = STATE_PREPARED
-                binding.timeTrack.text = Const.DEFAULT_TIME
-                setFabIcon()
-                Log.d("MyLog", "${binding.timeTrack.text}")
-            }
-        }
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun startPlayer() {
-        mediaPlayer.start()
-        playerState = STATE_PLAYING
-        threadTime()
-        setFabIcon()
-
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        playerState = STATE_PAUSED
-        setFabIcon()
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        pausePlayerUseCase.pausePlayer()
     }
 
     override fun onDestroy() {
@@ -187,7 +143,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         mediaPlayer.release()
         handler.removeCallbacks { threadTime() }
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
@@ -209,14 +164,16 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun setFabIcon() = when (playerState) {
-        STATE_PLAYING -> binding.playFab.foreground =
-            ResourcesCompat.getDrawable(resources, R.drawable.pause_button, null)
-        else -> binding.playFab.foreground =
-            ResourcesCompat.getDrawable(resources, R.drawable.play_button, null)
+    private fun setFabIcon() {
+        when (getCurrentStateUseCase.getCurrentState()) {
+            PlayerState.STATE_PLAYING -> binding.playFab.foreground =
+                ResourcesCompat.getDrawable(resources, R.drawable.pause_button, null)
+            else -> binding.playFab.foreground =
+                ResourcesCompat.getDrawable(resources, R.drawable.play_button, null)
+        }
     }
-}
 
+}
 
 
 
