@@ -1,7 +1,7 @@
 package com.example.playlistmaker.domain
 
-import com.example.playlistmaker.Track
-import com.example.playlistmaker.presentation.repository.AudioPlayerRepository
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.domain.repository.AudioPlayerRepository
 
 class PrepareUseCase(private val audioPlayerRepository: AudioPlayerRepository, val track: Track) {
 

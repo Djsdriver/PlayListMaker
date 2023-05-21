@@ -1,7 +1,7 @@
-package com.example.playlistmaker.presentation.repository
+package com.example.playlistmaker.domain.repository
 
-import com.example.playlistmaker.Track
-import com.example.playlistmaker.data.PlayerState
+import com.example.playlistmaker.domain.PlayerState
+import com.example.playlistmaker.domain.models.Track
 
 interface AudioPlayerRepository {
 

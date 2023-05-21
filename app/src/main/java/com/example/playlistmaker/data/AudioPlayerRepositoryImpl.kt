@@ -2,16 +2,10 @@ package com.example.playlistmaker.data
 
 import android.media.MediaPlayer
 import android.util.Log
-import com.example.playlistmaker.Track
-import com.example.playlistmaker.presentation.repository.AudioPlayerRepository
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.domain.PlayerState
+import com.example.playlistmaker.domain.repository.AudioPlayerRepository
 
-
-enum class PlayerState {
-    STATE_DEFAULT,
-    STATE_PREPARED,
-    STATE_PLAYING,
-    STATE_PAUSED
-}
 
 class AudioPlayerRepositoryImpl(
     private val mediaPlayer: MediaPlayer
