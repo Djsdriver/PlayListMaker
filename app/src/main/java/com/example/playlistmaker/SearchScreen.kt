@@ -17,9 +17,10 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.presentation.AudioPlayerActivity
 import com.example.playlistmaker.retrofit.TrackApi
 import com.example.playlistmaker.retrofit.TrackResultResponse
-import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
