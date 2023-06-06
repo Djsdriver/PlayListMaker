@@ -8,15 +8,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Const
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.player.data.repository.AudioPlayerRepositoryImpl
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.usecase.*
@@ -24,32 +25,22 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class AudioPlayerActivity : AppCompatActivity() {
+class AudioPlayerActivity() : AppCompatActivity() {
 
     private val binding: ActivityAudioPlayerBinding by lazy {
         ActivityAudioPlayerBinding.inflate(layoutInflater)
     }
-    private val mediaPlayer = MediaPlayer()
-    lateinit var handler: Handler
 
-    private val audioPlayerRepositoryImpl = AudioPlayerRepositoryImpl(mediaPlayer)
-    private val startPlayerUseCase = StartPlayerUseCase(audioPlayerRepositoryImpl)
-    private val pausePlayerUseCase = PausePlayerUseCase(audioPlayerRepositoryImpl)
-    private val getCurrentStateUseCase = GetCurrentStateUseCase(audioPlayerRepositoryImpl)
-    private val plaBackCurrentStateUseCase= PlayBackControlUseCase(audioPlayerRepositoryImpl)
-
+    private lateinit var viewModel: AudioPlayerViewModel
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        handler = Handler(Looper.getMainLooper())
-
 
         setSupportActionBar(binding.toolbarPlayer)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         darkOrLightTheme()
-
 
         binding.trackNamePlayer.isSelected = true
         val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -58,10 +49,77 @@ class AudioPlayerActivity : AppCompatActivity() {
             @Suppress("DEPRECATION") intent.getSerializableExtra(Const.PUT_EXTRA_TRACK) as Track
         }
 
+        viewModel = ViewModelProvider(this, AudioPlayerViewModelFactory()).get(AudioPlayerViewModel::class.java)
+
+        binding.playFab.setOnClickListener {
+            /*when (viewModel.playbackState.value) {
+                AudioPlayerViewModel.PlaybackState.Playing -> {
+                    viewModel.pausePlayer()
+                }
+                else -> {
+                    viewModel.startPlayer()
+                }
+            }*/
+            viewModel.playbackControl()
+        }
+
+        viewModel.playbackState.observe(this) { state ->
+            when (state) {
+                is AudioPlayerViewModel.PlaybackState.Idle -> {
+                    // handle idle state
+                    setFabIcon(false)
+                    binding.timeTrack.text = Const.DEFAULT_TIME
+                    Log.d("My", "$state")
+                }
+                is AudioPlayerViewModel.PlaybackState.Prepared -> {
+                    Log.d("My", "$state")
+                    // handle prepared state
+                    setFabIcon(false)
+                    binding.trackNamePlayer.text = state.track.trackName
+                    binding.artistNamePlayer.text = state.track.artistName
+                    binding.duration.text = SimpleDateFormat("mm:ss", Locale.getDefault())
+                        .format(state.track.trackTimeMillis.toLong())
+                    binding.album.text = state.track.collectionName
+                    binding.year.text = state.track.releaseDate.substringBefore("-")
+                    binding.genre.text = state.track.primaryGenreName
+                    binding.country.text = state.track.country
+                }
+                is AudioPlayerViewModel.PlaybackState.Playing -> {
+                    Log.d("My", "$state")
+                    viewModel.playbackTime.observe(this) { playbackTime ->
+                        if (!playbackTime.isNullOrEmpty()) {
+                            binding.timeTrack.text = playbackTime
+                        }
+                    }
+                    Log.d("My", "${binding.timeTrack.text}")
+                    // handle playing state
+                    setFabIcon(true)
+                }
+                is AudioPlayerViewModel.PlaybackState.Paused -> {
+                    Log.d("My", "$state")
+                    setFabIcon(false)
+                }
+                is AudioPlayerViewModel.PlaybackState.Progress -> {
+                    Log.d("My", "$state")
+                    // handle progress state
+
+                }
+                is AudioPlayerViewModel.PlaybackState.Completed -> {
+                    Log.d("My", "$state")
+                    setFabIcon(false)
+                    binding.timeTrack.text=Const.DEFAULT_TIME
+                    Log.d("My", "${binding.timeTrack.text}")
+                }// handle completed state
+
+                else -> {
+
+                }
+            }
+        }
 
         if (track != null) {
-            val prepareUseCase = PrepareUseCase(audioPlayerRepositoryImpl, track)
-            prepareUseCase.prepare()
+            viewModel.preparePlayer(track)
+
             Glide.with(this)
                 .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
                 .placeholder(R.drawable.placeholder)
@@ -74,78 +132,24 @@ class AudioPlayerActivity : AppCompatActivity() {
                     )
                 )
                 .into(binding.coverTrack)
-
-            with(binding) {
-                timeTrack.text = track.trackTimeMillis.let {
-                    SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(track.trackTimeMillis.toLong())
-                }
-                trackNamePlayer.text = track.trackName
-                artistNamePlayer.text = track.artistName
-                duration.text = track.trackTimeMillis.let {
-                    SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(track.trackTimeMillis.toLong())
-                }
-                album.text = track.collectionName.let { track.collectionName }
-                year.text = track.releaseDate.let { track.releaseDate.substringBefore("-") }
-                genre.text = track.primaryGenreName.let { track.primaryGenreName }
-                country.text = track.country.let { track.country }
-            }
         }
 
-        binding.playFab.setOnClickListener {
-            plaBackCurrentStateUseCase.playBackControl()
-            threadTime()
-            setFabIcon()
-        }
-
-        audioPlayerRepositoryImpl.setOnCompletionListener {
-            handler.removeCallbacks { threadTime() }
-        }
 
     }
 
-    private fun threadTime() {
-        handler.postDelayed(object : Runnable {
-            @RequiresApi(Build.VERSION_CODES.M)
-            override fun run() {
-                if (audioPlayerRepositoryImpl.getCurrentState() == PlayerState.STATE_PLAYING) {
-                    try {
-                        binding.timeTrack.text = SimpleDateFormat(
-                            "mm:ss",
-                            Locale.getDefault()
-                        ).format(audioPlayerRepositoryImpl.getCurrentTime())
-                        handler.postDelayed(this, Const.DELAY_TIME)
-                    } catch (e: java.lang.Exception) {
-                        binding.timeTrack.text = Const.DEFAULT_TIME
-                    }
-                } else if (audioPlayerRepositoryImpl.getCurrentState() == PlayerState.STATE_PREPARED) {
-                    binding.timeTrack.text = Const.DEFAULT_TIME
-                    setFabIcon()
-                }
-
-            }
-        }, 0)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onPause() {
         super.onPause()
-        pausePlayerUseCase.pausePlayer()
+        viewModel.pausePlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
-        handler.removeCallbacks { threadTime() }
+        viewModel.onCleared()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
+            viewModel.pausePlayer()
             finish()
         }
         return super.onOptionsItemSelected(item)
@@ -164,16 +168,12 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun setFabIcon() {
-        when (getCurrentStateUseCase.getCurrentState()) {
-            PlayerState.STATE_PLAYING -> binding.playFab.foreground =
-                ResourcesCompat.getDrawable(resources, R.drawable.pause_button, null)
-            else -> binding.playFab.foreground =
-                ResourcesCompat.getDrawable(resources, R.drawable.play_button, null)
-        }
+    private fun setFabIcon(isPlaying: Boolean) {
+        binding.playFab.foreground =
+            ResourcesCompat.getDrawable(
+                resources,
+                if (isPlaying) R.drawable.pause_button else R.drawable.play_button,
+                null
+            )
     }
-
 }
-
-
-

@@ -13,7 +13,7 @@ interface AudioPlayerRepository {
 
     fun setOnCompletionListener(onComplete: () -> Unit)
 
-    fun getCurrentTime(): Int
+    fun getCurrentTime(): Long?
 
     fun playbackControl()
 
