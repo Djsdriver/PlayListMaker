@@ -183,7 +183,7 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/clearHistory"
+            android:id="@+id/clearHistoryButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/textButtonClearHistoryList"
