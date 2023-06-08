@@ -3,29 +3,35 @@ package com.example.playlistmaker.search.ui
 import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.search.data.TrackStorageImpl
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.domain.usecase.AddTrackToHistoryListUseCase
+import com.example.playlistmaker.search.domain.usecase.ClearHistoryListUseCase
+import com.example.playlistmaker.search.domain.usecase.LoadDataUseCase
+import com.example.playlistmaker.search.domain.usecase.SaveDataUseCase
 
-class SearchScreenViewModel(application: Application): AndroidViewModel(application) {
+class SearchScreenViewModel(
+    private val addTrackToHistoryListUseCase: AddTrackToHistoryListUseCase,
+    private val clearHistoryListUseCase: ClearHistoryListUseCase,
+    private val loadDataUseCase: LoadDataUseCase,
+    private val saveDataUseCase: SaveDataUseCase
+) : ViewModel() {
 
-    @SuppressLint("StaticFieldLeak")
-    private val context= application.applicationContext
-
-    private val trackStorageImpl=TrackStorageImpl(context)
-
-    fun addTrack(track: Track){
-        trackStorageImpl.addTrack(track)
+    fun addTrack(track: Track) {
+        addTrackToHistoryListUseCase.execute(track)
     }
-    fun clearHistoryList(){
-        trackStorageImpl.clearHistoryList()
+
+    fun clearHistoryList() {
+        clearHistoryListUseCase.execute()
     }
+
     fun loadData(): ArrayList<Track> {
-        return trackStorageImpl.loadData()
+        return loadDataUseCase.execute()
     }
+
     fun saveData(track: Track) {
-        trackStorageImpl.saveData(track)
+        saveDataUseCase.execute(track)
     }
-    override fun onCleared() {
-        super.onCleared()
-    }
+
 }
