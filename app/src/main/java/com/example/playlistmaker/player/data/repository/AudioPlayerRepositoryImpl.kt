@@ -5,13 +5,14 @@ import android.util.Log
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
+import com.example.playlistmaker.player.domain.usecase.*
 
 
 class AudioPlayerRepositoryImpl(
 ) : AudioPlayerRepository {
 
     private var mediaPlayer: MediaPlayer? = null
-    private var playerState: PlayerState = PlayerState.STATE_DEFAULT
+    private var playerState: PlayerState = PlayerState.Idle
 
     init {
         mediaPlayer=MediaPlayer()
@@ -19,34 +20,37 @@ class AudioPlayerRepositoryImpl(
 
     override fun startPlayer() {
         mediaPlayer?.start()
-        playerState = PlayerState.STATE_PLAYING
+        playerState = PlayerState.Playing
         Log.d("My", "$playerState")
-
     }
 
     override fun pausePlayer() {
         mediaPlayer?.pause()
-        playerState = PlayerState.STATE_PAUSED
+        playerState = PlayerState.Paused
         Log.d("My", "$playerState")
     }
 
-    override fun preparePlayer(track: Track) {
+    override fun preparePlayer(track: Track, onPrepared: () -> Unit, onComplete: () -> Unit) {
         mediaPlayer?.apply {
             setDataSource(track.previewUrl)
             prepareAsync()
             setOnPreparedListener {
-                playerState = PlayerState.STATE_PREPARED
+                playerState = PlayerState.Prepared(track)
                 Log.d("My", "$playerState")
+                onPrepared()
             }
-
+            setOnCompletionListener {
+                playerState = PlayerState.Completed
+                onComplete()
+            }
         }
     }
 
 
-    override fun setOnCompletionListener(onComplete: () -> Unit) {
+    override fun setOnCompletionListener(onComplete: (PlayerState) -> Unit) {
         mediaPlayer?.setOnCompletionListener {
-            playerState = PlayerState.STATE_COMPLETED
-            onComplete.invoke()
+            playerState = PlayerState.Completed
+            onComplete.invoke(PlayerState.Completed)
         }
     }
 
@@ -55,10 +59,10 @@ class AudioPlayerRepositoryImpl(
 
     override fun playbackControl() {
         when (playerState) {
-            PlayerState.STATE_PLAYING -> {
+            PlayerState.Playing -> {
                 pausePlayer()
             }
-            PlayerState.STATE_PREPARED, PlayerState.STATE_PAUSED -> {
+            is PlayerState.Prepared, PlayerState.Paused, PlayerState.Completed -> {
                 startPlayer()
             }
             else -> {}

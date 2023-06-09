@@ -9,9 +9,13 @@ interface AudioPlayerRepository {
 
     fun pausePlayer()
 
-    fun preparePlayer(track: Track)
+    fun preparePlayer(
+        track: Track,
+        onPrepared: () -> Unit,
+        onComplete: () -> Unit
+    )
 
-    fun setOnCompletionListener(onComplete: () -> Unit)
+    fun setOnCompletionListener(onComplete: (PlayerState) -> Unit)
 
     fun getCurrentTime(): Long?
 

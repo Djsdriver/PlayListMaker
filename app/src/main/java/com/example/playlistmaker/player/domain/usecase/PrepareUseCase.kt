@@ -5,7 +5,8 @@ import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 
 class PrepareUseCase(private val audioPlayerRepository: AudioPlayerRepository) {
 
-    fun prepare(track: Track) {
-        audioPlayerRepository.preparePlayer(track)
+    fun prepare(track: Track,onPrepared: () -> Unit,
+                onComplete: () -> Unit) {
+        audioPlayerRepository.preparePlayer(track,onPrepared,onComplete)
     }
 }

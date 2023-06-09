@@ -16,6 +16,7 @@ import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.usecase.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -45,20 +46,19 @@ class AudioPlayerActivity() : AppCompatActivity() {
             @Suppress("DEPRECATION") intent.getSerializableExtra(Const.PUT_EXTRA_TRACK) as Track
         }
 
-        viewModel = ViewModelProvider(this, AudioPlayerViewModelFactory()).get(AudioPlayerViewModel::class.java)
+        viewModel = ViewModelProvider(this, AudioPlayerViewModelFactory())[AudioPlayerViewModel::class.java]
 
         binding.playFab.setOnClickListener {
-
             viewModel.playbackControl()
         }
 
-        viewModel.playbackState.observe(this) { state ->
+        viewModel.playerState.observe(this) { state ->
             Log.e("State", state.toString())
             when (state) {
-                is AudioPlayerViewModel.PlaybackState.Idle -> {
+                is PlayerState.Idle -> {
                     setFabIcon(false)
                 }
-                is AudioPlayerViewModel.PlaybackState.Prepared -> {
+                is PlayerState.Prepared -> {
                     binding.timeTrack.text = Const.DEFAULT_TIME
                     setFabIcon(false)
                     binding.trackNamePlayer.text = state.track.trackName
@@ -71,33 +71,27 @@ class AudioPlayerActivity() : AppCompatActivity() {
                     binding.country.text = state.track.country
 
                 }
-                is AudioPlayerViewModel.PlaybackState.Playing -> {
-                    viewModel.playbackTime.observe(this) { playbackTime ->
-                        if (!playbackTime.isNullOrEmpty()) {
-                            binding.timeTrack.text = playbackTime
-                        }
-                    }
-
+                is PlayerState.Playing -> {
                     setFabIcon(true)
                 }
-                is AudioPlayerViewModel.PlaybackState.Paused -> {
+                is PlayerState.Paused -> {
                     setFabIcon(false)
                 }
-                is AudioPlayerViewModel.PlaybackState.Progress -> {
+                is PlayerState.Progress -> {
 
                 }
-                is AudioPlayerViewModel.PlaybackState.Completed -> {
+                is PlayerState.Completed -> {
                     setFabIcon(false)
-                        viewModel.playbackTimeEnd.observe(this){
-                            binding.timeTrack.text = it // Set the text here
-                            Log.d("My", "${binding.timeTrack.text}")
-                        }
-
+                    binding.timeTrack.text = Const.DEFAULT_TIME // Set the text here
                 }
-
                 else -> {
-
                 }
+            }
+        }
+
+        viewModel.playbackTime.observe(this) { playbackTime ->
+            if (!playbackTime.isNullOrEmpty()) {
+                binding.timeTrack.text = playbackTime
             }
         }
 
@@ -117,8 +111,6 @@ class AudioPlayerActivity() : AppCompatActivity() {
                 )
                 .into(binding.coverTrack)
         }
-
-
     }
 
     override fun onPause() {

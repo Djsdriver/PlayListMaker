@@ -16,15 +16,16 @@ class AudioPlayerViewModelFactory(): ViewModelProvider.Factory {
     private val playBackControlUseCase by lazy { PlayBackControlUseCase(audioPlayerRepositoryImpl) }
     private val prepareUseCase by lazy { PrepareUseCase(audioPlayerRepositoryImpl,) }
     private val startPlayerUseCase by lazy { StartPlayerUseCase(audioPlayerRepositoryImpl) }
+    private val getCurrentTimeUseCase by lazy { GetCurrentTimeUseCase(audioPlayerRepositoryImpl) }
 
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AudioPlayerViewModel(
-            /*getCurrentStateUseCase = getCurrentStateUseCase,
+            getCurrentStateUseCase = getCurrentStateUseCase,
         pausePlayerUseCase = pausePlayerUseCase,
             playBackControlUseCase = playBackControlUseCase,
             prepareUseCase = prepareUseCase,
-            startPlayerUseCase = startPlayerUseCase*/
-        audioPlayerRepositoryImpl) as T
+            startPlayerUseCase = startPlayerUseCase,
+        getCurrentTimeUseCase = getCurrentTimeUseCase) as T
     }
 }
