@@ -10,25 +10,17 @@ import com.example.playlistmaker.sharing.domain.models.EmailData
 class ExternalNavigator(private val context: Context) {
 
     fun openTerms(link: String) {
-        /*val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(link)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        startActivity(context, intent, null)*/
-
-       // val nextIntent= Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.adress)))
         val nextIntent= Intent(Intent.ACTION_VIEW, Uri.parse(link))
         startActivity(context,Intent.createChooser(nextIntent,""),null)
     }
 
     fun sendToSupport(emailData: EmailData) {
         val supportIntent = Intent(Intent.ACTION_SENDTO);
-        supportIntent.data=Uri.parse("mailto:") // only email apps should handle this
-        //supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(context.getString(R.string.my_mail)))
+        supportIntent.data=Uri.parse("mailto:")
+
         supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(emailData.sender))
-        //supportIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.TEXT_EXTRA_SUBJEC))
         supportIntent.putExtra(Intent.EXTRA_SUBJECT, emailData.subject)
-       // supportIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.BODY_EXTRA_TEXT))
+
         supportIntent.putExtra(Intent.EXTRA_TEXT, emailData.message)
         startActivity(context,Intent.createChooser(supportIntent,""),null)
     }
@@ -37,7 +29,6 @@ class ExternalNavigator(private val context: Context) {
         val shareIntent = Intent()
         shareIntent.action = Intent.ACTION_SEND
         shareIntent.type="text/plain"
-        //shareIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.send_to))
         shareIntent.putExtra(Intent.EXTRA_TEXT, link)
         startActivity(context,Intent.createChooser(shareIntent,link),null)
     }

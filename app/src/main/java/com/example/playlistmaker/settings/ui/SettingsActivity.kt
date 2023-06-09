@@ -1,17 +1,13 @@
 package com.example.playlistmaker.settings.ui
 
-import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.App
-import com.example.playlistmaker.Const
+import com.example.playlistmaker.utility.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.sharing.domain.models.EmailData
-import com.example.playlistmaker.sharing.domain.repository.SharingRepository
 
 class SettingsActivity : AppCompatActivity() {
 

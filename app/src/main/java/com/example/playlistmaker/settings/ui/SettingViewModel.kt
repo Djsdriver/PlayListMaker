@@ -1,16 +1,11 @@
 package com.example.playlistmaker.settings.ui
 
-import android.app.Application
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.Const
 import com.example.playlistmaker.settings.domain.usecase.ChangeAppTheme
 import com.example.playlistmaker.settings.domain.usecase.IsDarkThemeEnabled
 import com.example.playlistmaker.sharing.domain.models.EmailData
-import com.example.playlistmaker.sharing.domain.repository.SharingRepository
 import com.example.playlistmaker.sharing.domain.usecase.OpenTerms
 import com.example.playlistmaker.sharing.domain.usecase.SendToSupport
 import com.example.playlistmaker.sharing.domain.usecase.ShareApp

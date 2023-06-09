@@ -1,8 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.search.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
 
 class TrackAdapter(val listener: ClickListener) : RecyclerView.Adapter<TrackHolder>() {

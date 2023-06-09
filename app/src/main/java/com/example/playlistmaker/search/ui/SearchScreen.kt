@@ -7,9 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.PersistableBundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -22,11 +19,8 @@ import com.example.playlistmaker.*
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.playlistmaker.utility.Const
+import com.example.playlistmaker.utility.Resource
 
 
 class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
@@ -40,15 +34,11 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
 
     private lateinit var searchViewModel: SearchScreenViewModel
 
-
     companion object {
         private var isClickAllowed = true
 
         private val handler = Handler(Looper.getMainLooper())
 
-        val retrofit = Retrofit.Builder().baseUrl(Const.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create()).build()
-        val itemTrack = retrofit.create(TrackApi::class.java)
     }
 
     private val searchRunnable = Thread { search() }
@@ -56,7 +46,6 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, Const.CLICK_DEBOUNCE_DELAY)
     }
-
 
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -84,6 +73,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
 
         searchViewModel = ViewModelProvider(this, SearchScreenViewModelFactory(this))[SearchScreenViewModel::class.java]
 
+
         setSupportActionBar(binding.toolbarSearch)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         darkOrLightTheme()
@@ -100,9 +90,10 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         buttonClearEditText()
 
         binding.updateButton.setOnClickListener {
-            //showPlaceholder(null,"")
+            showPlaceholder(null,"")
             search()
         }
+
 
         binding.editTextSearch.setOnFocusChangeListener { view, hasFocus ->
             binding.listHistory.visibility =
@@ -143,7 +134,6 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             binding.listHistory.visibility = if (text.isNullOrEmpty().not() || !binding.editTextSearch.hasFocus()) View.GONE else View.VISIBLE
             binding.rcHistory.visibility = if (text.isNullOrEmpty().not() || !binding.editTextSearch.hasFocus()) View.GONE else View.VISIBLE
 
-
             if (text?.isEmpty() == true) {
                 binding.recyclerViewSearch.visibility = View.INVISIBLE
                 adapter.clear()
@@ -159,7 +149,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
                 binding.showMessageHistory.visibility = View.GONE
             }
             adapterHistoryList.notifyDataSetChanged()
-            //showPlaceholder(null, "false")
+            showPlaceholder(null, "false")
         }
 
         binding.editTextSearch.setOnEditorActionListener { _, actionId, _ ->
@@ -192,78 +182,42 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
     private fun buttonClearEditText() {
         binding.imClearEditText.setOnClickListener {
             binding.editTextSearch.setText("")
-                // adapter.clear()
+            adapter.clear()
             val inputMethodManager =
                 getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.editTextSearch.windowToken, 0)
-           // showPlaceholder(null,"false")
+            showPlaceholder(null)
         }
     }
 
-    /*private fun search() {
-        if (binding.editTextSearch.text.isNotEmpty()){
-            binding.progressBar.visibility=View.VISIBLE
-            itemTrack.getTrackByTerm(binding.editTextSearch.text.toString())
-                .enqueue(object : Callback<TrackResultResponse> {
-                    override fun onResponse(
-                        call: Call<TrackResultResponse>,
-                        response: Response<TrackResultResponse>
-                    ) {
-                        binding.progressBar.visibility = View.GONE
-                        showPlaceholder(null)
-                        when (response.code()) {
-                            200 -> {
-                                if (response.body()?.results?.isNotEmpty() == true) {
-                                    adapter.setTrackList(response.body()!!.results)
-                                    showPlaceholder(null)
-                                } else {
-                                    showPlaceholder(true)
-                                }
-                            }
-                            else -> {
-                                showPlaceholder(false, getString(R.string.server_error))
-                            }
-                        }
-
-                    }
-                    override fun onFailure(call: Call<TrackResultResponse>, t: Throwable) {
-                        binding.progressBar.visibility = View.GONE
-                        showPlaceholder(false, getString(R.string.bad_connection))
-                    }
-
-                })
-        }
-        true
-    }*/
-
     private fun search() {
-        val searchTerm = binding.editTextSearch.text.toString().trim()
+        val searchTerm = binding.editTextSearch.text.toString()
         if (searchTerm.isEmpty()) return
 
-        binding.progressBar.visibility = View.VISIBLE
-        itemTrack.getTrackByTerm(searchTerm).enqueue(object : Callback<TrackResultResponse> {
-            override fun onResponse(call: Call<TrackResultResponse>, response: Response<TrackResultResponse>) {
-                binding.progressBar.visibility = View.GONE
-                when (response.code()) {
-                    200 -> {
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            adapter.setTrackList(response.body()!!.results)
-                            showPlaceholder(null)
-                        } else {
-                            showPlaceholder(true)
-                        }
-                    }
-                    else -> {
-                        showPlaceholder(false, getString(R.string.server_error))
+        searchViewModel.searchTracks(searchTerm)
+
+        searchViewModel.tracks.observe(this) { tracks ->
+            when (tracks.status) {
+                Resource.Status.LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    adapter.clear()
+                }
+                Resource.Status.SUCCESS -> {
+                    binding.progressBar.visibility = View.GONE
+                    if (tracks.data?.isNotEmpty() == true) {
+                        adapter.setTrackList(tracks.data)
+                        showPlaceholder(null)
+                    } else {
+                        showPlaceholder(true)
                     }
                 }
+                Resource.Status.ERROR -> {
+                    binding.progressBar.visibility = View.GONE
+                    showPlaceholder(false, tracks.message ?: getString(R.string.server_error))
+                }
             }
+        }
 
-            override fun onFailure(call: Call<TrackResultResponse>, t: Throwable) {
-                binding.progressBar.visibility = View.GONE
-                showPlaceholder(false, getString(R.string.bad_connection))
-            }
-        })
     }
 
 
@@ -306,17 +260,11 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         searchViewModel.addTrack(track = track)
         searchViewModel.saveData(track)
         adapterHistoryList.notifyDataSetChanged()
-
-       if (clickDebounce()){
+        if (clickDebounce()) {
             startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
                 putExtra(Const.PUT_EXTRA_TRACK, track)
             })
-           /*val intent = Intent(this, AudioPlayerActivity::class.java).apply {
-               putExtra("item", Gson().toJson(track))
-           }
-           startActivity(intent)*/
-        Log.d("MyLog",  "${track.trackName}  ${track.previewUrl}")
-       }
+        }
 
     }
     private fun clickDebounce() : Boolean {

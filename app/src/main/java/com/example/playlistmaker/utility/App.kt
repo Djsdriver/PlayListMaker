@@ -1,9 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.utility
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.Const.PRACTICUM_EXAMPLE_PREFERENCES
-import com.example.playlistmaker.Const.SWITCH_KEY
+import com.example.playlistmaker.utility.Const.PRACTICUM_EXAMPLE_PREFERENCES
+import com.example.playlistmaker.utility.Const.SWITCH_KEY
 
 class App : Application() {
 

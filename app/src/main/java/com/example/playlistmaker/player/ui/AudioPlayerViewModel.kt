@@ -3,14 +3,12 @@ package com.example.playlistmaker.player.ui
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.Const
+import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
-import com.example.playlistmaker.player.domain.usecase.*
 import com.example.playlistmaker.search.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,6 +21,9 @@ class AudioPlayerViewModel(private val audioPlayerRepository: AudioPlayerReposit
     private val _playbackTime = MutableLiveData<String?>()
     val playbackTime: LiveData<String?> = _playbackTime
 
+    private val _playbackTimeEnd = MutableLiveData<String?>()
+    val playbackTimeEnd: LiveData<String?> = _playbackTimeEnd
+
     private var mediaPlayer: MediaPlayer? = null
     private var handler: Handler = Handler(Looper.getMainLooper())
 
@@ -32,6 +33,7 @@ class AudioPlayerViewModel(private val audioPlayerRepository: AudioPlayerReposit
 
         audioPlayerRepository.setOnCompletionListener {
             _playbackState.value = PlaybackState.Completed
+            _playbackTimeEnd.value= Const.DEFAULT_TIME
             handler.removeCallbacksAndMessages(threadTime())
 
         }
@@ -75,9 +77,10 @@ class AudioPlayerViewModel(private val audioPlayerRepository: AudioPlayerReposit
                 handler.removeCallbacksAndMessages(threadTime())
             }
             PlayerState.STATE_COMPLETED -> {
-                    _playbackState.value = PlaybackState.Completed
-                    //_playbackTime.postValue(Const.DEFAULT_TIME)
+                _playbackState.value = PlaybackState.Completed
                 handler.removeCallbacksAndMessages(threadTime())
+                _playbackTimeEnd.postValue(Const.DEFAULT_TIME)
+
 
             }
             else -> {}

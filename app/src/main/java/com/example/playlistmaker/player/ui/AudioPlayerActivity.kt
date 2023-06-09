@@ -2,12 +2,9 @@ package com.example.playlistmaker.player.ui
 
 
 import android.content.res.Configuration
-import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.RequiresApi
@@ -15,11 +12,10 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.Const
+import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
-import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.usecase.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -52,28 +48,18 @@ class AudioPlayerActivity() : AppCompatActivity() {
         viewModel = ViewModelProvider(this, AudioPlayerViewModelFactory()).get(AudioPlayerViewModel::class.java)
 
         binding.playFab.setOnClickListener {
-            /*when (viewModel.playbackState.value) {
-                AudioPlayerViewModel.PlaybackState.Playing -> {
-                    viewModel.pausePlayer()
-                }
-                else -> {
-                    viewModel.startPlayer()
-                }
-            }*/
+
             viewModel.playbackControl()
         }
 
         viewModel.playbackState.observe(this) { state ->
+            Log.e("State", state.toString())
             when (state) {
                 is AudioPlayerViewModel.PlaybackState.Idle -> {
-                    // handle idle state
                     setFabIcon(false)
-                    binding.timeTrack.text = Const.DEFAULT_TIME
-                    Log.d("My", "$state")
                 }
                 is AudioPlayerViewModel.PlaybackState.Prepared -> {
-                    Log.d("My", "$state")
-                    // handle prepared state
+                    binding.timeTrack.text = Const.DEFAULT_TIME
                     setFabIcon(false)
                     binding.trackNamePlayer.text = state.track.trackName
                     binding.artistNamePlayer.text = state.track.artistName
@@ -83,33 +69,31 @@ class AudioPlayerActivity() : AppCompatActivity() {
                     binding.year.text = state.track.releaseDate.substringBefore("-")
                     binding.genre.text = state.track.primaryGenreName
                     binding.country.text = state.track.country
+
                 }
                 is AudioPlayerViewModel.PlaybackState.Playing -> {
-                    Log.d("My", "$state")
                     viewModel.playbackTime.observe(this) { playbackTime ->
                         if (!playbackTime.isNullOrEmpty()) {
                             binding.timeTrack.text = playbackTime
                         }
                     }
-                    Log.d("My", "${binding.timeTrack.text}")
-                    // handle playing state
+
                     setFabIcon(true)
                 }
                 is AudioPlayerViewModel.PlaybackState.Paused -> {
-                    Log.d("My", "$state")
                     setFabIcon(false)
                 }
                 is AudioPlayerViewModel.PlaybackState.Progress -> {
-                    Log.d("My", "$state")
-                    // handle progress state
 
                 }
                 is AudioPlayerViewModel.PlaybackState.Completed -> {
-                    Log.d("My", "$state")
                     setFabIcon(false)
-                    binding.timeTrack.text=Const.DEFAULT_TIME
-                    Log.d("My", "${binding.timeTrack.text}")
-                }// handle completed state
+                        viewModel.playbackTimeEnd.observe(this){
+                            binding.timeTrack.text = it // Set the text here
+                            Log.d("My", "${binding.timeTrack.text}")
+                        }
+
+                }
 
                 else -> {
 
@@ -149,7 +133,7 @@ class AudioPlayerActivity() : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            viewModel.pausePlayer()
+            //viewModel.pausePlayer()
             finish()
         }
         return super.onOptionsItemSelected(item)
