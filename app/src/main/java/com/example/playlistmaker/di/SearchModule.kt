@@ -27,7 +27,7 @@ val searchModule= module {
     }
 
     single<TrackStorage> { TrackStorageImpl(sharedPreferences = get(qualifier = named(Const.SHARED_PREFERENCES_HISTORY_LIST) )) }
-    single<TrackApi>{
+    single<TrackApi>(named("api")){
         Retrofit.Builder()
             .baseUrl(Const.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -35,7 +35,7 @@ val searchModule= module {
             .create(TrackApi::class.java)
     }
 
-    single<TrackRepository> { SearchTrackRepository(trackApi = get() )}
+    single<TrackRepository> { SearchTrackRepository(trackApi = get(qualifier = named("api")) )}
 
     factory { AddTrackToHistoryListUseCase(trackStorage = get()) }
 
@@ -56,10 +56,5 @@ val searchModule= module {
     }
 }
 
-    /*val searchModule = module {
-        viewModel { SearchScreenViewModel(get(), get(), get(), get(), get()) }
-        single { SearchTrackRepository(get()) }
-        single { TrackStorageImpl(get()) }
 
-    }*/
 

@@ -32,6 +32,7 @@ class AudioPlayerRepositoryImpl(
 
     override fun preparePlayer(track: Track, onPrepared: () -> Unit, onComplete: () -> Unit) {
         mediaPlayer?.apply {
+            reset()
             setDataSource(track.previewUrl)
             prepareAsync()
             setOnPreparedListener {

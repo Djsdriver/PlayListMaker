@@ -16,12 +16,9 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val settingModule= module {
-    single(named(Const.PRACTICUM_EXAMPLE_PREFERENCES)) {
-        androidContext().getSharedPreferences(Const.PRACTICUM_EXAMPLE_PREFERENCES, Context.MODE_PRIVATE)
-    }
 
     single<SettingsRepository> {
-        SettingsRepositoryImpl(context = get(qualifier = named(Const.PRACTICUM_EXAMPLE_PREFERENCES)))
+        SettingsRepositoryImpl(context = get())
     }
 
     factory { ChangeAppTheme(settingsRepository = get()) }
