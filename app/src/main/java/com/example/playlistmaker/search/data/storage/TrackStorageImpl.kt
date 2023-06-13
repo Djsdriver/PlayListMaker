@@ -11,6 +11,8 @@ import com.google.gson.reflect.TypeToken
 
 class TrackStorageImpl(private val sharedPreferences: SharedPreferences) : TrackStorage {
 
+
+
     companion object {
         private const val KEY_HISTORY_LIST = "history_list"
         private const val MAX_HISTORY_LIST_SIZE = 10

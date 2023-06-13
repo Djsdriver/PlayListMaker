@@ -24,6 +24,7 @@ import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.utility.Resource
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.qualifier.named
 
 
 class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
@@ -32,6 +33,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
     }
 
     private val searchViewModel by viewModel<SearchScreenViewModel>()
+
 
     val adapter = TrackAdapter(this)
     val adapterHistoryList = TrackAdapter(this)
