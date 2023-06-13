@@ -8,6 +8,7 @@ import com.example.playlistmaker.utility.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.sharing.domain.models.EmailData
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -19,16 +20,15 @@ class SettingsActivity : AppCompatActivity() {
     }
 
 
-    private lateinit var viewModelSetting: SettingViewModel
-
-
+    //private lateinit var viewModelSetting: SettingViewModel
+    private val viewModelSetting by viewModel<SettingViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        viewModelSetting=ViewModelProvider(this, SettingViewModelFactory(this))[SettingViewModel::class.java]
+        //viewModelSetting=ViewModelProvider(this, SettingViewModelFactory(this))[SettingViewModel::class.java]
 
         setSupportActionBar(binding.toolbarSettings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

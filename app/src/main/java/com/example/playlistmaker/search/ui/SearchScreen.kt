@@ -19,8 +19,11 @@ import com.example.playlistmaker.*
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
+import com.example.playlistmaker.search.data.TrackStorage
 import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.utility.Resource
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
@@ -28,11 +31,17 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         ActivitySearchBinding.inflate(layoutInflater)
     }
 
+    private val searchViewModel by viewModel<SearchScreenViewModel>()
 
     val adapter = TrackAdapter(this)
     val adapterHistoryList = TrackAdapter(this)
 
-    private lateinit var searchViewModel: SearchScreenViewModel
+    //private lateinit var searchViewModel: SearchScreenViewModel
+
+
+    /*private val searchViewModel: SearchScreenViewModel by viewModel()
+    private val trackStorage: TrackStorage by inject()*/
+
 
     companion object {
         private var isClickAllowed = true
@@ -71,7 +80,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        searchViewModel = ViewModelProvider(this, SearchScreenViewModelFactory(this))[SearchScreenViewModel::class.java]
+        //searchViewModel = ViewModelProvider(this, SearchScreenViewModelFactory(this))[SearchScreenViewModel::class.java]
 
 
         setSupportActionBar(binding.toolbarSearch)
@@ -96,6 +105,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
 
 
         binding.editTextSearch.setOnFocusChangeListener { view, hasFocus ->
+
             binding.listHistory.visibility =
                 if (hasFocus && binding.editTextSearch.text.isEmpty()) View.VISIBLE else View.GONE
             adapterHistoryList.tracks = searchViewModel.loadData()

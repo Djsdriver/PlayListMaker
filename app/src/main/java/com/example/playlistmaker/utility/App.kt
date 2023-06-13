@@ -2,8 +2,14 @@ package com.example.playlistmaker.utility
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.di.playerModule
+import com.example.playlistmaker.di.searchModule
+import com.example.playlistmaker.di.settingModule
+import com.example.playlistmaker.di.shareModule
 import com.example.playlistmaker.utility.Const.PRACTICUM_EXAMPLE_PREFERENCES
 import com.example.playlistmaker.utility.Const.SWITCH_KEY
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 class App : Application() {
 
@@ -12,6 +18,12 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        startKoin {
+            androidContext(this@App)
+            modules(listOf(playerModule, searchModule, settingModule, shareModule) )
+        }
+
         val sharedPrefs = getSharedPreferences(PRACTICUM_EXAMPLE_PREFERENCES, MODE_PRIVATE)
         val isTurn = sharedPrefs.getBoolean(SWITCH_KEY, false)
         switchTheme(isTurn)

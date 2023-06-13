@@ -9,7 +9,6 @@ import retrofit2.Response
 class SearchTrackRepository(private val trackApi: TrackApi) : TrackRepository {
 
     override suspend fun searchTracks(query: String): Resource<List<Track>> {
-
         val call: Call<TrackResultResponse> = trackApi.getTrackByTerm(query)
         val response: Response<TrackResultResponse> = call.execute()
         return try {
