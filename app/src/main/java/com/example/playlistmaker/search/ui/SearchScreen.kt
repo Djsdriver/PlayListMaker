@@ -95,7 +95,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         buttonClearEditText()
 
         binding.updateButton.setOnClickListener {
-            showPlaceholder(null,"")
+            showPlaceholder(null, "")
             search()
         }
 
@@ -104,6 +104,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
 
             binding.listHistory.visibility =
                 if (hasFocus && binding.editTextSearch.text.isEmpty()) View.VISIBLE else View.GONE
+
             adapterHistoryList.tracks = searchViewModel.loadData()
             if (searchViewModel.loadData().isNullOrEmpty()) {
                 binding.showMessageHistory.visibility = View.VISIBLE
@@ -111,7 +112,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             } else {
                 binding.showMessageHistory.visibility = View.GONE
                 binding.clearHistoryButton.visibility = View.VISIBLE
-                binding.txtYouSearch.visibility=View.VISIBLE
+                binding.txtYouSearch.visibility = View.VISIBLE
                 adapterHistoryList.notifyDataSetChanged()
             }
 
@@ -123,13 +124,13 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             searchViewModel.clearHistoryList()
             binding.showMessageHistory.visibility = View.VISIBLE
             binding.listHistory.visibility = View.VISIBLE
-            if (searchViewModel.loadData().isEmpty()){
-                binding.rcHistory.visibility=View.GONE
-                binding.txtYouSearch.visibility=View.GONE
+            if (searchViewModel.loadData().isEmpty()) {
+                binding.rcHistory.visibility = View.GONE
+                binding.txtYouSearch.visibility = View.GONE
 
-            } else{
-                binding.rcHistory.visibility=View.VISIBLE
-               binding.txtYouSearch.visibility=View.VISIBLE
+            } else {
+                binding.rcHistory.visibility = View.VISIBLE
+                binding.txtYouSearch.visibility = View.VISIBLE
             }
             binding.clearHistoryButton.visibility = View.GONE
             adapterHistoryList.notifyDataSetChanged()
@@ -140,10 +141,18 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             searchDebounce()
             hideListBeforeUploading()
             adapterHistoryList.tracks = searchViewModel.loadData()
-            binding.imClearEditText.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
-            binding.listHistory.visibility = if (text.isNullOrEmpty().not() || !binding.editTextSearch.hasFocus()) View.GONE else View.VISIBLE
-            binding.rcHistory.visibility = if (text.isNullOrEmpty().not() || !binding.editTextSearch.hasFocus()) View.GONE else View.VISIBLE
-            binding.txtYouSearch.visibility = if (text.isNullOrEmpty().not() || !binding.editTextSearch.hasFocus()) View.GONE else View.VISIBLE
+            binding.imClearEditText.visibility =
+                if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
+            binding.listHistory.visibility = if (text.isNullOrEmpty()
+                    .not() || !binding.editTextSearch.hasFocus()
+            ) View.GONE else View.VISIBLE
+            binding.rcHistory.visibility = if (text.isNullOrEmpty()
+                    .not() || !binding.editTextSearch.hasFocus()
+            ) View.GONE else View.VISIBLE
+            binding.txtYouSearch.visibility =
+                if ((text?.isEmpty() == true || binding.editTextSearch.hasFocus()) && searchViewModel.loadData()
+                        .isEmpty()
+                ) View.GONE else View.VISIBLE
 
             if (text?.isEmpty() == true) {
                 binding.recyclerViewSearch.visibility = View.INVISIBLE
@@ -171,6 +180,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         }
 
     }
+
     private fun hideListBeforeUploading() {
         binding.progressBar.visibility = View.GONE
         binding.recyclerViewSearch.visibility = View.INVISIBLE
@@ -178,13 +188,12 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
     }
 
 
-
     private fun displayingTheHistoryList() {
         if (searchViewModel.loadData().isEmpty()) {
             binding.listHistory.visibility = View.VISIBLE
             binding.showMessageHistory.visibility = View.VISIBLE
             binding.clearHistoryButton.visibility = View.INVISIBLE
-            binding.txtYouSearch.visibility=View.GONE
+            binding.txtYouSearch.visibility = View.GONE
         } else {
             adapterHistoryList.tracks = searchViewModel.loadData()
             binding.listHistory.visibility = View.VISIBLE
@@ -194,7 +203,12 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
     private fun buttonClearEditText() {
         binding.imClearEditText.setOnClickListener {
             binding.editTextSearch.setText("")
-            binding.txtYouSearch.visibility=View.VISIBLE
+
+            if (searchViewModel.loadData().isEmpty()) {
+                binding.txtYouSearch.visibility = View.GONE
+            } else {
+                binding.txtYouSearch.visibility = View.VISIBLE
+            }
             adapter.clear()
             val inputMethodManager =
                 getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -279,7 +293,8 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         }
 
     }
-    private fun clickDebounce() : Boolean {
+
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
@@ -294,7 +309,6 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         adapterHistoryList.tracks = searchViewModel.loadData()
         adapterHistoryList.notifyDataSetChanged()
     }
-
 
 
 }
