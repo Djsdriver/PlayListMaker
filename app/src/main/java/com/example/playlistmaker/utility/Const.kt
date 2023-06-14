@@ -15,4 +15,6 @@ object Const {
     const val SHARED_PREFERENCES_HISTORY_LIST = "shared_preferences_history_list"
     const val KEY_HISTORY_LIST = "history_list"
     const val PUT_EXTRA_TRACK = "PUT_EXTRA_TRACK"
+
+    const val API_RETROFIT_KOIN= "api"
 }

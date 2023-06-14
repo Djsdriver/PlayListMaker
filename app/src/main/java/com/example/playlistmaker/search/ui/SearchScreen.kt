@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.PersistableBundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -37,12 +38,6 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
 
     val adapter = TrackAdapter(this)
     val adapterHistoryList = TrackAdapter(this)
-
-    //private lateinit var searchViewModel: SearchScreenViewModel
-
-
-    /*private val searchViewModel: SearchScreenViewModel by viewModel()
-    private val trackStorage: TrackStorage by inject()*/
 
 
     companion object {
@@ -82,8 +77,6 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        //searchViewModel = ViewModelProvider(this, SearchScreenViewModelFactory(this))[SearchScreenViewModel::class.java]
-
 
         setSupportActionBar(binding.toolbarSearch)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -94,6 +87,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
 
         binding.rcHistory.adapter = adapterHistoryList
         binding.rcHistory.layoutManager = LinearLayoutManager(this)
+
 
 
         displayingTheHistoryList() // отображение списка при загрузке
@@ -117,6 +111,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             } else {
                 binding.showMessageHistory.visibility = View.GONE
                 binding.clearHistoryButton.visibility = View.VISIBLE
+                binding.txtYouSearch.visibility=View.VISIBLE
                 adapterHistoryList.notifyDataSetChanged()
             }
 
@@ -130,8 +125,11 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             binding.listHistory.visibility = View.VISIBLE
             if (searchViewModel.loadData().isEmpty()){
                 binding.rcHistory.visibility=View.GONE
+                binding.txtYouSearch.visibility=View.GONE
+
             } else{
                 binding.rcHistory.visibility=View.VISIBLE
+               binding.txtYouSearch.visibility=View.VISIBLE
             }
             binding.clearHistoryButton.visibility = View.GONE
             adapterHistoryList.notifyDataSetChanged()
@@ -145,6 +143,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             binding.imClearEditText.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
             binding.listHistory.visibility = if (text.isNullOrEmpty().not() || !binding.editTextSearch.hasFocus()) View.GONE else View.VISIBLE
             binding.rcHistory.visibility = if (text.isNullOrEmpty().not() || !binding.editTextSearch.hasFocus()) View.GONE else View.VISIBLE
+            binding.txtYouSearch.visibility = if (text.isNullOrEmpty().not() || !binding.editTextSearch.hasFocus()) View.GONE else View.VISIBLE
 
             if (text?.isEmpty() == true) {
                 binding.recyclerViewSearch.visibility = View.INVISIBLE
@@ -185,6 +184,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             binding.listHistory.visibility = View.VISIBLE
             binding.showMessageHistory.visibility = View.VISIBLE
             binding.clearHistoryButton.visibility = View.INVISIBLE
+            binding.txtYouSearch.visibility=View.GONE
         } else {
             adapterHistoryList.tracks = searchViewModel.loadData()
             binding.listHistory.visibility = View.VISIBLE
@@ -194,6 +194,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
     private fun buttonClearEditText() {
         binding.imClearEditText.setOnClickListener {
             binding.editTextSearch.setText("")
+            binding.txtYouSearch.visibility=View.VISIBLE
             adapter.clear()
             val inputMethodManager =
                 getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -271,7 +272,6 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
     override fun onClick(track: Track) {
         searchViewModel.addTrack(track = track)
         searchViewModel.saveData(track)
-        adapterHistoryList.notifyDataSetChanged()
         if (clickDebounce()) {
             startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
                 putExtra(Const.PUT_EXTRA_TRACK, track)
@@ -286,6 +286,13 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             handler.postDelayed({ isClickAllowed = true }, Const.CLICK_DEBOUNCE_DELAY)
         }
         return current
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("Resume", "Resume")
+        adapterHistoryList.tracks = searchViewModel.loadData()
+        adapterHistoryList.notifyDataSetChanged()
     }
 
 

@@ -20,7 +20,6 @@ class SettingsActivity : AppCompatActivity() {
     }
 
 
-    //private lateinit var viewModelSetting: SettingViewModel
     private val viewModelSetting by viewModel<SettingViewModel>()
 
 
@@ -28,16 +27,14 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        //viewModelSetting=ViewModelProvider(this, SettingViewModelFactory(this))[SettingViewModel::class.java]
-
         setSupportActionBar(binding.toolbarSettings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         darkOrLightTheme()
 
         viewModelSetting.isTurn.observe(this) {
             binding.switchSettingsDarkTheme.isChecked = it
-           switch.switchTheme(it)
-           (applicationContext as App).switchTheme(it)
+            switch.switchTheme(it)
+            (applicationContext as App).switchTheme(it)
         }
 
 
@@ -51,10 +48,13 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.btnImSupport.setOnClickListener {
-            viewModelSetting.sendToSupport(EmailData(
-                sender = getString(R.string.my_mail),
-                subject = getString(R.string.TEXT_EXTRA_SUBJEC),
-                message =getString(R.string.BODY_EXTRA_TEXT) ))
+            viewModelSetting.sendToSupport(
+                EmailData(
+                    sender = getString(R.string.my_mail),
+                    subject = getString(R.string.TEXT_EXTRA_SUBJEC),
+                    message = getString(R.string.BODY_EXTRA_TEXT)
+                )
+            )
         }
         binding.btnImNext.setOnClickListener {
             viewModelSetting.openTerms(getString(R.string.adress))

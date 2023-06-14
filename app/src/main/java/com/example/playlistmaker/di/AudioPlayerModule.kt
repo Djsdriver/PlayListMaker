@@ -15,11 +15,14 @@ val playerModule = module {
     factory { PrepareUseCase(audioPlayerRepository = get()) }
     factory { StartPlayerUseCase(audioPlayerRepository = get()) }
     factory { GetCurrentTimeUseCase(audioPlayerRepository = get()) }
-    viewModel { AudioPlayerViewModel(
-        getCurrentStateUseCase = get(),
-        pausePlayerUseCase = get(),
-        playBackControlUseCase = get(),
-        prepareUseCase = get(),
-        startPlayerUseCase = get(),
-        getCurrentTimeUseCase = get()) }
+    viewModel {
+        AudioPlayerViewModel(
+            getCurrentStateUseCase = get(),
+            pausePlayerUseCase = get(),
+            playBackControlUseCase = get(),
+            prepareUseCase = get(),
+            startPlayerUseCase = get(),
+            getCurrentTimeUseCase = get()
+        )
+    }
 }

@@ -19,14 +19,6 @@ class SettingsRepositoryImpl(private val context:Context): SettingsRepository {
 
     override fun changeAppTheme(currentThemeIsDark: Boolean) {
         darkTheme = currentThemeIsDark
-       /* AppCompatDelegate.setDefaultNightMode(
-            if (darkTheme) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )*/
-        darkTheme = currentThemeIsDark
         sharedPrefs.edit { putBoolean(Const.SWITCH_KEY, darkTheme) }
     }
 

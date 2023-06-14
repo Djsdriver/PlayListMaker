@@ -15,7 +15,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val settingModule= module {
+val settingModule = module {
 
     single<SettingsRepository> {
         SettingsRepositoryImpl(context = get())
@@ -24,10 +24,13 @@ val settingModule= module {
     factory { ChangeAppTheme(settingsRepository = get()) }
     factory { IsDarkThemeEnabled(settingsRepository = get()) }
 
-    viewModel { SettingViewModel(
-        openTerms = get(),
-        sendToSupport = get(),
-        shareApp = get(),
-        changeAppTheme = get(),
-        isDarkThemeEnabled = get()) }
+    viewModel {
+        SettingViewModel(
+            openTerms = get(),
+            sendToSupport = get(),
+            shareApp = get(),
+            changeAppTheme = get(),
+            isDarkThemeEnabled = get()
+        )
+    }
 }

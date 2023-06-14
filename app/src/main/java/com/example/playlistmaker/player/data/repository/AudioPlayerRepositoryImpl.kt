@@ -15,7 +15,7 @@ class AudioPlayerRepositoryImpl(
     private var playerState: PlayerState = PlayerState.Idle
 
     init {
-        mediaPlayer=MediaPlayer()
+        mediaPlayer = MediaPlayer()
     }
 
     override fun startPlayer() {

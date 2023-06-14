@@ -48,8 +48,6 @@ class AudioPlayerActivity() : AppCompatActivity() {
             @Suppress("DEPRECATION") intent.getSerializableExtra(Const.PUT_EXTRA_TRACK) as Track
         }
 
-        //viewModel = ViewModelProvider(this, AudioPlayerViewModelFactory())[AudioPlayerViewModel::class.java]
-
         binding.playFab.setOnClickListener {
             viewModel.playbackControl()
         }

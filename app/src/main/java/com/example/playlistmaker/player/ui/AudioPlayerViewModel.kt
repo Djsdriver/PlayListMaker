@@ -15,12 +15,14 @@ import com.example.playlistmaker.utility.Const
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AudioPlayerViewModel(private val getCurrentStateUseCase: GetCurrentStateUseCase,
-                           private val pausePlayerUseCase : PausePlayerUseCase,
-                           private val playBackControlUseCase: PlayBackControlUseCase,
-                           private val prepareUseCase: PrepareUseCase,
-                           private val startPlayerUseCase: StartPlayerUseCase,
-private val getCurrentTimeUseCase: GetCurrentTimeUseCase) : ViewModel() {
+class AudioPlayerViewModel(
+    private val getCurrentStateUseCase: GetCurrentStateUseCase,
+    private val pausePlayerUseCase: PausePlayerUseCase,
+    private val playBackControlUseCase: PlayBackControlUseCase,
+    private val prepareUseCase: PrepareUseCase,
+    private val startPlayerUseCase: StartPlayerUseCase,
+    private val getCurrentTimeUseCase: GetCurrentTimeUseCase
+) : ViewModel() {
 
     private val _playerState = MutableLiveData<PlayerState>()
     val playerState: LiveData<PlayerState> = _playerState
@@ -28,16 +30,13 @@ private val getCurrentTimeUseCase: GetCurrentTimeUseCase) : ViewModel() {
     private val _playbackTime = MutableLiveData<String?>()
     val playbackTime: LiveData<String?> = _playbackTime
 
-    private val _playbackTimeEnd = MutableLiveData<String?>()
-    val playbackTimeEnd: LiveData<String?> = _playbackTimeEnd
-
     private var mediaPlayer: MediaPlayer? = null
     private var handler: Handler = Handler(Looper.getMainLooper())
 
     fun preparePlayer(track: Track) {
         prepareUseCase.prepare(
             track = track,
-            onPrepared = { _playerState.postValue(PlayerState.Prepared(track))},
+            onPrepared = { _playerState.postValue(PlayerState.Prepared(track)) },
             onComplete = {
                 _playerState.postValue(PlayerState.Completed)
                 handler.removeCallbacksAndMessages(PLAYBACK_TIMER_TOKEN)

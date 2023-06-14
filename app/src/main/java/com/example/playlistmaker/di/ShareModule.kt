@@ -9,7 +9,7 @@ import com.example.playlistmaker.sharing.domain.usecase.ShareApp
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-val shareModule= module {
+val shareModule = module {
 
     single<SharingRepository> {
         SharingRepositoryImpl(externalNavigator = get())
@@ -22,8 +22,6 @@ val shareModule= module {
     factory { OpenTerms(sharingRepository = get()) }
     factory { SendToSupport(sharingRepository = get()) }
     factory { ShareApp(sharingRepository = get()) }
-
-
 
 
 }

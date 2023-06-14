@@ -19,15 +19,15 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-val searchModule= module {
+val searchModule = module {
 
     single(named(Const.SHARED_PREFERENCES_HISTORY_LIST)) {
         androidContext()
             .getSharedPreferences(Const.SHARED_PREFERENCES_HISTORY_LIST, Context.MODE_PRIVATE)
     }
 
-    single<TrackStorage> { TrackStorageImpl(sharedPreferences = get(qualifier = named(Const.SHARED_PREFERENCES_HISTORY_LIST) )) }
-    single<TrackApi>(named("api")){
+    single<TrackStorage> { TrackStorageImpl(sharedPreferences = get(qualifier = named(Const.SHARED_PREFERENCES_HISTORY_LIST))) }
+    single<TrackApi>(named(Const.API_RETROFIT_KOIN)) {
         Retrofit.Builder()
             .baseUrl(Const.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -35,7 +35,7 @@ val searchModule= module {
             .create(TrackApi::class.java)
     }
 
-    single<TrackRepository> { SearchTrackRepository(trackApi = get(qualifier = named("api")) )}
+    single<TrackRepository> { SearchTrackRepository(trackApi = get(qualifier = named(Const.API_RETROFIT_KOIN))) }
 
     factory { AddTrackToHistoryListUseCase(trackStorage = get()) }
 
