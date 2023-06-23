@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.example.playlistmaker.search.data.network.SearchTrackRepository
 import com.example.playlistmaker.utility.Resource
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.domain.repository.TrackRepository
 import com.example.playlistmaker.search.domain.usecase.AddTrackToHistoryListUseCase
 import com.example.playlistmaker.search.domain.usecase.ClearHistoryListUseCase
 import com.example.playlistmaker.search.domain.usecase.LoadDataUseCase
@@ -17,7 +18,7 @@ class SearchScreenViewModel(
     private val clearHistoryListUseCase: ClearHistoryListUseCase,
     private val loadDataUseCase: LoadDataUseCase,
     private val saveDataUseCase: SaveDataUseCase,
-    private val repository: SearchTrackRepository,
+    private val repository: TrackRepository,
 ) : ViewModel() {
 
     private val _tracks = MutableLiveData<Resource<List<Track>>>()

@@ -15,7 +15,7 @@ class AudioPlayerRepositoryImpl(
     private var playerState: PlayerState = PlayerState.Idle
 
     init {
-        mediaPlayer=MediaPlayer()
+        mediaPlayer = MediaPlayer()
     }
 
     override fun startPlayer() {
@@ -32,6 +32,7 @@ class AudioPlayerRepositoryImpl(
 
     override fun preparePlayer(track: Track, onPrepared: () -> Unit, onComplete: () -> Unit) {
         mediaPlayer?.apply {
+            reset()
             setDataSource(track.previewUrl)
             prepareAsync()
             setOnPreparedListener {

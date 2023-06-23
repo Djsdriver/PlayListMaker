@@ -7,7 +7,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
 
 class TrackAdapter(val listener: ClickListener) : RecyclerView.Adapter<TrackHolder>() {
-    var tracks=ArrayList<Track>()
+    var tracks = ArrayList<Track>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_track, parent, false)
         return TrackHolder((view))
@@ -16,15 +16,15 @@ class TrackAdapter(val listener: ClickListener) : RecyclerView.Adapter<TrackHold
     override fun getItemCount(): Int = tracks.size
 
     override fun onBindViewHolder(holder: TrackHolder, position: Int) {
-        holder.bind(track = tracks[position],listener)
+        holder.bind(track = tracks[position], listener)
     }
 
-    fun clear(){
+    fun clear() {
         tracks.clear()
         notifyDataSetChanged()
     }
 
-    fun setTrackList(list: List<Track>){
+    fun setTrackList(list: List<Track>) {
         tracks.clear()
         tracks.addAll(list)
         notifyDataSetChanged()

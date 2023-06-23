@@ -18,6 +18,7 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.usecase.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,7 +29,8 @@ class AudioPlayerActivity() : AppCompatActivity() {
         ActivityAudioPlayerBinding.inflate(layoutInflater)
     }
 
-    private lateinit var viewModel: AudioPlayerViewModel
+    //private lateinit var viewModel: AudioPlayerViewModel
+    private val viewModel by viewModel<AudioPlayerViewModel>()
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +47,6 @@ class AudioPlayerActivity() : AppCompatActivity() {
         } else {
             @Suppress("DEPRECATION") intent.getSerializableExtra(Const.PUT_EXTRA_TRACK) as Track
         }
-
-        viewModel = ViewModelProvider(this, AudioPlayerViewModelFactory())[AudioPlayerViewModel::class.java]
 
         binding.playFab.setOnClickListener {
             viewModel.playbackControl()

@@ -27,16 +27,17 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_player"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/BackgroundColorToolBar"
             android:theme="?attr/actionBarTheme"
-            app:layout_constraintEnd_toStartOf="@+id/right_guideline"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:contentInsetStart="0dp"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title=" "
-            app:titleTextColor="@color/TextColorToolBarScreen"
-            tools:ignore="MissingConstraints" />
+            app:showAsAction="always"
+            app:title=" " />
+
 
 
         <ImageView

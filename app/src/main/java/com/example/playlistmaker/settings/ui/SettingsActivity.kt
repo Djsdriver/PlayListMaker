@@ -8,6 +8,7 @@ import com.example.playlistmaker.utility.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.sharing.domain.models.EmailData
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -19,16 +20,12 @@ class SettingsActivity : AppCompatActivity() {
     }
 
 
-    private lateinit var viewModelSetting: SettingViewModel
-
-
+    private val viewModelSetting by viewModel<SettingViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        viewModelSetting=ViewModelProvider(this, SettingViewModelFactory(this))[SettingViewModel::class.java]
 
         setSupportActionBar(binding.toolbarSettings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -36,8 +33,8 @@ class SettingsActivity : AppCompatActivity() {
 
         viewModelSetting.isTurn.observe(this) {
             binding.switchSettingsDarkTheme.isChecked = it
-           switch.switchTheme(it)
-           (applicationContext as App).switchTheme(it)
+            switch.switchTheme(it)
+            (applicationContext as App).switchTheme(it)
         }
 
 
@@ -51,10 +48,13 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.btnImSupport.setOnClickListener {
-            viewModelSetting.sendToSupport(EmailData(
-                sender = getString(R.string.my_mail),
-                subject = getString(R.string.TEXT_EXTRA_SUBJEC),
-                message =getString(R.string.BODY_EXTRA_TEXT) ))
+            viewModelSetting.sendToSupport(
+                EmailData(
+                    sender = getString(R.string.my_mail),
+                    subject = getString(R.string.TEXT_EXTRA_SUBJEC),
+                    message = getString(R.string.BODY_EXTRA_TEXT)
+                )
+            )
         }
         binding.btnImNext.setOnClickListener {
             viewModelSetting.openTerms(getString(R.string.adress))

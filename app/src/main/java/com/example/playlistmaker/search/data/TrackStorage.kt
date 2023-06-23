@@ -4,7 +4,6 @@ import com.example.playlistmaker.search.domain.models.Track
 
 interface TrackStorage {
 
-
     fun loadData(): ArrayList<Track>
 
     fun saveData(track: Track)

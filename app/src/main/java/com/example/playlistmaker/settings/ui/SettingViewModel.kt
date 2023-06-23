@@ -26,12 +26,10 @@ class SettingViewModel(
     }
 
 
-
-    fun changeAppTheme(current: Boolean){
+    fun changeAppTheme(current: Boolean) {
         changeAppTheme.changeAppTheme(current)
-        _isTurn.value=current
+        _isTurn.value = current
     }
-
 
 
     fun shareApp(link: String) {
