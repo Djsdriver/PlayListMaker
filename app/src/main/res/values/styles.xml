@@ -187,4 +187,25 @@
         <item name="android:textColor">@color/black_mode</item>
     </style>
 
+
+    <style name="MediaTabLayout" parent="Widget.Design.TabLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="tabTextAppearance">@style/TabTextAppearance</item>
+        <item name="android:fontFamily">@font/ys_text_medium_regular</item>
+        <item name="tabMaxWidth">0dp</item>
+        <item name="tabGravity">fill</item>
+        <item name="android:fontWeight" tools:targetApi="o">500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="tabTextColor">?attr/colorOnPrimary</item>
+        <item name="tabIndicatorColor">?attr/colorOnPrimary</item>
+        <item name="tabIndicatorFullWidth">true</item>
+    </style>
+
+    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+    </style>
+
 </resources>

@@ -12,7 +12,7 @@
     <string name="UserAgreementTextSettingActivity">Пользовательское соглашение</string>
     <string name="nameSettingLayout">Настройки</string>
     <string name="nameTitleSearchLayout">Поиск</string>
-    <string name="nameTitleMediaLayout">Медиа</string>
+    <string name="nameTitleMediaLayout">Медиатека</string>
     <string name="server_error">Ошибка сервера</string>
     <string name="bad_connection">Плохое соединение</string>
     <string name="textBadConnetion">Проблема со связью \n \n Загрузка не удалась. Проверьте \n подключение к интернету</string>
@@ -22,4 +22,7 @@
     <string name="messageIsEmptyListHistory">Здесь будет музыка, \n которую вы искали</string>
     <string name="textButtonClearHistoryList">Очистить</string>
     <string name="durationTrackText">2:55</string>
+    <string name="NewPlayListText">Новый плейлист</string>
+    <string name="playListNotFound">Вы не создали \n ни одного плейлиста</string>
+    <string name="favorityTrackNotFound">Ваша медиатека пуста</string>
 </resources>

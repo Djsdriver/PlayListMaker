@@ -16,7 +16,7 @@
     <string name="UserAgreementTextSettingActivity">Пользовательское соглашение</string>
     <string name="nameSettingLayout">Настройки</string>
     <string name="nameTitleSearchLayout">Поиск</string>
-    <string name="nameTitleMediaLayout">Медиа</string>
+    <string name="nameTitleMediaLayout">Медиатека</string>
 
     <string name="send_to">https://practicum.yandex.ru/</string>
 
@@ -38,6 +38,11 @@
     <string name="trackNameText">Yesterday (Remastered 2009)</string>
     <string name="artistNameText">The Beatles</string>
     <string name="durationTrackText">2:55</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="NewPlayListText">Новый плейлист</string>
+    <string name="playListNotFound">Вы не создали \n ни одного плейлиста</string>
+    <string name="favorityTrackNotFound">Ваша медиатека пуста</string>
 
 
 </resources>
