@@ -32,4 +32,7 @@
     <color name="color_fab_player">#ffffff</color>
     <color name="color_fab_play_button">#1A1B22</color>
     <color name="backgroundFabPlaylistAndFavorite">#AEAFB4</color>
+    <color name="blue">#3772E7</color>
+
+    <color name="backgroundBottomView">#1A1B22</color>
 </resources>

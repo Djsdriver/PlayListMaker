@@ -1,94 +1,67 @@
 package com.example.playlistmaker.search.ui
 
-import android.annotation.SuppressLint
-import android.content.Intent
-import android.content.res.Configuration
+import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.example.playlistmaker.R
+import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
-import android.os.PersistableBundle
 import android.util.Log
-import android.view.MenuItem
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.*
-import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
-import com.example.playlistmaker.search.data.TrackStorage
+import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.utility.Resource
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.qualifier.named
 
 
-class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
-    private val binding: ActivitySearchBinding by lazy {
-        ActivitySearchBinding.inflate(layoutInflater)
-    }
+class SearchFragment : Fragment(), TrackAdapter.ClickListener {
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private val searchViewModel by viewModel<SearchScreenViewModel>()
 
-
-    val adapter = TrackAdapter(this)
-    val adapterHistoryList = TrackAdapter(this)
-
+    private val adapter = TrackAdapter(this)
+    private val adapterHistoryList = TrackAdapter(this)
 
     companion object {
         private var isClickAllowed = true
-
         private val handler = Handler(Looper.getMainLooper())
-
     }
 
     private val searchRunnable = Thread { search() }
+
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, Const.CLICK_DEBOUNCE_DELAY)
     }
 
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(Const.KEY_EDIT_TEXT, binding.editTextSearch.toString())
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onRestoreInstanceState(
-        savedInstanceState: Bundle?,
-        persistentState: PersistableBundle?
-    ) {
-        super.onRestoreInstanceState(savedInstanceState, persistentState)
-        if (savedInstanceState != null) {
-            val editText = savedInstanceState.getString(Const.KEY_EDIT_TEXT)
-            binding.editTextSearch.setText(editText)
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    }
-
-
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-
-
-        setSupportActionBar(binding.toolbarSearch)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        darkOrLightTheme()
-
-        binding.recyclerViewSearch.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewSearch.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewSearch.adapter = adapter
 
         binding.rcHistory.adapter = adapterHistoryList
-        binding.rcHistory.layoutManager = LinearLayoutManager(this)
-
-
+        binding.rcHistory.layoutManager = LinearLayoutManager(requireContext())
 
         displayingTheHistoryList() // отображение списка при загрузке
 
@@ -99,9 +72,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             search()
         }
 
-
         binding.editTextSearch.setOnFocusChangeListener { view, hasFocus ->
-
             binding.listHistory.visibility =
                 if (hasFocus && binding.editTextSearch.text.isEmpty()) View.VISIBLE else View.GONE
 
@@ -115,8 +86,6 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
                 binding.txtYouSearch.visibility = View.VISIBLE
                 adapterHistoryList.notifyDataSetChanged()
             }
-
-
         }
 
         binding.clearHistoryButton.setOnClickListener {
@@ -127,19 +96,16 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             if (searchViewModel.loadData().isEmpty()) {
                 binding.rcHistory.visibility = View.GONE
                 binding.txtYouSearch.visibility = View.GONE
-
             } else {
                 binding.rcHistory.visibility = View.VISIBLE
                 binding.txtYouSearch.visibility = View.VISIBLE
             }
             binding.clearHistoryButton.visibility = View.GONE
             adapterHistoryList.notifyDataSetChanged()
-
         }
 
         binding.editTextSearch.doOnTextChanged { text, start, before, count ->
             searchDebounce()
-            hideListBeforeUploading()
             adapterHistoryList.tracks = searchViewModel.loadData()
             binding.imClearEditText.visibility =
                 if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
@@ -166,6 +132,7 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
                 binding.clearHistoryButton.visibility = View.INVISIBLE
             } else {
                 binding.clearHistoryButton.visibility = View.VISIBLE
+                binding.rcHistory.visibility = View.VISIBLE
                 binding.showMessageHistory.visibility = View.GONE
             }
             adapterHistoryList.notifyDataSetChanged()
@@ -178,14 +145,8 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
             }
             false
         }
-
     }
 
-    private fun hideListBeforeUploading() {
-        binding.progressBar.visibility = View.GONE
-        binding.recyclerViewSearch.visibility = View.INVISIBLE
-        adapter.clear()
-    }
 
 
     private fun displayingTheHistoryList() {
@@ -208,10 +169,12 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
                 binding.txtYouSearch.visibility = View.GONE
             } else {
                 binding.txtYouSearch.visibility = View.VISIBLE
+                binding.rcHistory.visibility=View.VISIBLE
+                binding.listHistory.visibility=View.VISIBLE
             }
             adapter.clear()
             val inputMethodManager =
-                getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.editTextSearch.windowToken, 0)
             showPlaceholder(null)
         }
@@ -219,11 +182,28 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
 
     private fun search() {
         val searchTerm = binding.editTextSearch.text.toString()
-        if (searchTerm.isEmpty()) return
+        if (searchTerm.isNullOrEmpty()) return
+
+        if (_binding == null) {
+            Log.e("SearchFragment", "_binding is null")
+            return
+        }
+
+        // Проверка доступности интернет-соединения
+        val connectivityManager =
+            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        val isConnected = networkInfo != null && networkInfo.isConnected
+
+        if (!isConnected) {
+            // Обработка ошибки отсутствия интернет-соединения
+            showPlaceholder(false, getString(R.string.noInternet))
+            return
+        }
 
         searchViewModel.searchTracks(searchTerm)
 
-        searchViewModel.tracks.observe(this) { tracks ->
+        searchViewModel.tracks.observe(viewLifecycleOwner) { tracks ->
             when (tracks.status) {
                 Resource.Status.LOADING -> {
                     binding.progressBar.visibility = View.VISIBLE
@@ -244,54 +224,38 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
                 }
             }
         }
-
     }
 
-
-    fun showPlaceholder(flag: Boolean?, message: String = "") = with(binding) {
-        if (flag != null) {
-            if (flag == true) {
-                badConnectionWidget.visibility = View.GONE
-                notFoundWidget.visibility = View.VISIBLE
+    private fun showPlaceholder(flag: Boolean?, message: String = "") {
+        with(binding) {
+            if (flag != null) {
+                if (flag == true) {
+                    badConnectionWidget.visibility = View.GONE
+                    notFoundWidget.visibility = View.VISIBLE
+                } else {
+                    notFoundWidget.visibility = View.GONE
+                    badConnectionWidget.visibility = View.VISIBLE
+                    badConnection.text = message
+                }
+                adapter.clear()
             } else {
                 notFoundWidget.visibility = View.GONE
-                badConnectionWidget.visibility = View.VISIBLE
-                badConnection.text = message
-            }
-            adapter.clear()
-        } else {
-            notFoundWidget.visibility = View.GONE
-            badConnectionWidget.visibility = View.GONE
-        }
-    }
-
-
-    private fun darkOrLightTheme() {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        when (currentNightMode) {
-            Configuration.UI_MODE_NIGHT_NO -> {
-                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_color)
-            }
-            Configuration.UI_MODE_NIGHT_YES -> {
-                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_color)
+                badConnectionWidget.visibility = View.GONE
             }
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) finish()
-        return super.onOptionsItemSelected(item)
-    }
+
+
 
     override fun onClick(track: Track) {
         searchViewModel.addTrack(track = track)
         searchViewModel.saveData(track)
         if (clickDebounce()) {
-            startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
+            startActivity(Intent(requireContext(), AudioPlayerActivity::class.java).apply {
                 putExtra(Const.PUT_EXTRA_TRACK, track)
             })
         }
-
     }
 
     private fun clickDebounce(): Boolean {
@@ -306,9 +270,15 @@ class SearchScreen : AppCompatActivity(), TrackAdapter.ClickListener {
     override fun onResume() {
         super.onResume()
         Log.d("Resume", "Resume")
-        adapterHistoryList.tracks = searchViewModel.loadData()
-        adapterHistoryList.notifyDataSetChanged()
+        if (searchViewModel.loadData().isNotEmpty()) {
+            binding.rcHistory.visibility=View.VISIBLE
+            binding.listHistory.visibility=View.VISIBLE
+        }
     }
 
-
+    override fun onPause() {
+        super.onPause()
+        binding.editTextSearch.text = null
+    }
 }
+
