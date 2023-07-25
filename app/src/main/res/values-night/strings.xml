@@ -25,4 +25,5 @@
     <string name="NewPlayListText">Новый плейлист</string>
     <string name="playListNotFound">Вы не создали \n ни одного плейлиста</string>
     <string name="favorityTrackNotFound">Ваша медиатека пуста</string>
+    <string name="noInternet">Отсутствует подключение к интернету</string>
 </resources>
