@@ -7,11 +7,15 @@ import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.usecase.*
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utility.Const
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,7 +35,8 @@ class AudioPlayerViewModel(
     val playbackTime: LiveData<String?> = _playbackTime
 
     private var mediaPlayer: MediaPlayer? = null
-    private var handler: Handler = Handler(Looper.getMainLooper())
+
+    private var timerJob: Job? = null
 
     fun preparePlayer(track: Track) {
         prepareUseCase.prepare(
@@ -39,12 +44,11 @@ class AudioPlayerViewModel(
             onPrepared = { _playerState.postValue(PlayerState.Prepared(track)) },
             onComplete = {
                 _playerState.postValue(PlayerState.Completed)
-                handler.removeCallbacksAndMessages(PLAYBACK_TIMER_TOKEN)
+                timerJob?.cancel()
             }
         )
     }
 
-    // private
     private fun startPlayer() {
         _playerState.value = PlayerState.Playing
         startPlayerUseCase.startPlayer()
@@ -55,13 +59,13 @@ class AudioPlayerViewModel(
         pausePlayerUseCase.pausePlayer()
         _playerState.value = PlayerState.Paused
         //remove by token
-        handler.removeCallbacksAndMessages(PLAYBACK_TIMER_TOKEN)
+        timerJob?.cancel()
     }
 
-    //postAtTime + Token
+
     private fun threadTime() {
-        var runnable = object : Runnable {
-            override fun run() {
+        timerJob = viewModelScope.launch {
+            while (true) {
                 getCurrentTimeUseCase.getTime()?.let {
                     _playbackTime.postValue(
                         SimpleDateFormat(
@@ -69,12 +73,10 @@ class AudioPlayerViewModel(
                             Locale.getDefault()
                         ).format(it)
                     )
-                    val postTime = SystemClock.uptimeMillis() + Const.DELAY_TIME
-                    handler.postAtTime(this, PLAYBACK_TIMER_TOKEN, postTime)
                 }
+                delay(Const.DELAY_TIME)
             }
         }
-        handler.post(runnable)
     }
 
     fun playbackControl() {
@@ -87,12 +89,11 @@ class AudioPlayerViewModel(
 
             is PlayerState.Prepared, PlayerState.Paused -> {
                 _playerState.value = PlayerState.Paused
-                handler.removeCallbacksAndMessages(PLAYBACK_TIMER_TOKEN)
             }
 
             PlayerState.Completed -> {
                 _playerState.value = PlayerState.Completed
-                handler.removeCallbacksAndMessages(PLAYBACK_TIMER_TOKEN)
+                timerJob?.cancel()
             }
 
             else -> {}
@@ -102,7 +103,7 @@ class AudioPlayerViewModel(
     public override fun onCleared() {
         super.onCleared()
         mediaPlayer?.release()
-        handler.removeCallbacksAndMessages(PLAYBACK_TIMER_TOKEN)
+        timerJob?.cancel()
     }
 
     companion object {

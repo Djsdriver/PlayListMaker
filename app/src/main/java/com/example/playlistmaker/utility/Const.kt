@@ -3,7 +3,7 @@ package com.example.playlistmaker.utility
 object Const {
 
     const val CLICK_DEBOUNCE_DELAY = 1000L
-    const val DELAY_TIME = 500L
+    const val DELAY_TIME = 300L
     const val DEFAULT_TIME = "00:00"
     const val PRACTICUM_EXAMPLE_PREFERENCES = "PRACTICUM_EXAMPLE_PREFERENCES"
     const val SWITCH_KEY = "SWITCH_KEY"

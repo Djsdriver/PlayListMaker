@@ -9,8 +9,6 @@ import android.view.ViewGroup
 import com.example.playlistmaker.R
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -33,17 +31,6 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
     private val adapter = TrackAdapter(this)
     private val adapterHistoryList = TrackAdapter(this)
 
-    companion object {
-        private var isClickAllowed = true
-        private val handler = Handler(Looper.getMainLooper())
-    }
-
-    private val searchRunnable = Thread { search() }
-
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, Const.CLICK_DEBOUNCE_DELAY)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,7 +55,7 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
         buttonClearEditText()
 
         binding.updateButton.setOnClickListener {
-            showPlaceholder(null, "")
+            //showPlaceholder(null, "")
             search()
         }
 
@@ -105,7 +92,14 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
         }
 
         binding.editTextSearch.doOnTextChanged { text, start, before, count ->
-            searchDebounce()
+            if (!isInternetAvailable()) {
+                showPlaceholder(false, getString(R.string.noInternet))
+                return@doOnTextChanged
+            }
+            if (text?.isNotEmpty() == true) {
+                search()
+            }
+
             adapterHistoryList.tracks = searchViewModel.loadData()
             binding.imClearEditText.visibility =
                 if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
@@ -148,7 +142,6 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
     }
 
 
-
     private fun displayingTheHistoryList() {
         if (searchViewModel.loadData().isEmpty()) {
             binding.listHistory.visibility = View.VISIBLE
@@ -169,8 +162,8 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
                 binding.txtYouSearch.visibility = View.GONE
             } else {
                 binding.txtYouSearch.visibility = View.VISIBLE
-                binding.rcHistory.visibility=View.VISIBLE
-                binding.listHistory.visibility=View.VISIBLE
+                binding.rcHistory.visibility = View.VISIBLE
+                binding.listHistory.visibility = View.VISIBLE
             }
             adapter.clear()
             val inputMethodManager =
@@ -184,24 +177,19 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
         val searchTerm = binding.editTextSearch.text.toString()
         if (searchTerm.isNullOrEmpty()) return
 
-        if (_binding == null) {
-            Log.e("SearchFragment", "_binding is null")
-            return
-        }
-
-        // Проверка доступности интернет-соединения
-        val connectivityManager =
-            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connectivityManager.activeNetworkInfo
-        val isConnected = networkInfo != null && networkInfo.isConnected
-
-        if (!isConnected) {
-            // Обработка ошибки отсутствия интернет-соединения
+        if (!isInternetAvailable()) {
             showPlaceholder(false, getString(R.string.noInternet))
             return
         }
 
-        searchViewModel.searchTracks(searchTerm)
+        if (_binding == null) {
+            Log.e("SearchFragment", "_binding is null")
+            return
+        }
+        showPlaceholder(null)
+        searchViewModel.searchDebounce(searchTerm)
+
+
 
         searchViewModel.tracks.observe(viewLifecycleOwner) { tracks ->
             when (tracks.status) {
@@ -226,6 +214,7 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
         }
     }
 
+
     private fun showPlaceholder(flag: Boolean?, message: String = "") {
         with(binding) {
             if (flag != null) {
@@ -246,33 +235,30 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
     }
 
 
-
-
     override fun onClick(track: Track) {
         searchViewModel.addTrack(track = track)
         searchViewModel.saveData(track)
-        if (clickDebounce()) {
+        if (searchViewModel.clickDebounce()) {
             startActivity(Intent(requireContext(), AudioPlayerActivity::class.java).apply {
                 putExtra(Const.PUT_EXTRA_TRACK, track)
             })
         }
     }
 
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, Const.CLICK_DEBOUNCE_DELAY)
-        }
-        return current
+    private fun isInternetAvailable(): Boolean {
+        val connectivityManager =
+            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val networkInfo = connectivityManager?.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
+
 
     override fun onResume() {
         super.onResume()
         Log.d("Resume", "Resume")
         if (searchViewModel.loadData().isNotEmpty()) {
-            binding.rcHistory.visibility=View.VISIBLE
-            binding.listHistory.visibility=View.VISIBLE
+            binding.rcHistory.visibility = View.VISIBLE
+            binding.listHistory.visibility = View.VISIBLE
         }
     }
 
