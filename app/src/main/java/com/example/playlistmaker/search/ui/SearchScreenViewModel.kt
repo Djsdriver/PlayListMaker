@@ -9,7 +9,14 @@ import com.example.playlistmaker.search.domain.usecase.AddTrackToHistoryListUseC
 import com.example.playlistmaker.search.domain.usecase.ClearHistoryListUseCase
 import com.example.playlistmaker.search.domain.usecase.LoadDataUseCase
 import com.example.playlistmaker.search.domain.usecase.SaveDataUseCase
+import com.example.playlistmaker.utility.Const
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -21,14 +28,47 @@ class SearchScreenViewModel(
     private val repository: TrackRepository,
 ) : ViewModel() {
 
-    private val _tracks = MutableLiveData<Resource<List<Track>>>()
+    private var isClickAllowed = true
+
+    private var latestSearchText: String? = null
+    private var searchJob: Job? = null
+
+    private val _tracks = MutableLiveData<Resource<List<Track>>>(Resource.loading(null))
     val tracks: LiveData<Resource<List<Track>>> = _tracks
 
+
     fun searchTracks(query: String) {
-        viewModelScope.launch(Dispatchers.IO) { // switch to IO thread
-            _tracks.postValue(Resource.loading(null))
-            val result = repository.searchTracks(query)
-            _tracks.postValue(result)
+        viewModelScope.launch {
+            _tracks.value = Resource.loading(null)
+            repository.searchTracks(query)
+                .collect { result ->
+                    _tracks.postValue(Resource.success(result.data))
+                }
+        }
+    }
+
+
+    fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            viewModelScope.launch {
+                delay(Const.CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
+    fun searchDebounce(changedText: String) {
+        if (latestSearchText == changedText) {
+            return
+        }
+        latestSearchText = changedText
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(Const.CLICK_DEBOUNCE_DELAY)
+            searchTracks(changedText)
         }
     }
 
