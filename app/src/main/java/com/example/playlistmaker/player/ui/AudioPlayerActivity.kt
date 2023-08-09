@@ -18,6 +18,7 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.usecase.*
+import com.example.playlistmaker.utility.toTrackEntity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -50,6 +51,18 @@ class AudioPlayerActivity() : AppCompatActivity() {
 
         binding.playFab.setOnClickListener {
             viewModel.playbackControl()
+        }
+
+        binding.favoriteFab.setOnClickListener {
+            if (track != null) {
+                viewModel.onFavoriteClicked(track)
+            }
+        }
+
+        viewModel.isFavorite.observe(this) { isFavorite ->
+            binding.favoriteFab.setImageResource(
+                if (isFavorite) R.drawable.filled_heart else R.drawable.favorite_button
+            )
         }
 
         viewModel.playerState.observe(this) { state ->

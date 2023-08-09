@@ -22,7 +22,10 @@ val playerModule = module {
             playBackControlUseCase = get(),
             prepareUseCase = get(),
             startPlayerUseCase = get(),
-            getCurrentTimeUseCase = get()
+            getCurrentTimeUseCase = get(),
+
+            deleteTrackUseCase = get(),
+            insertTrackUseCase = get(),
         )
     }
 }
