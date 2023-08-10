@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.domain.models
 
+import java.util.Date
 import java.io.Serializable
 
 data class Track(
@@ -14,4 +15,5 @@ data class Track(
     val country: String,
     val previewUrl: String,
     var isFavorite: Boolean = false,
+    val timeAdded: Long=Date().time,
 ):Serializable

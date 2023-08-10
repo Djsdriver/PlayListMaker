@@ -41,20 +41,6 @@ class TrackStorageImpl(
     }
 
     override fun saveData(track: Track) {
-        // Найти все идентификаторы избранных треков
-        val favoriteTrackIds = runBlocking {
-            appDatabase.getMovieDao().getAllTrackIds()
-        }
-        // Пометить трек, если он присутствует в списке избранных треков
-        val isFavorite = favoriteTrackIds.contains(track.trackId)
-        track.isFavorite = isFavorite
-
-        /*// Добавить трек в историю
-        val historyList = loadData()
-        historyList.add(track)
-        if (historyList.size > MAX_HISTORY_LIST_SIZE) {
-            historyList.removeAt(0)
-        }
-        saveTrackHistoryList(historyList)*/
+        //
     }
 }

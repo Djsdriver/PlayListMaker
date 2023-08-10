@@ -24,4 +24,8 @@ class FavoriteRepositoryImpl(private val appDatabase: AppDatabase):FavoriteRepos
         }
         emit(tracks)
     }
+
+    override suspend fun getAllTrackIds(): List<Int> {
+        return appDatabase.getMovieDao().getAllTrackIds()
+    }
 }

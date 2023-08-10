@@ -12,26 +12,26 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class FavoriteTracksViewModel(private val getAllTracksUseCase: GetAllTracksUseCase) : ViewModel() {
-    // Реализация ViewModel для фрагмента избранных треков
 
     private val _state = MutableLiveData<FavoriteTracksState>()
     val state: LiveData<FavoriteTracksState> = _state
 
+
     fun getAllTracks() {
         viewModelScope.launch {
             getAllTracksUseCase.getAllTracks().collect { tracks ->
-                _state.postValue(
                     if (tracks.isNotEmpty()) {
-                        FavoriteTracksState.TracksLoaded(tracks)
+                        _state.postValue(FavoriteTracksState.TracksLoaded(tracks))
                     } else {
-                        FavoriteTracksState.Empty
+                        _state.postValue(FavoriteTracksState.Empty)
                     }
-                )
             }
         }
 
     }
+
 }
+
 
 sealed class FavoriteTracksState {
     object Empty : FavoriteTracksState()

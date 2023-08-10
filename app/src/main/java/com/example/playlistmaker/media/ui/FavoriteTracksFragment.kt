@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
@@ -24,7 +23,7 @@ class FavoriteTracksFragment : Fragment(),TrackAdapter.ClickListener {
     private var _binding: FragmentFavoriteTracksBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter = TrackAdapter(this)
+    private val favoriteAdapter = TrackAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,40 +36,38 @@ class FavoriteTracksFragment : Fragment(),TrackAdapter.ClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.recyclerViewFavorite.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewFavorite.adapter = adapter
+        binding.recyclerViewFavorite.adapter = favoriteAdapter
 
         viewModel.getAllTracks()
-        adapter.notifyDataSetChanged()
+        favoriteAdapter.notifyDataSetChanged()
+
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is FavoriteTracksState.Empty -> {
-                    adapter.notifyDataSetChanged()
+                    favoriteAdapter.notifyDataSetChanged()
                     binding.placeHolderFavorite.visibility = View.VISIBLE
                     binding.recyclerViewFavorite.visibility=View.GONE
                 }
 
                 is FavoriteTracksState.TracksLoaded -> {
-                    adapter.notifyDataSetChanged()
                     binding.placeHolderFavorite.visibility = View.GONE
+                    binding.recyclerViewFavorite.visibility=View.VISIBLE
                     val tracks = state.tracks.map { it.toTrack() }
-                    adapter.setTrackList(tracks)
-
+                    favoriteAdapter.setTrackList(tracks)
+                    favoriteAdapter.notifyDataSetChanged()
                 }
             }
         }
     }
 
-    companion object {
-
-        fun newInstance() = FavoriteTracksFragment().apply {}
-    }
 
     override fun onResume() {
         super.onResume()
         Log.d("Resume", "ResumeFavor")
         viewModel.getAllTracks()
-        adapter.notifyDataSetChanged()
+        favoriteAdapter.notifyDataSetChanged()
     }
 
     override fun onPause() {
@@ -81,8 +78,7 @@ class FavoriteTracksFragment : Fragment(),TrackAdapter.ClickListener {
     override fun onStart() {
         super.onStart()
         Log.d("Resume", "StartFavor")
-        viewModel.getAllTracks()
-        adapter.notifyDataSetChanged()
+
     }
 
     override fun onStop() {
@@ -96,5 +92,9 @@ class FavoriteTracksFragment : Fragment(),TrackAdapter.ClickListener {
         startActivity(Intent(requireContext(), AudioPlayerActivity::class.java).apply {
             putExtra(Const.PUT_EXTRA_TRACK, track)
         })
+    }
+
+    companion object {
+        fun newInstance() = FavoriteTracksFragment().apply {}
     }
 }

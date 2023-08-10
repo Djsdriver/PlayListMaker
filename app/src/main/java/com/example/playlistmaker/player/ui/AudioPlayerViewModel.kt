@@ -1,19 +1,14 @@
 package com.example.playlistmaker.player.ui
 
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.media.data.db.TrackEntity
 import com.example.playlistmaker.media.domain.usecase.DeleteTrackUseCase
-import com.example.playlistmaker.media.domain.usecase.GetAllTracksUseCase
+import com.example.playlistmaker.media.domain.usecase.GetFavoriteIdsUseCase
 import com.example.playlistmaker.media.domain.usecase.InsertTrackUseCase
 import com.example.playlistmaker.player.domain.models.PlayerState
-import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.usecase.*
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utility.Const
@@ -33,10 +28,10 @@ class AudioPlayerViewModel(
     private val getCurrentTimeUseCase: GetCurrentTimeUseCase,
 
     private val deleteTrackUseCase: DeleteTrackUseCase,
-    //private val getAllTracksUseCase: GetAllTracksUseCase,
+    private val getFavoriteIdsUseCase: GetFavoriteIdsUseCase,
     private val insertTrackUseCase: InsertTrackUseCase,
 
-) : ViewModel() {
+    ) : ViewModel() {
 
     private val _playerState = MutableLiveData<PlayerState>()
     val playerState: LiveData<PlayerState> = _playerState
@@ -52,6 +47,11 @@ class AudioPlayerViewModel(
     private var timerJob: Job? = null
 
     fun preparePlayer(track: Track) {
+        viewModelScope.launch {
+            val favoriteTrackIds = getFavoriteIdsUseCase.getFavoriteIds()
+            track.isFavorite = favoriteTrackIds.contains(track.trackId)
+            isFavorite.postValue(track.isFavorite)
+        }
         prepareUseCase.prepare(
             track = track,
             onPrepared = { _playerState.postValue(PlayerState.Prepared(track)) },

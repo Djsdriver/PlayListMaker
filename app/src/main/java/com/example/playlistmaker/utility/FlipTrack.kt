@@ -2,6 +2,8 @@ package com.example.playlistmaker.utility
 
 import com.example.playlistmaker.media.data.db.TrackEntity
 import com.example.playlistmaker.search.domain.models.Track
+import java.util.Calendar
+import java.util.Date
 
 fun Track.toTrackEntity(): TrackEntity {
     return TrackEntity(
@@ -15,7 +17,8 @@ fun Track.toTrackEntity(): TrackEntity {
         primaryGenreName = this.primaryGenreName,
         country = this.country,
         previewUrl = this.previewUrl,
-        isFavorite = this.isFavorite
+        isFavorite = this.isFavorite,
+        timeAdded= Date().time
     )
 }
 
@@ -31,6 +34,7 @@ fun TrackEntity.toTrack(): Track {
         primaryGenreName = this.primaryGenreName,
         country = this.country,
         previewUrl = this.previewUrl,
-        isFavorite = this.isFavorite
+        isFavorite = this.isFavorite,
+        timeAdded= Date().time
     )
 }

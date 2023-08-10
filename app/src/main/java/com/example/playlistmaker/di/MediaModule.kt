@@ -2,6 +2,7 @@ package com.example.playlistmaker.di
 
 import com.example.playlistmaker.media.domain.usecase.DeleteTrackUseCase
 import com.example.playlistmaker.media.domain.usecase.GetAllTracksUseCase
+import com.example.playlistmaker.media.domain.usecase.GetFavoriteIdsUseCase
 import com.example.playlistmaker.media.domain.usecase.InsertTrackUseCase
 import com.example.playlistmaker.media.ui.FavoriteTracksViewModel
 import com.example.playlistmaker.media.ui.PlayListsViewModel
@@ -30,6 +31,8 @@ val mediaModule = module {
     factory { GetAllTracksUseCase(favoriteRepository = get()) }
 
     factory { InsertTrackUseCase(favoriteRepository = get())}
+
+    factory { GetFavoriteIdsUseCase(favoriteRepository = get())}
 
 
 }

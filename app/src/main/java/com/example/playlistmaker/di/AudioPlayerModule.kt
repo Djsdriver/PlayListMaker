@@ -26,6 +26,7 @@ val playerModule = module {
 
             deleteTrackUseCase = get(),
             insertTrackUseCase = get(),
+            getFavoriteIdsUseCase = get(),
         )
     }
 }

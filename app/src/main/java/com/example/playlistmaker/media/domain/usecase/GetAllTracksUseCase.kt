@@ -8,10 +8,6 @@ import kotlinx.coroutines.flow.map
 class GetAllTracksUseCase(private val favoriteRepository: FavoriteRepository) {
 
     suspend fun getAllTracks(): Flow<List<TrackEntity>>{
-        return favoriteRepository.getAllTracks().map { track->
-            track.sortedByDescending { track ->
-                track.trackId
-            }
-        }
+        return favoriteRepository.getAllTracks()
     }
 }

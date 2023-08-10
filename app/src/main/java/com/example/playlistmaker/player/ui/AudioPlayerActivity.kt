@@ -164,5 +164,6 @@ class AudioPlayerActivity() : AppCompatActivity() {
                 if (isPlaying) R.drawable.pause_button else R.drawable.play_button,
                 null
             )
+
     }
 }
