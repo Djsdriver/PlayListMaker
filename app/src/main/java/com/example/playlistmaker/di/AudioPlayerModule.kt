@@ -24,8 +24,8 @@ val playerModule = module {
             startPlayerUseCase = get(),
             getCurrentTimeUseCase = get(),
 
-            deleteTrackUseCase = get(),
-            insertTrackUseCase = get(),
+            removeTrackFromFavouriteUseCase = get(),
+            addTrackToFavouriteUseCase = get(),
             getFavoriteIdsUseCase = get(),
         )
     }

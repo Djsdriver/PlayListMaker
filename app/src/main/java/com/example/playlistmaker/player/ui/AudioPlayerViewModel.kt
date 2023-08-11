@@ -5,9 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.media.domain.usecase.DeleteTrackUseCase
+import com.example.playlistmaker.media.domain.usecase.RemoveTrackFromFavouriteUseCase
 import com.example.playlistmaker.media.domain.usecase.GetFavoriteIdsUseCase
-import com.example.playlistmaker.media.domain.usecase.InsertTrackUseCase
+import com.example.playlistmaker.media.domain.usecase.AddTrackToFavouriteUseCase
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.usecase.*
 import com.example.playlistmaker.search.domain.models.Track
@@ -27,9 +27,9 @@ class AudioPlayerViewModel(
     private val startPlayerUseCase: StartPlayerUseCase,
     private val getCurrentTimeUseCase: GetCurrentTimeUseCase,
 
-    private val deleteTrackUseCase: DeleteTrackUseCase,
+    private val removeTrackFromFavouriteUseCase: RemoveTrackFromFavouriteUseCase,
     private val getFavoriteIdsUseCase: GetFavoriteIdsUseCase,
-    private val insertTrackUseCase: InsertTrackUseCase,
+    private val addTrackToFavouriteUseCase: AddTrackToFavouriteUseCase,
 
     ) : ViewModel() {
 
@@ -40,7 +40,7 @@ class AudioPlayerViewModel(
     val playbackTime: LiveData<String?> = _playbackTime
 
     private val _isFavorite = MutableLiveData<Boolean>()
-    val isFavorite: MutableLiveData<Boolean> = _isFavorite
+    val isFavorite: LiveData<Boolean> = _isFavorite
 
     private var mediaPlayer: MediaPlayer? = null
 
@@ -50,7 +50,7 @@ class AudioPlayerViewModel(
         viewModelScope.launch {
             val favoriteTrackIds = getFavoriteIdsUseCase.getFavoriteIds()
             track.isFavorite = favoriteTrackIds.contains(track.trackId)
-            isFavorite.postValue(track.isFavorite)
+            _isFavorite.postValue(track.isFavorite)
         }
         prepareUseCase.prepare(
             track = track,
@@ -71,7 +71,6 @@ class AudioPlayerViewModel(
     fun pausePlayer() {
         pausePlayerUseCase.pausePlayer()
         _playerState.value = PlayerState.Paused
-        //remove by token
         timerJob?.cancel()
     }
 
@@ -116,12 +115,12 @@ class AudioPlayerViewModel(
     fun onFavoriteClicked(track: Track) {
         viewModelScope.launch {
             if (track.isFavorite) {
-                deleteTrackUseCase.deleteTrack(trackEntity = track.toTrackEntity())
+                removeTrackFromFavouriteUseCase.removeTrack(trackEntity = track.toTrackEntity())
             } else {
-                insertTrackUseCase.insertTrack(trackEntity = track.toTrackEntity())
+                addTrackToFavouriteUseCase.addTrack(trackEntity = track.toTrackEntity())
             }
             track.isFavorite = !track.isFavorite
-            isFavorite.postValue(track.isFavorite)
+            _isFavorite.postValue(track.isFavorite)
         }
     }
 

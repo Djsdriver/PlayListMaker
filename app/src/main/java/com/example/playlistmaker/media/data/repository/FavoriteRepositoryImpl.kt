@@ -8,24 +8,24 @@ import kotlinx.coroutines.flow.flow
 
 class FavoriteRepositoryImpl(private val appDatabase: AppDatabase):FavoriteRepository {
     override suspend fun insertTrack(trackEntity: TrackEntity) {
-        appDatabase.getMovieDao().insertTrack(track = trackEntity)
+        appDatabase.getTrackDao().insertTrack(track = trackEntity)
     }
 
     override suspend fun deleteTrack(trackEntity: TrackEntity) {
-        appDatabase.getMovieDao().deleteTrack(track = trackEntity)
+        appDatabase.getTrackDao().deleteTrack(track = trackEntity)
 
     }
 
     override suspend fun getAllTracks(): Flow<List<TrackEntity>> = flow {
-        val tracks = appDatabase.getMovieDao().getAllTracks()
-        val favoriteTrackIds = tracks.map { it.trackId }
+        val tracks = appDatabase.getTrackDao().getAllTracks()
+        /*val favoriteTrackIds = tracks.map { it.trackId }
         tracks.forEach { track ->
             track.isFavorite = track.trackId in favoriteTrackIds
-        }
+        }*/
         emit(tracks)
     }
 
     override suspend fun getAllTrackIds(): List<Int> {
-        return appDatabase.getMovieDao().getAllTrackIds()
+        return appDatabase.getTrackDao().getAllTrackIds()
     }
 }

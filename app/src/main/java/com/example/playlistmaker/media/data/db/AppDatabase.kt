@@ -11,5 +11,5 @@ import androidx.room.RoomDatabase
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun getMovieDao(): FavoriteTrackDao
+    abstract fun getTrackDao(): FavoriteTrackDao
 }

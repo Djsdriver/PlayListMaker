@@ -6,8 +6,6 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.repository.TrackRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.Call
-import retrofit2.Response
 
 class SearchTrackRepository(
     private val trackApi: TrackApi,
@@ -18,10 +16,10 @@ class SearchTrackRepository(
             val response = trackApi.getTrackByTerm(query)
             if (response.results.isNotEmpty()){
                 val tracks = response.results
-                val favoriteTrackIds = appDatabase.getMovieDao().getAllTrackIds()
+                /*val favoriteTrackIds = appDatabase.getTrackDao().getAllTrackIds()
                 tracks.forEach { track ->
                     track.isFavorite = track.trackId in favoriteTrackIds
-                }
+                }*/
                 emit(Resource.success(tracks))
             } else{
                 emit(Resource.error("Проверьте подключение к интернету", null))

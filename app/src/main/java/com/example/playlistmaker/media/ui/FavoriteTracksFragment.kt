@@ -11,13 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.ui.TrackAdapter
+import com.example.playlistmaker.common.TrackAdapter
 import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.utility.toTrack
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class FavoriteTracksFragment : Fragment(),TrackAdapter.ClickListener {
+class FavoriteTracksFragment : Fragment(), TrackAdapter.ClickListener {
     private val viewModel by viewModel<FavoriteTracksViewModel>()
 
     private var _binding: FragmentFavoriteTracksBinding? = null
@@ -41,12 +41,10 @@ class FavoriteTracksFragment : Fragment(),TrackAdapter.ClickListener {
         binding.recyclerViewFavorite.adapter = favoriteAdapter
 
         viewModel.getAllTracks()
-        favoriteAdapter.notifyDataSetChanged()
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is FavoriteTracksState.Empty -> {
-                    favoriteAdapter.notifyDataSetChanged()
                     binding.placeHolderFavorite.visibility = View.VISIBLE
                     binding.recyclerViewFavorite.visibility=View.GONE
                 }
@@ -56,7 +54,6 @@ class FavoriteTracksFragment : Fragment(),TrackAdapter.ClickListener {
                     binding.recyclerViewFavorite.visibility=View.VISIBLE
                     val tracks = state.tracks.map { it.toTrack() }
                     favoriteAdapter.setTrackList(tracks)
-                    favoriteAdapter.notifyDataSetChanged()
                 }
             }
         }
@@ -67,25 +64,9 @@ class FavoriteTracksFragment : Fragment(),TrackAdapter.ClickListener {
         super.onResume()
         Log.d("Resume", "ResumeFavor")
         viewModel.getAllTracks()
-        favoriteAdapter.notifyDataSetChanged()
+        //favoriteAdapter.notifyDataSetChanged()
     }
 
-    override fun onPause() {
-        super.onPause()
-        Log.d("Resume", "PauseFavor")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("Resume", "StartFavor")
-
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("Resume", "StopFavor")
-
-    }
 
 
     override fun onClick(track: Track) {

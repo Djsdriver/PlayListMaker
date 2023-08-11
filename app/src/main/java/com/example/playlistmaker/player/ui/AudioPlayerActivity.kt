@@ -30,7 +30,6 @@ class AudioPlayerActivity() : AppCompatActivity() {
         ActivityAudioPlayerBinding.inflate(layoutInflater)
     }
 
-    //private lateinit var viewModel: AudioPlayerViewModel
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -49,10 +48,6 @@ class AudioPlayerActivity() : AppCompatActivity() {
             @Suppress("DEPRECATION") intent.getSerializableExtra(Const.PUT_EXTRA_TRACK) as Track
         }
 
-        binding.playFab.setOnClickListener {
-            viewModel.playbackControl()
-        }
-
         binding.favoriteFab.setOnClickListener {
             if (track != null) {
                 viewModel.onFavoriteClicked(track)
@@ -63,6 +58,10 @@ class AudioPlayerActivity() : AppCompatActivity() {
             binding.favoriteFab.setImageResource(
                 if (isFavorite) R.drawable.filled_heart else R.drawable.favorite_button
             )
+        }
+
+        binding.playFab.setOnClickListener {
+            viewModel.playbackControl()
         }
 
         viewModel.playerState.observe(this) { state ->
@@ -95,7 +94,7 @@ class AudioPlayerActivity() : AppCompatActivity() {
                 }
                 is PlayerState.Completed -> {
                     setFabIcon(false)
-                    binding.timeTrack.text = Const.DEFAULT_TIME // Set the text here
+                    binding.timeTrack.text = Const.DEFAULT_TIME
                 }
                 else -> {
                 }
@@ -138,7 +137,6 @@ class AudioPlayerActivity() : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            //viewModel.pausePlayer()
             finish()
         }
         return super.onOptionsItemSelected(item)
