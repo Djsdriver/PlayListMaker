@@ -26,7 +26,7 @@ val searchModule = module {
             .getSharedPreferences(Const.SHARED_PREFERENCES_HISTORY_LIST, Context.MODE_PRIVATE)
     }
 
-    single<TrackStorage> { TrackStorageImpl(sharedPreferences = get(qualifier = named(Const.SHARED_PREFERENCES_HISTORY_LIST))) }
+    single<TrackStorage> { TrackStorageImpl(sharedPreferences = get(qualifier = named(Const.SHARED_PREFERENCES_HISTORY_LIST)),get()) }
     single<TrackApi>(named(Const.API_RETROFIT_KOIN)) {
         Retrofit.Builder()
             .baseUrl(Const.BASE_URL)
@@ -35,7 +35,7 @@ val searchModule = module {
             .create(TrackApi::class.java)
     }
 
-    single<TrackRepository> { SearchTrackRepository(trackApi = get(qualifier = named(Const.API_RETROFIT_KOIN))) }
+    single<TrackRepository> { SearchTrackRepository(trackApi = get(qualifier = named(Const.API_RETROFIT_KOIN)),get())}
 
     factory { AddTrackToHistoryListUseCase(trackStorage = get()) }
 

@@ -105,7 +105,7 @@
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toEndOf="@+id/play_fab"
             app:layout_constraintTop_toTopOf="@+id/play_fab"
-            app:tint="@color/color_fab_player" />
+            app:tint="@null" />
 
         <TextView
             android:id="@+id/timeTrack"

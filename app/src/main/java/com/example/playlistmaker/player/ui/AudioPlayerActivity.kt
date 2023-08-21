@@ -18,6 +18,7 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.usecase.*
+import com.example.playlistmaker.utility.toTrackEntity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,7 +30,6 @@ class AudioPlayerActivity() : AppCompatActivity() {
         ActivityAudioPlayerBinding.inflate(layoutInflater)
     }
 
-    //private lateinit var viewModel: AudioPlayerViewModel
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -46,6 +46,18 @@ class AudioPlayerActivity() : AppCompatActivity() {
             intent.getSerializableExtra(Const.PUT_EXTRA_TRACK, Track::class.java)
         } else {
             @Suppress("DEPRECATION") intent.getSerializableExtra(Const.PUT_EXTRA_TRACK) as Track
+        }
+
+        binding.favoriteFab.setOnClickListener {
+            if (track != null) {
+                viewModel.onFavoriteClicked(track)
+            }
+        }
+
+        viewModel.isFavorite.observe(this) { isFavorite ->
+            binding.favoriteFab.setImageResource(
+                if (isFavorite) R.drawable.filled_heart else R.drawable.favorite_button
+            )
         }
 
         binding.playFab.setOnClickListener {
@@ -82,7 +94,7 @@ class AudioPlayerActivity() : AppCompatActivity() {
                 }
                 is PlayerState.Completed -> {
                     setFabIcon(false)
-                    binding.timeTrack.text = Const.DEFAULT_TIME // Set the text here
+                    binding.timeTrack.text = Const.DEFAULT_TIME
                 }
                 else -> {
                 }
@@ -125,7 +137,6 @@ class AudioPlayerActivity() : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            //viewModel.pausePlayer()
             finish()
         }
         return super.onOptionsItemSelected(item)
@@ -151,5 +162,6 @@ class AudioPlayerActivity() : AppCompatActivity() {
                 if (isPlaying) R.drawable.pause_button else R.drawable.play_button,
                 null
             )
+
     }
 }

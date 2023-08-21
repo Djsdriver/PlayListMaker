@@ -22,7 +22,11 @@ val playerModule = module {
             playBackControlUseCase = get(),
             prepareUseCase = get(),
             startPlayerUseCase = get(),
-            getCurrentTimeUseCase = get()
+            getCurrentTimeUseCase = get(),
+
+            removeTrackFromFavouriteUseCase = get(),
+            addTrackToFavouriteUseCase = get(),
+            getFavoriteIdsUseCase = get(),
         )
     }
 }

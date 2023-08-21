@@ -3,14 +3,18 @@ package com.example.playlistmaker.search.data.storage
 import android.content.SharedPreferences
 
 import androidx.core.content.edit
+import com.example.playlistmaker.media.data.db.AppDatabase
 
 import com.example.playlistmaker.search.data.TrackStorage
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.runBlocking
 
-class TrackStorageImpl(private val sharedPreferences: SharedPreferences) : TrackStorage {
-
+class TrackStorageImpl(
+    private val sharedPreferences: SharedPreferences,
+    private val appDatabase: AppDatabase
+) : TrackStorage {
 
     companion object {
         private const val KEY_HISTORY_LIST = "history_list"
@@ -28,7 +32,6 @@ class TrackStorageImpl(private val sharedPreferences: SharedPreferences) : Track
         sharedPreferences.edit {
             clear()
         }
-
     }
 
     override fun loadData(): ArrayList<Track> {
@@ -38,6 +41,6 @@ class TrackStorageImpl(private val sharedPreferences: SharedPreferences) : Track
     }
 
     override fun saveData(track: Track) {
-        // addTrack(track)
+        //
     }
 }

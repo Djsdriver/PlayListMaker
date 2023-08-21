@@ -1,18 +1,18 @@
 package com.example.playlistmaker.player.ui
 
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.media.domain.usecase.RemoveTrackFromFavouriteUseCase
+import com.example.playlistmaker.media.domain.usecase.GetFavoriteIdsUseCase
+import com.example.playlistmaker.media.domain.usecase.AddTrackToFavouriteUseCase
 import com.example.playlistmaker.player.domain.models.PlayerState
-import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.usecase.*
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utility.Const
+import com.example.playlistmaker.utility.toTrackEntity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,8 +25,13 @@ class AudioPlayerViewModel(
     private val playBackControlUseCase: PlayBackControlUseCase,
     private val prepareUseCase: PrepareUseCase,
     private val startPlayerUseCase: StartPlayerUseCase,
-    private val getCurrentTimeUseCase: GetCurrentTimeUseCase
-) : ViewModel() {
+    private val getCurrentTimeUseCase: GetCurrentTimeUseCase,
+
+    private val removeTrackFromFavouriteUseCase: RemoveTrackFromFavouriteUseCase,
+    private val getFavoriteIdsUseCase: GetFavoriteIdsUseCase,
+    private val addTrackToFavouriteUseCase: AddTrackToFavouriteUseCase,
+
+    ) : ViewModel() {
 
     private val _playerState = MutableLiveData<PlayerState>()
     val playerState: LiveData<PlayerState> = _playerState
@@ -34,11 +39,21 @@ class AudioPlayerViewModel(
     private val _playbackTime = MutableLiveData<String?>()
     val playbackTime: LiveData<String?> = _playbackTime
 
+    private val _isFavorite = MutableLiveData<Boolean>()
+    val isFavorite: LiveData<Boolean> = _isFavorite
+
     private var mediaPlayer: MediaPlayer? = null
 
     private var timerJob: Job? = null
 
     fun preparePlayer(track: Track) {
+        viewModelScope.launch {
+            getFavoriteIdsUseCase.getFavoriteIds().collect(){
+                track.isFavorite = it.contains(track.trackId)
+                _isFavorite.postValue(track.isFavorite)            }
+            /*track.isFavorite = favoriteTrackIds.contains(track.trackId)
+            _isFavorite.postValue(track.isFavorite)*/
+        }
         prepareUseCase.prepare(
             track = track,
             onPrepared = { _playerState.postValue(PlayerState.Prepared(track)) },
@@ -58,7 +73,6 @@ class AudioPlayerViewModel(
     fun pausePlayer() {
         pausePlayerUseCase.pausePlayer()
         _playerState.value = PlayerState.Paused
-        //remove by token
         timerJob?.cancel()
     }
 
@@ -100,15 +114,30 @@ class AudioPlayerViewModel(
         }
     }
 
+    fun onFavoriteClicked(track: Track) {
+        viewModelScope.launch {
+            if (track.isFavorite) {
+                removeTrackFromFavouriteUseCase.removeTrack(trackEntity = track.toTrackEntity())
+            } else {
+                addTrackToFavouriteUseCase.addTrack(trackEntity = track.toTrackEntity())
+            }
+            track.isFavorite = !track.isFavorite
+            _isFavorite.postValue(track.isFavorite)
+        }
+    }
+
+
+
     public override fun onCleared() {
         super.onCleared()
         mediaPlayer?.release()
         timerJob?.cancel()
     }
 
-    companion object {
-        val PLAYBACK_TIMER_TOKEN = Any()
-    }
 }
+
+
+
+
 
 

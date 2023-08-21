@@ -27,4 +27,13 @@
         android:id="@+id/audioPlayerActivity"
         android:name="com.example.playlistmaker.player.ui.AudioPlayerActivity"
         android:label="AudioPlayerActivity" />
+    <fragment
+        android:id="@+id/favoriteTracksFragment"
+        android:name="com.example.playlistmaker.media.ui.FavoriteTracksFragment"
+        android:label="fragment_favorite_tracks"
+        tools:layout="@layout/fragment_favorite_tracks" >
+        <action
+            android:id="@+id/action_favoriteTracksFragment_to_audioPlayerActivity"
+            app:destination="@id/audioPlayerActivity" />
+    </fragment>
 </navigation>

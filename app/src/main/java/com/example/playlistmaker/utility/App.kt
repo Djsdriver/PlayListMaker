@@ -2,7 +2,10 @@ package com.example.playlistmaker.utility
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.di.dataModule
+import com.example.playlistmaker.di.mediaModule
 import com.example.playlistmaker.di.playerModule
+import com.example.playlistmaker.di.repositoryModule
 import com.example.playlistmaker.di.searchModule
 import com.example.playlistmaker.di.settingModule
 import com.example.playlistmaker.di.shareModule
@@ -21,7 +24,14 @@ class App : Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(listOf(playerModule, searchModule, settingModule, shareModule) )
+            modules(listOf(
+                playerModule,
+                searchModule,
+                settingModule,
+                shareModule,
+                dataModule,
+                mediaModule,
+                repositoryModule) )
         }
 
         val sharedPrefs = getSharedPreferences(PRACTICUM_EXAMPLE_PREFERENCES, MODE_PRIVATE)
