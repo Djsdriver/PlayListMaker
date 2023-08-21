@@ -16,16 +16,11 @@ class FavoriteRepositoryImpl(private val appDatabase: AppDatabase):FavoriteRepos
 
     }
 
-    override suspend fun getAllTracks(): Flow<List<TrackEntity>> = flow {
-        val tracks = appDatabase.getTrackDao().getAllTracks()
-        /*val favoriteTrackIds = tracks.map { it.trackId }
-        tracks.forEach { track ->
-            track.isFavorite = track.trackId in favoriteTrackIds
-        }*/
-        emit(tracks)
-    }
+    override fun getAllTracks(): Flow<List<TrackEntity>> = appDatabase.getTrackDao().getAllTracks()
 
-    override suspend fun getAllTrackIds(): List<Int> {
-        return appDatabase.getTrackDao().getAllTrackIds()
+
+    override fun getAllTrackIds(): Flow<List<Int>> = flow{
+        val listId= appDatabase.getTrackDao().getAllTrackIds()
+        emit(listId)
     }
 }

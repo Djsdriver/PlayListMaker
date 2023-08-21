@@ -9,21 +9,23 @@ import com.example.playlistmaker.databinding.FragmentMediatekaBinding
 import com.example.playlistmaker.media.data.db.TrackEntity
 import com.example.playlistmaker.media.domain.usecase.GetAllTracksUseCase
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class FavoriteTracksViewModel(private val getAllTracksUseCase: GetAllTracksUseCase) : ViewModel() {
 
-    private val _state = MutableLiveData<FavoriteTracksState>()
-    val state: LiveData<FavoriteTracksState> = _state
+    private val _state = MutableStateFlow<FavoriteTracksState>(FavoriteTracksState.Empty)
+    val state: StateFlow<FavoriteTracksState> = _state
 
 
     fun getAllTracks() {
         viewModelScope.launch {
             getAllTracksUseCase.getAllTracks().collect { tracks ->
                     if (tracks.isNotEmpty()) {
-                        _state.postValue(FavoriteTracksState.TracksLoaded(tracks))
+                        _state.value=FavoriteTracksState.TracksLoaded(tracks)
                     } else {
-                        _state.postValue(FavoriteTracksState.Empty)
+                        _state.value=FavoriteTracksState.Empty
                     }
             }
         }
@@ -31,7 +33,6 @@ class FavoriteTracksViewModel(private val getAllTracksUseCase: GetAllTracksUseCa
     }
 
 }
-
 
 sealed class FavoriteTracksState {
     object Empty : FavoriteTracksState()

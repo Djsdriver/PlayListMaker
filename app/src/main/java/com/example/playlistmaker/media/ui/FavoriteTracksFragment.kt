@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
@@ -14,6 +15,8 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.common.TrackAdapter
 import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.utility.toTrack
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -42,18 +45,19 @@ class FavoriteTracksFragment : Fragment(), TrackAdapter.ClickListener {
 
         viewModel.getAllTracks()
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is FavoriteTracksState.Empty -> {
-                    binding.placeHolderFavorite.visibility = View.VISIBLE
-                    binding.recyclerViewFavorite.visibility=View.GONE
-                }
-
-                is FavoriteTracksState.TracksLoaded -> {
-                    binding.placeHolderFavorite.visibility = View.GONE
-                    binding.recyclerViewFavorite.visibility=View.VISIBLE
-                    val tracks = state.tracks.map { it.toTrack() }
-                    favoriteAdapter.setTrackList(tracks)
+        lifecycleScope.launch {
+            viewModel.state.collect{state->
+                when (state){
+                    is FavoriteTracksState.Empty -> {
+                        binding.placeHolderFavorite.visibility = View.VISIBLE
+                        binding.recyclerViewFavorite.visibility=View.GONE
+                    }
+                    is FavoriteTracksState.TracksLoaded -> {
+                        binding.placeHolderFavorite.visibility = View.GONE
+                        binding.recyclerViewFavorite.visibility=View.VISIBLE
+                        val tracks = state.tracks.map { it.toTrack() }
+                        favoriteAdapter.setTrackList(tracks)
+                    }
                 }
             }
         }
@@ -64,7 +68,6 @@ class FavoriteTracksFragment : Fragment(), TrackAdapter.ClickListener {
         super.onResume()
         Log.d("Resume", "ResumeFavor")
         viewModel.getAllTracks()
-        //favoriteAdapter.notifyDataSetChanged()
     }
 
 

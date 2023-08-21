@@ -48,9 +48,11 @@ class AudioPlayerViewModel(
 
     fun preparePlayer(track: Track) {
         viewModelScope.launch {
-            val favoriteTrackIds = getFavoriteIdsUseCase.getFavoriteIds()
-            track.isFavorite = favoriteTrackIds.contains(track.trackId)
-            _isFavorite.postValue(track.isFavorite)
+            getFavoriteIdsUseCase.getFavoriteIds().collect(){
+                track.isFavorite = it.contains(track.trackId)
+                _isFavorite.postValue(track.isFavorite)            }
+            /*track.isFavorite = favoriteTrackIds.contains(track.trackId)
+            _isFavorite.postValue(track.isFavorite)*/
         }
         prepareUseCase.prepare(
             track = track,
@@ -132,9 +134,6 @@ class AudioPlayerViewModel(
         timerJob?.cancel()
     }
 
-    companion object {
-        val PLAYBACK_TIMER_TOKEN = Any()
-    }
 }
 
 
