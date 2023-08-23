@@ -2,6 +2,8 @@ package com.example.playlistmaker.main.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.view.WindowManager
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
@@ -22,20 +24,26 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setupWithNavController(navController)
 
-       /* binding.btnMedia.setOnClickListener {
-            startActivity(Intent(this, MediaScreen::class.java))
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.newPlaylistFragment ->{
+                    hideBottomNav()
+                    window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+                }
+                else -> showBottomNav()
+            }
         }
+    }
 
-        binding.btnSearch.setOnClickListener {
-            startActivity(Intent(this, SearchScreen::class.java))
+    private fun hideBottomNav() {
+        binding.bottomNavigationView.visibility = View.GONE
+    }
 
-        }
-
-        binding.btnSetting.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
-        }*/
+    private fun showBottomNav() {
+        binding.bottomNavigationView.visibility = View.VISIBLE
+    }
 
 
     }
-}
+
 

@@ -26,4 +26,6 @@
     <string name="playListNotFound">Вы не создали \n ни одного плейлиста</string>
     <string name="favorityTrackNotFound">Ваша медиатека пуста</string>
     <string name="noInternet">Отсутствует подключение к интернету</string>
+    <string name="quitting_question">Завершить создание плейлиста?</string>
+    <string name="finish">Завершить</string>
 </resources>
