@@ -5,7 +5,7 @@ import com.example.playlistmaker.media.domain.usecase.GetAllTracksUseCase
 import com.example.playlistmaker.media.domain.usecase.GetFavoriteIdsUseCase
 import com.example.playlistmaker.media.domain.usecase.AddTrackToFavouriteUseCase
 import com.example.playlistmaker.media.ui.FavoriteTracksViewModel
-import com.example.playlistmaker.media.ui.PlayListsViewModel
+import com.example.playlistmaker.media.ui.PlaylistViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -15,9 +15,6 @@ val mediaModule = module {
         FavoriteTracksViewModel(get())
     }
 
-    viewModel{
-        PlayListsViewModel()
-    }
 
     factory { RemoveTrackFromFavouriteUseCase( favoriteRepository = get()) }
 
