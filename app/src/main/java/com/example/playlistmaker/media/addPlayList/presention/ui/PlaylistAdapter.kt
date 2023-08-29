@@ -9,16 +9,20 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.media.addPlayList.data.db.PlaylistEntity
 import com.example.playlistmaker.media.addPlayList.domain.models.PlaylistModel
+
 import java.io.File
 
-class PlaylistAdapter: RecyclerView.Adapter<PlaylistViewHolder>() {
+class PlaylistAdapter(val listenerItemPlaylist: ClickListener, private val isVertical: Boolean): RecyclerView.Adapter<PlaylistViewHolder>() {
     var tracks = ArrayList<PlaylistModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_playlist, parent, false)
-        return PlaylistViewHolder(view)
+
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val layoutId = if (isVertical) R.layout.item_playlist else R.layout.item_playlist_horizontal
+        val itemView = layoutInflater.inflate(layoutId, parent, false)
+
+        return PlaylistViewHolder(itemView)
     }
 
 
@@ -26,13 +30,17 @@ class PlaylistAdapter: RecyclerView.Adapter<PlaylistViewHolder>() {
     override fun getItemCount(): Int = tracks.size
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
-        holder.bind(tracks[position])
+        holder.bind(tracks[position],listenerItemPlaylist)
     }
 
     fun setTrackList(list: List<PlaylistModel>) {
         tracks.clear()
         tracks.addAll(list)
         notifyDataSetChanged()
+    }
+
+    fun interface ClickListener {
+        fun onClick(playlistModel: PlaylistModel)
     }
 }
 class PlaylistViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -41,7 +49,7 @@ class PlaylistViewHolder(view: View): RecyclerView.ViewHolder(view) {
     private val trackCount: TextView = view.findViewById(R.id.text_tracks_quantity)
     private val imagePlaylist: ImageView = view.findViewById(R.id.iv_playlist_big_image)
 
-    fun bind(playlistModel: PlaylistModel) {
+    fun bind(playlistModel: PlaylistModel, listenerItemPlaylist: PlaylistAdapter.ClickListener) {
         title.text = playlistModel.name
         trackCount.text = playlistModel.trackCount.toString()
 
@@ -50,5 +58,10 @@ class PlaylistViewHolder(view: View): RecyclerView.ViewHolder(view) {
             .load(imageFile)
             .placeholder(R.drawable.ic_launcher_background)
             .into(imagePlaylist)
+
+
+        itemView.setOnClickListener {
+            listenerItemPlaylist.onClick(playlistModel)
+        }
     }
 }

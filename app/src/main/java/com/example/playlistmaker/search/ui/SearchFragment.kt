@@ -7,16 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.playlistmaker.R
-import android.content.Intent
 import android.net.ConnectivityManager
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.common.TrackAdapter
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.AudioPlayerActivity
+import com.example.playlistmaker.player.ui.AudioPlayerFragment
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.utility.Resource
@@ -240,9 +240,16 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
         searchViewModel.addTrack(track = track)
         searchViewModel.saveData(track)
         if (searchViewModel.clickDebounce()) {
-            startActivity(Intent(requireContext(), AudioPlayerActivity::class.java).apply {
+            /*startActivity(Intent(requireContext(), AudioPlayerActivity::class.java).apply {
                 putExtra(Const.PUT_EXTRA_TRACK, track)
-            })
+            })*/
+            val bundle = Bundle().apply {
+                putSerializable(Const.PUT_EXTRA_TRACK, track)
+            }
+            val audioPlayerFragment = AudioPlayerFragment().apply {
+                arguments = bundle
+            }
+            findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
         }
     }
 

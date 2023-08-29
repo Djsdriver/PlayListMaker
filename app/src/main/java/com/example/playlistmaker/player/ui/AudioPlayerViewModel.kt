@@ -5,9 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.media.addPlayList.domain.usecase.GetAllPlaylistToListUseCase
 import com.example.playlistmaker.media.domain.usecase.RemoveTrackFromFavouriteUseCase
 import com.example.playlistmaker.media.domain.usecase.GetFavoriteIdsUseCase
 import com.example.playlistmaker.media.domain.usecase.AddTrackToFavouriteUseCase
+import com.example.playlistmaker.media.ui.PlaylistState
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.usecase.*
 import com.example.playlistmaker.search.domain.models.Track
@@ -15,6 +17,8 @@ import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.utility.toTrackEntity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,6 +34,7 @@ class AudioPlayerViewModel(
     private val removeTrackFromFavouriteUseCase: RemoveTrackFromFavouriteUseCase,
     private val getFavoriteIdsUseCase: GetFavoriteIdsUseCase,
     private val addTrackToFavouriteUseCase: AddTrackToFavouriteUseCase,
+    private val getAllPlaylistToListUseCase: GetAllPlaylistToListUseCase,
 
     ) : ViewModel() {
 
@@ -45,6 +50,22 @@ class AudioPlayerViewModel(
     private var mediaPlayer: MediaPlayer? = null
 
     private var timerJob: Job? = null
+
+    private val _state = MutableStateFlow<PlaylistState>(PlaylistState.Empty)
+    val state: StateFlow<PlaylistState> = _state
+
+    fun getAllPlaylist() {
+        viewModelScope.launch {
+            getAllPlaylistToListUseCase.getAllTracks().collect { tracks ->
+                if (tracks.isNotEmpty()) {
+                    _state.value= PlaylistState.PlaylistLoaded(tracks)
+                } else {
+                    _state.value= PlaylistState.Empty
+                }
+            }
+        }
+
+    }
 
     fun preparePlayer(track: Track) {
         viewModelScope.launch {

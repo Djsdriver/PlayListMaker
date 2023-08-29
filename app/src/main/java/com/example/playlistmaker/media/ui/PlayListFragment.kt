@@ -14,18 +14,19 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 
 import com.example.playlistmaker.databinding.FragmentPlayListBinding
+import com.example.playlistmaker.media.addPlayList.domain.models.PlaylistModel
 import com.example.playlistmaker.media.addPlayList.presention.ui.PlaylistAdapter
 import com.example.playlistmaker.utility.toPlaylistModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class PlayListFragment : Fragment() {
+class PlayListFragment : Fragment(), PlaylistAdapter.ClickListener {
     private val binding: FragmentPlayListBinding by lazy {
         FragmentPlayListBinding.inflate(layoutInflater)
     }
     private val viewModel by viewModel<PlaylistViewModel>()
-    private val playlistAdapter = PlaylistAdapter()
+    private val playlistAdapter = PlaylistAdapter(this,true)
 
 
     override fun onCreateView(
@@ -79,5 +80,9 @@ class PlayListFragment : Fragment() {
     companion object {
 
         fun newInstance() = PlayListFragment().apply {}
+    }
+
+    override fun onClick(playlistModel: PlaylistModel) {
+
     }
 }

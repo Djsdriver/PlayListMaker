@@ -1,47 +1,57 @@
 package com.example.playlistmaker.player.ui
 
-
-import android.content.res.Configuration
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
-import androidx.annotation.RequiresApi
+import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.databinding.FragmentAudioplayerBinding
+import com.example.playlistmaker.media.addPlayList.domain.models.PlaylistModel
+import com.example.playlistmaker.media.addPlayList.presention.ui.PlaylistAdapter
+import com.example.playlistmaker.media.ui.PlaylistState
 import com.example.playlistmaker.player.domain.models.PlayerState
-import com.example.playlistmaker.player.domain.usecase.*
-import com.example.playlistmaker.utility.toTrackEntity
+import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.utility.Const
+import com.example.playlistmaker.utility.toPlaylistModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
+
+class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
 
 
-class AudioPlayerActivity() : AppCompatActivity() {
-
-    private val binding: ActivityAudioPlayerBinding by lazy {
-        ActivityAudioPlayerBinding.inflate(layoutInflater)
-    }
+    private var _binding: FragmentAudioplayerBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+    private val playlistAdapter = PlaylistAdapter(this, false)
 
-        setSupportActionBar(binding.toolbarPlayer)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        darkOrLightTheme()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAudioplayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.bottomSheetContainer.rvPlaylists.layoutManager = LinearLayoutManager(requireContext())
+        binding.bottomSheetContainer.rvPlaylists.adapter = playlistAdapter
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetContainer.bottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
@@ -56,8 +66,23 @@ class AudioPlayerActivity() : AppCompatActivity() {
                         binding.overlay.visibility = View.GONE
                     }
 
-                    BottomSheetBehavior.STATE_COLLAPSED->{
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
                         binding.overlay.visibility = View.VISIBLE
+                        viewModel.getAllPlaylist()
+
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            viewModel.state.collect { state ->
+                                when (state) {
+                                    is PlaylistState.Empty -> {
+                                        //binding.linearLayout.visibility = View.VISIBLE
+                                    }
+                                    is PlaylistState.PlaylistLoaded -> {
+                                        val tracks = state.tracks.map { it.toPlaylistModel() }
+                                        playlistAdapter.setTrackList(tracks)
+                                    }
+                                }
+                            }
+                        }
                     }
                     else -> {
                         binding.overlay.visibility = View.VISIBLE
@@ -66,19 +91,26 @@ class AudioPlayerActivity() : AppCompatActivity() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding.overlay.alpha = slideOffset+1f
+                binding.overlay.alpha = slideOffset + 1f
             }
         })
+
+        binding.bottomSheetContainer.newPlayList.setOnClickListener {
+            findNavController().navigate(R.id.action_audioPlayerFragment_to_addFragment)
+        }
 
         binding.playlistFab.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         binding.trackNamePlayer.isSelected = true
+
+
         val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra(Const.PUT_EXTRA_TRACK, Track::class.java)
+            arguments?.getSerializable(Const.PUT_EXTRA_TRACK, Track::class.java)
         } else {
-            @Suppress("DEPRECATION") intent.getSerializableExtra(Const.PUT_EXTRA_TRACK) as Track
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable(Const.PUT_EXTRA_TRACK) as Track?
         }
 
         binding.favoriteFab.setOnClickListener {
@@ -87,7 +119,7 @@ class AudioPlayerActivity() : AppCompatActivity() {
             }
         }
 
-        viewModel.isFavorite.observe(this) { isFavorite ->
+        viewModel.isFavorite.observe(viewLifecycleOwner) { isFavorite ->
             binding.favoriteFab.setImageResource(
                 if (isFavorite) R.drawable.filled_heart else R.drawable.favorite_button
             )
@@ -97,7 +129,7 @@ class AudioPlayerActivity() : AppCompatActivity() {
             viewModel.playbackControl()
         }
 
-        viewModel.playerState.observe(this) { state ->
+        viewModel.playerState.observe(viewLifecycleOwner) { state ->
             Log.e("State", state.toString())
             when (state) {
                 is PlayerState.Idle -> {
@@ -134,7 +166,7 @@ class AudioPlayerActivity() : AppCompatActivity() {
             }
         }
 
-        viewModel.playbackTime.observe(this) { playbackTime ->
+        viewModel.playbackTime.observe(viewLifecycleOwner) { playbackTime ->
             if (!playbackTime.isNullOrEmpty()) {
                 binding.timeTrack.text = playbackTime
             }
@@ -143,7 +175,7 @@ class AudioPlayerActivity() : AppCompatActivity() {
         if (track != null) {
             viewModel.preparePlayer(track)
 
-            Glide.with(this)
+            Glide.with(requireContext())
                 .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
                 .placeholder(R.drawable.placeholder)
                 .centerCrop()
@@ -163,38 +195,23 @@ class AudioPlayerActivity() : AppCompatActivity() {
         viewModel.pausePlayer()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.onCleared()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun darkOrLightTheme() {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        when (currentNightMode) {
-            Configuration.UI_MODE_NIGHT_NO -> {
-                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_color)
-            }
-            Configuration.UI_MODE_NIGHT_YES -> {
-                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_color)
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun setFabIcon(isPlaying: Boolean) {
-        binding.playFab.foreground =
-            ResourcesCompat.getDrawable(
-                resources,
-                if (isPlaying) R.drawable.pause_button else R.drawable.play_button,
-                null
-            )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            binding.playFab.foreground =
+                ResourcesCompat.getDrawable(
+                    resources,
+                    if (isPlaying) R.drawable.pause_button else R.drawable.play_button,
+                    null
+                )
+        }
+    }
 
+    override fun onClick(playlistModel: PlaylistModel) {
+        // Handle playlist item click here
     }
 }

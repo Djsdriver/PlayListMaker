@@ -27,6 +27,7 @@ val playerModule = module {
             removeTrackFromFavouriteUseCase = get(),
             addTrackToFavouriteUseCase = get(),
             getFavoriteIdsUseCase = get(),
+            getAllPlaylistToListUseCase = get()
         )
     }
 }

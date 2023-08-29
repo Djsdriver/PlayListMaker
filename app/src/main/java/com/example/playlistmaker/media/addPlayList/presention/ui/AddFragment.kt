@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
@@ -62,6 +63,7 @@ class AddFragment : Fragment() {
             }
             setPositiveButton(this@AddFragment.resources.getText(R.string.finish)) { dialog, which ->
                 findNavController().navigateUp()
+
             }
         }
 
@@ -71,7 +73,7 @@ class AddFragment : Fragment() {
                 || binding.descriptionEditText.text.toString().isNotEmpty()){
                 confirmDialog.show()
             } else{
-                findNavController().popBackStack()
+                findNavController().navigateUp()
             }
 
         }
@@ -96,22 +98,22 @@ class AddFragment : Fragment() {
 
 
         binding.btnCreatePlaylist.setOnClickListener {
-            val message = try {
                 if (uriImage == null) {
 
                 } else {
                     saveImageToPrivateStorage(uriImage!!, addPlaylistToDatabase())
                     //addPlaylistToDatabase()
-                }
 
-                this.resources.getString(R.string.playlist_created, binding.namePlaylistEditText.text)
-            } catch (e: Exception) {
-                "error"
-            }
+
+                }
+               val message= this.resources.getString(R.string.playlist_created, binding.namePlaylistEditText.text)
+            findNavController().navigateUp()
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack()
+            }
+
+
         }
-    }
+
     private fun addPlaylistToDatabase(): String {
         val name = binding.namePlaylistEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
@@ -145,4 +147,6 @@ class AddFragment : Fragment() {
     }
 
 
+
 }
+

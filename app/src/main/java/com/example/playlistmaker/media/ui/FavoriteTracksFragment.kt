@@ -8,14 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
-import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.common.TrackAdapter
+import com.example.playlistmaker.player.ui.AudioPlayerFragment
 import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.utility.toTrack
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -73,9 +74,13 @@ class FavoriteTracksFragment : Fragment(), TrackAdapter.ClickListener {
 
 
     override fun onClick(track: Track) {
-        startActivity(Intent(requireContext(), AudioPlayerActivity::class.java).apply {
-            putExtra(Const.PUT_EXTRA_TRACK, track)
-        })
+        val bundle = Bundle().apply {
+            putSerializable(Const.PUT_EXTRA_TRACK, track)
+        }
+        val audioPlayerFragment = AudioPlayerFragment().apply {
+            arguments = bundle
+        }
+        findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
     }
 
     companion object {
