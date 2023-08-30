@@ -35,8 +35,12 @@ import java.util.Locale
 class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
 
 
-    private var _binding: FragmentAudioplayerBinding? = null
-    private val binding get() = _binding!!
+    /*private var _binding: FragmentAudioplayerBinding? = null
+    private val binding get() = _binding!!*/
+
+    private val binding: FragmentAudioplayerBinding by lazy {
+        FragmentAudioplayerBinding.inflate(layoutInflater)
+    }
 
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
@@ -46,12 +50,15 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
     private var track: Track? = null
     private var currentPlaylistId: Long? = null
 
+    val bottomSheetBehavior get()  = BottomSheetBehavior.from(binding.bottomSheetContainer.bottomSheet).apply {
+        state = BottomSheetBehavior.STATE_HIDDEN
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAudioplayerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -61,9 +68,10 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
         binding.bottomSheetContainer.rvPlaylists.layoutManager = LinearLayoutManager(requireContext())
         binding.bottomSheetContainer.rvPlaylists.adapter = playlistAdapter
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetContainer.bottomSheet).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
+        binding.toolbarPlayer.setOnClickListener {
+                findNavController().navigateUp()
+            }
+
 
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
 
@@ -205,7 +213,8 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        //_binding = null
+       // binding = null
     }
 
     private fun setFabIcon(isPlaying: Boolean) {
@@ -227,16 +236,18 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
             arguments?.getSerializable(Const.PUT_EXTRA_TRACK) as Track?
         }
                 track?.let {
-                    if (playlistModel.tracksId.isNotEmpty() && playlistModel.tracksId[0].trackName == track.trackName) {
-                        Toast.makeText(requireContext(), "Track already exists in the playlist", Toast.LENGTH_SHORT).show()
+                    if (playlistModel.tracksId.isNotEmpty() && playlistModel.tracksId[0].trackId == track.trackId) {
+                        Toast.makeText(requireContext(), "Трек уже добавлен в ${playlistModel.name} плейлист", Toast.LENGTH_SHORT).show()
 
                     } else {
                         playlistModel.tracksId.add(0,it.toTrackEntity())
                         viewModel.addTrackToPlaylist(playlistModel)
-                        Toast.makeText(requireContext(), "Track added", Toast.LENGTH_SHORT).show()
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        Toast.makeText(requireContext(), "Трек добавлен в ${playlistModel.name} плейлист", Toast.LENGTH_SHORT).show()
                     }
                 }
 
         Log.d("tracks", "${playlistModel.tracksId.size}")
+        playlistAdapter.notifyDataSetChanged()
     }
 }

@@ -102,7 +102,7 @@ class AddFragment : Fragment() {
 
                 } else {
                     saveImageToPrivateStorage(uriImage!!, addPlaylistToDatabase())
-                    //addPlaylistToDatabase()
+
 
 
                 }

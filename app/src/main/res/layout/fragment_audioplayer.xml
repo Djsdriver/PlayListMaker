@@ -18,16 +18,6 @@
             android:layout_height="wrap_content"
             tools:context=".player.ui.AudioPlayerActivity">
 
-            <androidx.fragment.app.FragmentContainerView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                >
-
-            </androidx.fragment.app.FragmentContainerView>
 
 
             <androidx.constraintlayout.widget.Guideline
@@ -44,7 +34,7 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.95" />
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar_player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,7 +45,9 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:showAsAction="always"
-                app:title=" " />
+                app:navigationIcon="@drawable/back_arrow"
+                app:navigationIconTint="@color/black_mode"
+                app:title="" />
 
 
             <ImageView
