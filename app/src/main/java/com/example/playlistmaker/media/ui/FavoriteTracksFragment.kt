@@ -80,7 +80,7 @@ class FavoriteTracksFragment : Fragment(), TrackAdapter.ClickListener {
         val audioPlayerFragment = AudioPlayerFragment().apply {
             arguments = bundle
         }
-        findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
+        findNavController().navigate(R.id.action_mediatekaFragment_to_audioPlayerFragment, bundle)
     }
 
     companion object {

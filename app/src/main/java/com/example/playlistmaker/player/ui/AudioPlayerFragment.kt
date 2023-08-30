@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -17,11 +18,14 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentAudioplayerBinding
 import com.example.playlistmaker.media.addPlayList.domain.models.PlaylistModel
 import com.example.playlistmaker.media.addPlayList.presention.ui.PlaylistAdapter
+import com.example.playlistmaker.media.data.db.TrackEntity
 import com.example.playlistmaker.media.ui.PlaylistState
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utility.Const
+import com.example.playlistmaker.utility.toPlaylistEntity
 import com.example.playlistmaker.utility.toPlaylistModel
+import com.example.playlistmaker.utility.toTrackEntity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -37,6 +41,10 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
     private val playlistAdapter = PlaylistAdapter(this, false)
+
+    private var trackEntity: TrackEntity? = null
+    private var track: Track? = null
+    private var currentPlaylistId: Long? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -212,6 +220,23 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
     }
 
     override fun onClick(playlistModel: PlaylistModel) {
-        // Handle playlist item click here
+        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable(Const.PUT_EXTRA_TRACK, Track::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable(Const.PUT_EXTRA_TRACK) as Track?
+        }
+                track?.let {
+                    if (playlistModel.tracksId.isNotEmpty() && playlistModel.tracksId[0].trackName == track.trackName) {
+                        Toast.makeText(requireContext(), "Track already exists in the playlist", Toast.LENGTH_SHORT).show()
+
+                    } else {
+                        playlistModel.tracksId.add(0,it.toTrackEntity())
+                        viewModel.addTrackToPlaylist(playlistModel)
+                        Toast.makeText(requireContext(), "Track added", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+        Log.d("tracks", "${playlistModel.tracksId.size}")
     }
 }

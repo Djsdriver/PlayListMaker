@@ -124,7 +124,7 @@ class AddFragment : Fragment() {
             name = name,
             description = description,
             imagePath = generationName,
-            tracksId = emptyList(),
+            tracksId = mutableListOf(),
             trackCount = 0
         )
         )

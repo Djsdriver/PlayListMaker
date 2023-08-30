@@ -2,6 +2,8 @@ package com.example.playlistmaker.media.addPlayList.domain.repository
 
 
 import com.example.playlistmaker.media.addPlayList.data.db.PlaylistEntity
+import com.example.playlistmaker.media.addPlayList.domain.models.PlaylistModel
+import com.example.playlistmaker.media.data.db.TrackEntity
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistRepository {
@@ -9,4 +11,6 @@ interface PlaylistRepository {
     fun getAllPlaylists(): Flow<List<PlaylistEntity>>
 
     suspend fun insertPlaylist(playlist: PlaylistEntity)
+
+    suspend fun updatePlaylist(playlistModel: PlaylistModel)
 }
