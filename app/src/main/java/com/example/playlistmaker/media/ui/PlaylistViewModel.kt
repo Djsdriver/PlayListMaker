@@ -12,22 +12,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
-    private val insertPlaylistToDatabaseUseCase: InsertPlayListToDatabaseUseCase,
     private val getAllPlaylistToListUseCase: GetAllPlaylistToListUseCase
     ) : ViewModel() {
 
-
     private val _state = MutableStateFlow<PlaylistState>(PlaylistState.Empty)
     val state: StateFlow<PlaylistState> = _state
-
-    fun insertPlaylistToDatabase(playlist: PlaylistEntity) {
-        viewModelScope.launch {
-            insertPlaylistToDatabaseUseCase.invoke(playlist)
-        }
-    }
-
-
-
 
     fun getAllPlaylist() {
         viewModelScope.launch {
@@ -40,11 +29,6 @@ class PlaylistViewModel(
             }
         }
 
-    }
-
-
-    fun generateImageNameForStorage(): String {
-       return "cover_${System.currentTimeMillis()}.jpg"
     }
 
 }

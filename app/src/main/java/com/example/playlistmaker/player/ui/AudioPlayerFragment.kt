@@ -23,9 +23,7 @@ import com.example.playlistmaker.media.ui.PlaylistState
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utility.Const
-import com.example.playlistmaker.utility.toPlaylistEntity
 import com.example.playlistmaker.utility.toPlaylistModel
-import com.example.playlistmaker.utility.toTrackEntity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -235,19 +233,18 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
             @Suppress("DEPRECATION")
             arguments?.getSerializable(Const.PUT_EXTRA_TRACK) as Track?
         }
-                track?.let {
-                    if (playlistModel.tracksId.isNotEmpty() && playlistModel.tracksId[0].trackId == track.trackId) {
-                        Toast.makeText(requireContext(), "Трек уже добавлен в ${playlistModel.name} плейлист", Toast.LENGTH_SHORT).show()
 
-                    } else {
-                        playlistModel.tracksId.add(0,it.toTrackEntity())
-                        viewModel.addTrackToPlaylist(playlistModel)
-                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                        Toast.makeText(requireContext(), "Трек добавлен в ${playlistModel.name} плейлист", Toast.LENGTH_SHORT).show()
-                    }
-                }
+        val isTrackAlreadyAdded = playlistModel.tracksId.any { it.trackId == track?.trackId }
 
-        Log.d("tracks", "${playlistModel.tracksId.size}")
+        if (isTrackAlreadyAdded) {
+            Toast.makeText(requireContext(), "Трек уже добавлен в ${playlistModel.name} плейлист", Toast.LENGTH_SHORT).show()
+        } else {
+            track?.let { playlistModel.tracksId.add(it) }
+            viewModel.updatePlaylist(playlistModel)
+            Toast.makeText(requireContext(), "Трек добавлен в ${playlistModel.name} плейлист", Toast.LENGTH_SHORT).show()
+        }
+
         playlistAdapter.notifyDataSetChanged()
     }
 }
+

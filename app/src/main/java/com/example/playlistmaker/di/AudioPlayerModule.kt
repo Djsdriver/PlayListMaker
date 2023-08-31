@@ -1,7 +1,6 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.media.addPlayList.domain.repository.PlaylistRepository
-import com.example.playlistmaker.media.addPlayList.domain.usecase.AddTrackToPlaylistUseCase
+import com.example.playlistmaker.media.addPlayList.domain.usecase.UpdatePlaylistUseCase
 import com.example.playlistmaker.player.data.repository.AudioPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.usecase.*
@@ -17,7 +16,7 @@ val playerModule = module {
     factory { PrepareUseCase(audioPlayerRepository = get()) }
     factory { StartPlayerUseCase(audioPlayerRepository = get()) }
     factory { GetCurrentTimeUseCase(audioPlayerRepository = get()) }
-    factory { AddTrackToPlaylistUseCase(playlistRepository = get()) }
+    factory { UpdatePlaylistUseCase(playlistRepository = get()) }
     viewModel {
         AudioPlayerViewModel(
             getCurrentStateUseCase = get(),
@@ -31,7 +30,7 @@ val playerModule = module {
             addTrackToFavouriteUseCase = get(),
             getFavoriteIdsUseCase = get(),
             getAllPlaylistToListUseCase = get(),
-            addTrackToPlaylistUseCase = get()
+            updatePlaylistUseCase = get()
         )
     }
 }

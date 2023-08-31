@@ -33,6 +33,7 @@ class AddFragment : Fragment() {
 
     private lateinit var binding: FragmentNewPlaylistBinding
     private val playlistViewModel by viewModel<PlaylistViewModel>()
+    private val addFragmentViewModel by viewModel<AddFragmentViewModel>()
     private var uriImage: Uri? = null
     lateinit var confirmDialog: MaterialAlertDialogBuilder
 
@@ -117,9 +118,9 @@ class AddFragment : Fragment() {
     private fun addPlaylistToDatabase(): String {
         val name = binding.namePlaylistEditText.text.toString()
         val description = binding.descriptionEditText.text.toString()
-        val generationName= "$name-${playlistViewModel.generateImageNameForStorage()}"
+        val generationName= "$name-${addFragmentViewModel.generateImageNameForStorage()}"
 
-        playlistViewModel.insertPlaylistToDatabase(
+        addFragmentViewModel.insertPlaylistToDatabase(
             PlaylistEntity(
             name = name,
             description = description,

@@ -8,7 +8,7 @@
     android:orientation="vertical"
     card_view:cardElevation="5dp"
     android:paddingStart="8dp"
-    android:paddingEnd="8dp">
+    >
 
     <androidx.cardview.widget.CardView
         android:layout_width="160dp"

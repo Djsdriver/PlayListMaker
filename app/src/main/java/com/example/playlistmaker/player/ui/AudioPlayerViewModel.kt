@@ -6,9 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.addPlayList.domain.models.PlaylistModel
-import com.example.playlistmaker.media.addPlayList.domain.usecase.AddTrackToPlaylistUseCase
+import com.example.playlistmaker.media.addPlayList.domain.usecase.UpdatePlaylistUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.GetAllPlaylistToListUseCase
-import com.example.playlistmaker.media.data.db.TrackEntity
 import com.example.playlistmaker.media.domain.usecase.RemoveTrackFromFavouriteUseCase
 import com.example.playlistmaker.media.domain.usecase.GetFavoriteIdsUseCase
 import com.example.playlistmaker.media.domain.usecase.AddTrackToFavouriteUseCase
@@ -38,7 +37,7 @@ class AudioPlayerViewModel(
     private val getFavoriteIdsUseCase: GetFavoriteIdsUseCase,
     private val addTrackToFavouriteUseCase: AddTrackToFavouriteUseCase,
     private val getAllPlaylistToListUseCase: GetAllPlaylistToListUseCase,
-    private val addTrackToPlaylistUseCase: AddTrackToPlaylistUseCase
+    private val updatePlaylistUseCase: UpdatePlaylistUseCase
 
     ) : ViewModel() {
 
@@ -72,9 +71,9 @@ class AudioPlayerViewModel(
     }
 
 
-    fun addTrackToPlaylist(playlistModel: PlaylistModel) {
+    fun updatePlaylist(playlistModel: PlaylistModel) {
         viewModelScope.launch {
-            addTrackToPlaylistUseCase(playlistModel)
+            updatePlaylistUseCase(playlistModel)
         }
     }
 
