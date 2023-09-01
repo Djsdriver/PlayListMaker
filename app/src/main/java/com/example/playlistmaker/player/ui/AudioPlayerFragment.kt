@@ -33,20 +33,14 @@ import java.util.Locale
 class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
 
 
-    /*private var _binding: FragmentAudioplayerBinding? = null
-    private val binding get() = _binding!!*/
-
     private val binding: FragmentAudioplayerBinding by lazy {
         FragmentAudioplayerBinding.inflate(layoutInflater)
     }
 
     private val viewModel by viewModel<AudioPlayerViewModel>()
+    private var track: Track?=null
 
     private val playlistAdapter = PlaylistAdapter(this, false)
-
-    private var trackEntity: TrackEntity? = null
-    private var track: Track? = null
-    private var currentPlaylistId: Long? = null
 
     val bottomSheetBehavior get()  = BottomSheetBehavior.from(binding.bottomSheetContainer.bottomSheet).apply {
         state = BottomSheetBehavior.STATE_HIDDEN
@@ -120,7 +114,7 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
         binding.trackNamePlayer.isSelected = true
 
 
-        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getSerializable(Const.PUT_EXTRA_TRACK, Track::class.java)
         } else {
             @Suppress("DEPRECATION")
@@ -129,7 +123,7 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
 
         binding.favoriteFab.setOnClickListener {
             if (track != null) {
-                viewModel.onFavoriteClicked(track)
+                viewModel.onFavoriteClicked(track!!)
             }
         }
 
@@ -187,10 +181,10 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
         }
 
         if (track != null) {
-            viewModel.preparePlayer(track)
+            viewModel.preparePlayer(track!!)
 
             Glide.with(requireContext())
-                .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
+                .load(track!!.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
                 .placeholder(R.drawable.placeholder)
                 .centerCrop()
                 .transform(
@@ -227,20 +221,16 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
     }
 
     override fun onClick(playlistModel: PlaylistModel) {
-        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable(Const.PUT_EXTRA_TRACK, Track::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            arguments?.getSerializable(Const.PUT_EXTRA_TRACK) as Track?
-        }
-
         val isTrackAlreadyAdded = playlistModel.tracksId.any { it.trackId == track?.trackId }
 
         if (isTrackAlreadyAdded) {
             Toast.makeText(requireContext(), "Трек уже добавлен в ${playlistModel.name} плейлист", Toast.LENGTH_SHORT).show()
+            bottomSheetBehavior.state=BottomSheetBehavior.STATE_HIDDEN
+
         } else {
             track?.let { playlistModel.tracksId.add(it) }
             viewModel.updatePlaylist(playlistModel)
+            bottomSheetBehavior.state=BottomSheetBehavior.STATE_HIDDEN
             Toast.makeText(requireContext(), "Трек добавлен в ${playlistModel.name} плейлист", Toast.LENGTH_SHORT).show()
         }
 

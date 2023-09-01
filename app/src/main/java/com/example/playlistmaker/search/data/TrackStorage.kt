@@ -10,7 +10,5 @@ interface TrackStorage {
 
     fun clearHistoryList()
 
-    //fun addTrack(track: Track)
-
     fun saveTrackHistoryList(historyList: ArrayList<Track>)
 }

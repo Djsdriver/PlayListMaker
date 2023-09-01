@@ -16,7 +16,7 @@ val playlist = module {
         PlaylistViewModel(get())
     }
 
-    single<PlaylistRepository> { PlaylistRepositoryImpl(get()) }
+    single<PlaylistRepository> { PlaylistRepositoryImpl(get(),get()) }
 
 
     factory { InsertPlayListToDatabaseUseCase (get()) }

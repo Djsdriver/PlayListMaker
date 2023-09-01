@@ -32,7 +32,6 @@ import java.io.FileOutputStream
 class AddFragment : Fragment() {
 
     private lateinit var binding: FragmentNewPlaylistBinding
-    private val playlistViewModel by viewModel<PlaylistViewModel>()
     private val addFragmentViewModel by viewModel<AddFragmentViewModel>()
     private var uriImage: Uri? = null
     lateinit var confirmDialog: MaterialAlertDialogBuilder
@@ -68,7 +67,6 @@ class AddFragment : Fragment() {
             }
         }
 
-
         binding.toolbarNewPlaylistCreate.setOnClickListener {
             if (binding.namePlaylistEditText.text.toString().isNotEmpty()
                 || binding.descriptionEditText.text.toString().isNotEmpty()){
@@ -102,10 +100,7 @@ class AddFragment : Fragment() {
                 if (uriImage == null) {
 
                 } else {
-                    saveImageToPrivateStorage(uriImage!!, addPlaylistToDatabase())
-
-
-
+                    addFragmentViewModel.saveImageToPrivateStorage(uriImage!!,addPlaylistToDatabase())
                 }
                val message= this.resources.getString(R.string.playlist_created, binding.namePlaylistEditText.text)
             findNavController().navigateUp()
@@ -131,22 +126,6 @@ class AddFragment : Fragment() {
         )
         return generationName
     }
-
-
-    private fun saveImageToPrivateStorage(uri: Uri, nameOfImage: String) {
-        val filePath =
-            File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),"my_album")
-        if (!filePath.exists()) {
-            filePath.mkdirs()
-        }
-        val file = File(filePath, nameOfImage)
-        val inputStream = requireActivity().contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(file)
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
-    }
-
 
 
 }
