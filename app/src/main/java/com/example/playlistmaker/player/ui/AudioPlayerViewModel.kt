@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.media.addPlayList.domain.models.PlaylistModel
+import com.example.playlistmaker.media.domain.models.PlaylistModel
 import com.example.playlistmaker.media.addPlayList.domain.usecase.UpdatePlaylistUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.GetAllPlaylistToListUseCase
 import com.example.playlistmaker.media.domain.usecase.RemoveTrackFromFavouriteUseCase

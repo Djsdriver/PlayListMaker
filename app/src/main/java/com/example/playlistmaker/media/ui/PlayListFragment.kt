@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 
 import com.example.playlistmaker.databinding.FragmentPlayListBinding
-import com.example.playlistmaker.media.addPlayList.domain.models.PlaylistModel
+import com.example.playlistmaker.media.domain.models.PlaylistModel
 import com.example.playlistmaker.media.addPlayList.presention.ui.PlaylistAdapter
 import com.example.playlistmaker.utility.toPlaylistModel
 import kotlinx.coroutines.launch

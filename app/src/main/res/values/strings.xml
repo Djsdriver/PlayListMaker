@@ -50,6 +50,8 @@
     <string name="cancel">Отмена</string>
     <string name="finish">Завершить</string>
     <string name="playlist_created">Создан</string>
+    <string name="textNewPlaylist">Новый плейлист</string>
+    <string name="textButtonNewPlaylist">Создать</string>
 
 
 </resources>

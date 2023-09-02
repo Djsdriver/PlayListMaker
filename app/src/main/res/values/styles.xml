@@ -253,4 +253,9 @@
         <item name="backgroundTint">@color/color_states_material_button</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.AppCompat.ImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">32dp</item>
+    </style>
+
 </resources>

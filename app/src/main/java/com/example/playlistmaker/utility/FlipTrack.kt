@@ -1,10 +1,9 @@
 package com.example.playlistmaker.utility
 
 import com.example.playlistmaker.media.addPlayList.data.db.PlaylistEntity
-import com.example.playlistmaker.media.addPlayList.domain.models.PlaylistModel
+import com.example.playlistmaker.media.domain.models.PlaylistModel
 import com.example.playlistmaker.media.data.db.TrackEntity
 import com.example.playlistmaker.search.domain.models.Track
-import java.util.Calendar
 import java.util.Date
 
 fun Track.toTrackEntity(): TrackEntity {

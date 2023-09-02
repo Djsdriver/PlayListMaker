@@ -1,6 +1,7 @@
 package com.example.playlistmaker.media.addPlayList.presention.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -68,8 +69,7 @@ class AddFragment : Fragment() {
         }
 
         binding.toolbarNewPlaylistCreate.setOnClickListener {
-            if (binding.namePlaylistEditText.text.toString().isNotEmpty()
-                || binding.descriptionEditText.text.toString().isNotEmpty()){
+            if (checkIfThereAreUnsavedData()){
                 confirmDialog.show()
             } else{
                 findNavController().navigateUp()
@@ -98,7 +98,7 @@ class AddFragment : Fragment() {
 
         binding.btnCreatePlaylist.setOnClickListener {
                 if (uriImage == null) {
-
+                    Toast.makeText(requireContext(),"Вы забыли выбрать картинку",Toast.LENGTH_LONG).show()
                 } else {
                     addFragmentViewModel.saveImageToPrivateStorage(uriImage!!,addPlaylistToDatabase())
                 }
@@ -125,6 +125,30 @@ class AddFragment : Fragment() {
         )
         )
         return generationName
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                myHandleOnBackPressed()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
+
+    private fun myHandleOnBackPressed() {
+        if (checkIfThereAreUnsavedData()) {
+            confirmDialog.show()
+        } else {
+            findNavController().popBackStack()
+        }
+    }
+
+    private fun checkIfThereAreUnsavedData(): Boolean {
+        return (uriImage != null
+                || binding.namePlaylistEditText.text.toString().isNotEmpty()
+                || binding.descriptionEditText.text.toString().isNotEmpty())
     }
 
 

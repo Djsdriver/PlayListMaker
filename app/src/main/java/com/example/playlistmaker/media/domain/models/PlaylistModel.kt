@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.addPlayList.domain.models
+package com.example.playlistmaker.media.domain.models
 
 import androidx.room.PrimaryKey
 import com.example.playlistmaker.media.data.db.TrackEntity

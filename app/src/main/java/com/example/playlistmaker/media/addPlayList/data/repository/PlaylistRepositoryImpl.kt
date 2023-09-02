@@ -8,12 +8,10 @@ import android.net.Uri
 import android.os.Environment
 import com.example.playlistmaker.media.addPlayList.data.db.AppDatabasePlayList
 import com.example.playlistmaker.media.addPlayList.data.db.PlaylistEntity
-import com.example.playlistmaker.media.addPlayList.domain.models.PlaylistModel
+import com.example.playlistmaker.media.domain.models.PlaylistModel
 import com.example.playlistmaker.media.addPlayList.domain.repository.PlaylistRepository
-import com.example.playlistmaker.media.data.db.TrackEntity
 import com.example.playlistmaker.utility.toPlaylistEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import java.io.File
 import java.io.FileOutputStream
 
