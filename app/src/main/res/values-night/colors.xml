@@ -38,5 +38,8 @@
 
     <color name="backgroundBottomView">#1A1B22</color>
 
+    <color name="white_mode">#1A1B22</color>
+
+
 
 </resources>

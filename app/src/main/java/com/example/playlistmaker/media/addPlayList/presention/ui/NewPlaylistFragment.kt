@@ -2,11 +2,8 @@ package com.example.playlistmaker.media.addPlayList.presention.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,22 +17,21 @@ import androidx.core.widget.doOnTextChanged
 
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.media.addPlayList.data.db.PlaylistEntity
-import com.example.playlistmaker.media.ui.PlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
-import java.io.FileOutputStream
 
 
-class AddFragment : Fragment() {
 
-    private lateinit var binding: FragmentNewPlaylistBinding
-    private val addFragmentViewModel by viewModel<AddFragmentViewModel>()
+class NewPlaylistFragment : Fragment() {
+
+    private var _binding: FragmentNewPlaylistBinding? = null
+    private val binding get() = _binding!!
+    private val newPlaylistFragmentViewModel by viewModel<NewPlaylistFragmentViewModel>()
     private var uriImage: Uri? = null
-    lateinit var confirmDialog: MaterialAlertDialogBuilder
 
 
 
@@ -43,8 +39,7 @@ class AddFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding=FragmentNewPlaylistBinding.inflate(inflater,container,false)
-        // Inflate the layout for this fragment
+        _binding=FragmentNewPlaylistBinding.inflate(inflater,container,false)
         return binding.root
     }
 
@@ -52,25 +47,18 @@ class AddFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        newPlaylistFragmentViewModel.uriImage.observe(viewLifecycleOwner) { uri ->
+            uriImage = uri
+        }
 
         binding.namePlaylistEditText.doOnTextChanged { s, _, _, _ ->
             binding.btnCreatePlaylist.isEnabled = s?.isNotEmpty() == true
         }
 
-        confirmDialog = MaterialAlertDialogBuilder(requireContext()).apply {
-            setTitle(this@AddFragment.resources.getText(R.string.quitting_question))
-            setMessage(this@AddFragment.resources.getText(R.string.unsaved_data_caution))
-            setNegativeButton(this@AddFragment.resources.getText(R.string.cancel)) { dialog, which ->
-            }
-            setPositiveButton(this@AddFragment.resources.getText(R.string.finish)) { dialog, which ->
-                findNavController().navigateUp()
-
-            }
-        }
 
         binding.toolbarNewPlaylistCreate.setOnClickListener {
             if (checkIfThereAreUnsavedData()){
-                confirmDialog.show()
+                showDialog()
             } else{
                 findNavController().navigateUp()
             }
@@ -82,7 +70,8 @@ class AddFragment : Fragment() {
                 //обрабатываем событие выбора пользователем фотографии
                 if (uri != null) {
                     binding.imageNewPlaylistImage.setImageURI(uri)
-                    uriImage=uri
+                    newPlaylistFragmentViewModel.setUriImage(uri)
+
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
@@ -95,36 +84,29 @@ class AddFragment : Fragment() {
 
         }
 
-
         binding.btnCreatePlaylist.setOnClickListener {
-                if (uriImage == null) {
-                    Toast.makeText(requireContext(),"Вы забыли выбрать картинку",Toast.LENGTH_LONG).show()
-                } else {
-                    addFragmentViewModel.saveImageToPrivateStorage(uriImage!!,addPlaylistToDatabase())
-                }
-               val message= this.resources.getString(R.string.playlist_created, binding.namePlaylistEditText.text)
+            val name = binding.namePlaylistEditText.text.toString()
+            val description = binding.descriptionEditText.text.toString()
+
+            newPlaylistFragmentViewModel.addPlaylistToDatabase(name, description)
+
+            val message = resources.getString(R.string.playlist_created, name)
             findNavController().navigateUp()
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-            }
+        }
 
 
         }
 
-    private fun addPlaylistToDatabase(): String {
-        val name = binding.namePlaylistEditText.text.toString()
-        val description = binding.descriptionEditText.text.toString()
-        val generationName= "$name-${addFragmentViewModel.generateImageNameForStorage()}"
-
-        addFragmentViewModel.insertPlaylistToDatabase(
-            PlaylistEntity(
-            name = name,
-            description = description,
-            imagePath = generationName,
-            tracksId = mutableListOf(),
-            trackCount = 0
-        )
-        )
-        return generationName
+    private fun showDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(this@NewPlaylistFragment.resources.getText(R.string.quitting_question))
+            .setMessage(this@NewPlaylistFragment.resources.getText(R.string.unsaved_data_caution))
+            .setNegativeButton(this@NewPlaylistFragment.resources.getText(R.string.cancel)) { dialog, which ->
+            }
+            .setPositiveButton(this@NewPlaylistFragment.resources.getText(R.string.finish)) { dialog, which ->
+                findNavController().navigateUp()
+        }.show()
     }
 
     override fun onAttach(context: Context) {
@@ -139,16 +121,17 @@ class AddFragment : Fragment() {
 
     private fun myHandleOnBackPressed() {
         if (checkIfThereAreUnsavedData()) {
-            confirmDialog.show()
+            showDialog()
         } else {
             findNavController().popBackStack()
         }
     }
-
     private fun checkIfThereAreUnsavedData(): Boolean {
-        return (uriImage != null
-                || binding.namePlaylistEditText.text.toString().isNotEmpty()
-                || binding.descriptionEditText.text.toString().isNotEmpty())
+        return binding.namePlaylistEditText.text.toString().isNotEmpty()
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding=null
     }
 
 

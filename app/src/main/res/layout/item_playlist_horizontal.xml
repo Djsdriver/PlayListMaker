@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/ScreenBackgroundActivity"
+    android:background="@color/white_mode"
+    android:backgroundTint="@color/white_mode"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="8dp">
@@ -12,15 +13,16 @@
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:elevation="10dp"
         app:cardCornerRadius="8dp"
-        android:backgroundTint="@color/white">
+        app:cardElevation="0dp"
+        android:backgroundTint="@color/white_mode">
 
         <ImageView
             android:id="@+id/iv_playlist_big_image"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:scaleType="centerCrop">
+            android:scaleType="centerCrop"
+            android:backgroundTint="@color/white_mode">
 
         </ImageView>
 

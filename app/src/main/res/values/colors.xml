@@ -47,6 +47,8 @@
     <color name="gray">#AEAFB4</color>
     <color name="light_gray">#E6E8EB</color>
 
+    <color name="white_mode">#FFFFFF</color>
+
     <color name="mtrl_textinput_default_box_stroke_color" tools:ignore="PrivateResource">#AEAFB4</color>
 
 </resources>

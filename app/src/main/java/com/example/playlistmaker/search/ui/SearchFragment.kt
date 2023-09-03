@@ -240,14 +240,8 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
         searchViewModel.addTrack(track = track)
         searchViewModel.saveData(track)
         if (searchViewModel.clickDebounce()) {
-            /*startActivity(Intent(requireContext(), AudioPlayerActivity::class.java).apply {
-                putExtra(Const.PUT_EXTRA_TRACK, track)
-            })*/
             val bundle = Bundle().apply {
                 putSerializable(Const.PUT_EXTRA_TRACK, track)
-            }
-            val audioPlayerFragment = AudioPlayerFragment().apply {
-                arguments = bundle
             }
             findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
         }
@@ -273,6 +267,11 @@ class SearchFragment : Fragment(), TrackAdapter.ClickListener {
     override fun onPause() {
         super.onPause()
         binding.editTextSearch.text = null
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding=null
     }
 }
 

@@ -37,13 +37,14 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
     }
 
     private val viewModel by viewModel<AudioPlayerViewModel>()
-    private var track: Track?=null
+    private var track: Track? = null
 
     private val playlistAdapter = PlaylistAdapter(this, false)
 
-    val bottomSheetBehavior get()  = BottomSheetBehavior.from(binding.bottomSheetContainer.bottomSheet).apply {
-        state = BottomSheetBehavior.STATE_HIDDEN
-    }
+    val bottomSheetBehavior
+        get() = BottomSheetBehavior.from(binding.bottomSheetContainer.bottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,15 +57,17 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.bottomSheetContainer.rvPlaylists.layoutManager = LinearLayoutManager(requireContext())
+        binding.bottomSheetContainer.rvPlaylists.layoutManager =
+            LinearLayoutManager(requireContext())
         binding.bottomSheetContainer.rvPlaylists.adapter = playlistAdapter
 
         binding.toolbarPlayer.setOnClickListener {
-                findNavController().navigateUp()
-            }
+            findNavController().navigateUp()
+        }
 
 
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
 
@@ -83,6 +86,7 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
                                     is PlaylistState.Empty -> {
                                         //binding.linearLayout.visibility = View.VISIBLE
                                     }
+
                                     is PlaylistState.PlaylistLoaded -> {
                                         val tracks = state.tracks.map { it.toPlaylistModel() }
                                         playlistAdapter.setTrackList(tracks)
@@ -91,6 +95,7 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
                             }
                         }
                     }
+
                     else -> {
                         binding.overlay.visibility = View.VISIBLE
                     }
@@ -142,6 +147,7 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
                 is PlayerState.Idle -> {
                     setFabIcon(false)
                 }
+
                 is PlayerState.Prepared -> {
                     binding.timeTrack.text = Const.DEFAULT_TIME
                     setFabIcon(false)
@@ -155,19 +161,24 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
                     binding.country.text = state.track.country
 
                 }
+
                 is PlayerState.Playing -> {
                     setFabIcon(true)
                 }
+
                 is PlayerState.Paused -> {
                     setFabIcon(false)
                 }
+
                 is PlayerState.Progress -> {
 
                 }
+
                 is PlayerState.Completed -> {
                     setFabIcon(false)
                     binding.timeTrack.text = Const.DEFAULT_TIME
                 }
+
                 else -> {
                 }
             }
@@ -205,7 +216,7 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         //_binding = null
-       // binding = null
+        // binding = null
     }
 
     private fun setFabIcon(isPlaying: Boolean) {
@@ -220,20 +231,13 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
     }
 
     override fun onClick(playlistModel: PlaylistModel) {
-        val isTrackAlreadyAdded = playlistModel.tracksId.any { it.trackId == track?.trackId }
+        val isTrackAlreadyAdded = playlistModel.tracks.any { it.trackId == track?.trackId }
+        viewModel.onPlaylistClicked(playlistModel, isTrackAlreadyAdded, track)
+            viewModel.toastMessage.observe(viewLifecycleOwner) { message ->
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            }
 
-        if (isTrackAlreadyAdded) {
-            Toast.makeText(requireContext(), "Трек уже добавлен в ${playlistModel.name} плейлист", Toast.LENGTH_SHORT).show()
-            bottomSheetBehavior.state=BottomSheetBehavior.STATE_HIDDEN
-
-        } else {
-            track?.let { playlistModel.tracksId.add(it) }
-            viewModel.updatePlaylist(playlistModel)
-            bottomSheetBehavior.state=BottomSheetBehavior.STATE_HIDDEN
-            Toast.makeText(requireContext(), "Трек добавлен в ${playlistModel.name} плейлист", Toast.LENGTH_SHORT).show()
-        }
-
-        playlistAdapter.notifyDataSetChanged()
     }
 }
+
 

@@ -2,7 +2,7 @@ package com.example.playlistmaker.di
 
 import com.example.playlistmaker.media.addPlayList.domain.usecase.InsertPlayListToDatabaseUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.SaveImageToPrivateStorageUseCase
-import com.example.playlistmaker.media.addPlayList.presention.ui.AddFragmentViewModel
+import com.example.playlistmaker.media.addPlayList.presention.ui.NewPlaylistFragmentViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -10,7 +10,7 @@ import org.koin.dsl.module
 val addPlaylistModule = module {
 
     viewModel {
-        AddFragmentViewModel(get(),get())
+        NewPlaylistFragmentViewModel(get(),get())
     }
 
 

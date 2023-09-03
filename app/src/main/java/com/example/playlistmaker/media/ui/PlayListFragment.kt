@@ -44,10 +44,9 @@ class PlayListFragment : Fragment(), PlaylistAdapter.ClickListener {
 
         binding.recyclerPlaylist.adapter = playlistAdapter
 
-        viewModel.getAllPlaylist()
 
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.state.collect{state->
                 when (state){
                     is PlaylistState.Empty -> {
@@ -74,7 +73,6 @@ class PlayListFragment : Fragment(), PlaylistAdapter.ClickListener {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getAllPlaylist()
     }
 
     companion object {

@@ -44,6 +44,9 @@ class AudioPlayerViewModel(
     private val _playerState = MutableLiveData<PlayerState>()
     val playerState: LiveData<PlayerState> = _playerState
 
+    private val _toastMessage = MutableLiveData<String>()
+    val toastMessage: LiveData<String> = _toastMessage
+
     private val _playbackTime = MutableLiveData<String?>()
     val playbackTime: LiveData<String?> = _playbackTime
 
@@ -148,6 +151,7 @@ class AudioPlayerViewModel(
     fun onFavoriteClicked(track: Track) {
         viewModelScope.launch {
             if (track.isFavorite) {
+
                 removeTrackFromFavouriteUseCase.removeTrack(trackEntity = track.toTrackEntity())
             } else {
                 addTrackToFavouriteUseCase.addTrack(trackEntity = track.toTrackEntity())
@@ -158,6 +162,28 @@ class AudioPlayerViewModel(
     }
 
 
+
+
+    fun showTrackAddedToast(playlistName: String, track: Track?) {
+        val message = "Трек ${track?.trackName} добавлен в $playlistName плейлист"
+        _toastMessage.value = message
+    }
+
+    fun showTrackAlreadyAddedToast(playlistName: String,track: Track?) {
+        val message = "Трек ${track?.trackName} уже добавлен в $playlistName плейлист"
+        _toastMessage.value = message
+    }
+    fun onPlaylistClicked(playlistModel: PlaylistModel, isTrackAlreadyAdded: Boolean, track: Track?) {
+        if (isTrackAlreadyAdded) {
+            showTrackAlreadyAddedToast(playlistModel.name, track)
+        } else {
+            track?.let { playlistModel.tracks.add(it) }
+            updatePlaylist(playlistModel)
+            showTrackAddedToast(playlistModel.name, track)
+
+        }
+
+    }
 
     public override fun onCleared() {
         super.onCleared()

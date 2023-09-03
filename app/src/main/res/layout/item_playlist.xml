@@ -12,16 +12,16 @@
     <androidx.cardview.widget.CardView
         android:layout_width="160dp"
         android:layout_height="160dp"
-        android:elevation="10dp"
         app:cardCornerRadius="8dp"
-        android:backgroundTint="@color/white">
+        app:cardElevation="0dp"
+        android:backgroundTint="@color/white_mode">
 
         <ImageView
             android:id="@+id/iv_playlist_big_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/white"
+            android:background="@color/white_mode"
             android:scaleType="centerCrop"
             android:src="@drawable/placeholder" />
     </androidx.cardview.widget.CardView>

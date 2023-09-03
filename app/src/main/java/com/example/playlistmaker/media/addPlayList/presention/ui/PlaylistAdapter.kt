@@ -15,7 +15,7 @@ import com.example.playlistmaker.media.domain.models.PlaylistModel
 
 import java.io.File
 
-class PlaylistAdapter(val listenerItemPlaylist: ClickListener, private val isVertical: Boolean) :
+class PlaylistAdapter(private val listenerItemPlaylist: ClickListener, private val isVertical: Boolean) :
     RecyclerView.Adapter<PlaylistViewHolder>() {
     var tracks = ArrayList<PlaylistModel>()
 
@@ -55,12 +55,12 @@ class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(playlistModel: PlaylistModel, listenerItemPlaylist: PlaylistAdapter.ClickListener) {
         title.text = playlistModel.name
-        trackCount.text = "${playlistModel.tracksId.size} треков"
+        trackCount.text = trackCount.resources.getQuantityString(R.plurals.plural_tracks,playlistModel.tracks.size,playlistModel.tracks.size)
 
         val imageFile = File(filePath, playlistModel.imagePath)
         Glide.with(itemView)
             .load(imageFile)
-            .placeholder(R.drawable.ic_launcher_background)
+            .placeholder(R.drawable.placeholder)
             .transform(
                 RoundedCorners(
                     itemView.resources.getDimensionPixelSize(
@@ -70,6 +70,7 @@ class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             )
             .apply(
                 RequestOptions().override(
+                    1600,
                     1600
                 )
             )

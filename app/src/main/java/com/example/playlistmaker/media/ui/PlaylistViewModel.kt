@@ -18,18 +18,18 @@ class PlaylistViewModel(
     private val _state = MutableStateFlow<PlaylistState>(PlaylistState.Empty)
     val state: StateFlow<PlaylistState> = _state
 
-    fun getAllPlaylist() {
-        viewModelScope.launch {
-            getAllPlaylistToListUseCase.getAllTracks().collect { tracks ->
-                if (tracks.isNotEmpty()) {
-                    _state.value= PlaylistState.PlaylistLoaded(tracks)
-                } else {
-                    _state.value= PlaylistState.Empty
+    init {
+            viewModelScope.launch {
+                getAllPlaylistToListUseCase.getAllTracks().collect { tracks ->
+                    if (tracks.isNotEmpty()) {
+                        _state.value= PlaylistState.PlaylistLoaded(tracks)
+                    } else {
+                        _state.value= PlaylistState.Empty
+                    }
                 }
             }
-        }
-
     }
+
 
 }
 

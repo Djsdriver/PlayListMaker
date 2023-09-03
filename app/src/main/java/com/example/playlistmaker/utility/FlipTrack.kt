@@ -46,7 +46,7 @@ fun PlaylistModel.toPlaylistEntity(): PlaylistEntity {
         name= this.name,
         description= this.description,
         imagePath= this.imagePath,
-        tracksId = this.tracksId.map { track -> track.toTrackEntity() }.toMutableList(),
+        tracks = this.tracks.map { track -> track.toTrackEntity() }.toMutableList(),
         trackCount = this.trackCount
     )
 }
@@ -57,7 +57,7 @@ fun PlaylistEntity.toPlaylistModel(): PlaylistModel {
         name= this.name,
         description= this.description,
         imagePath= this.imagePath,
-        tracksId=this.tracksId.map { track -> track.toTrack() }.toMutableList(),
+        tracks=this.tracks.map { track -> track.toTrack() }.toMutableList(),
         trackCount=this.trackCount
 
     )
