@@ -14,6 +14,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
@@ -21,6 +22,7 @@ import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.media.addPlayList.data.db.PlaylistEntity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -88,11 +90,13 @@ class NewPlaylistFragment : Fragment() {
             val name = binding.namePlaylistEditText.text.toString()
             val description = binding.descriptionEditText.text.toString()
 
-            newPlaylistFragmentViewModel.addPlaylistToDatabase(name, description)
+            lifecycleScope.launch {
+                newPlaylistFragmentViewModel.createNewPlaylist(name = name, description = description)
 
-            val message = resources.getString(R.string.playlist_created, name)
-            findNavController().navigateUp()
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                val message = resources.getString(R.string.playlist_created, name)
+                findNavController().navigateUp()
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            }
         }
 
 

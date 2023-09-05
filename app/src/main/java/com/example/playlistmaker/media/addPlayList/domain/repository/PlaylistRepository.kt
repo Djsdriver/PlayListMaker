@@ -15,4 +15,6 @@ interface PlaylistRepository {
     suspend fun updatePlaylist(playlistModel: PlaylistModel)
 
     suspend fun saveImageToPrivateStorage(uri: Uri, nameOfImage: String): String
+
+    suspend fun createPlaylist(name: String, description: String, imagePath: String?)
 }

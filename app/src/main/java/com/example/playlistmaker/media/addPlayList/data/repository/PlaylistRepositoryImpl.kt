@@ -11,6 +11,7 @@ import com.example.playlistmaker.media.addPlayList.data.db.PlaylistEntity
 import com.example.playlistmaker.media.domain.models.PlaylistModel
 import com.example.playlistmaker.media.addPlayList.domain.repository.PlaylistRepository
 import com.example.playlistmaker.utility.toPlaylistEntity
+import com.example.playlistmaker.utility.toPlaylistModel
 import kotlinx.coroutines.flow.Flow
 import java.io.File
 import java.io.FileOutputStream
@@ -22,6 +23,18 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
     override suspend fun insertPlaylist(playlist: PlaylistEntity) {
         appDatabase.getPlaylistDao().insertPlaylist(playlist)
     }
+
+    override suspend fun createPlaylist(name: String, description: String, imagePath: String?) {
+        val playlist = PlaylistEntity(
+            name = name.toString(),
+            description = description.toString(),
+            imagePath = imagePath ?: "",
+            tracks = mutableListOf(),
+            trackCount = 0
+        )
+        insertPlaylist(playlist)
+    }
+
 
     override suspend fun updatePlaylist(playlistModel: PlaylistModel) {
         appDatabase.getPlaylistDao().updatePlaylist(playlistModel.toPlaylistEntity())
@@ -42,6 +55,7 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
 
         return  file.absolutePath
     }
+
 
 
 }
