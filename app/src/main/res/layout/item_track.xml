@@ -67,11 +67,12 @@
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_im_share"
+        android:id="@+id/button_next_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/backgroundTintButtonSetting"
         android:stateListAnimator="@null"
+        android:clickable="false"
         app:icon="@drawable/ic_baseline_navigate_next"
         app:iconGravity="end"
         app:iconTint="@color/iconColorSettingLayout"

@@ -5,9 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.media.domain.models.PlaylistModel
+import com.example.playlistmaker.media.addPlayList.domain.usecase.UpdatePlaylistUseCase
+import com.example.playlistmaker.media.addPlayList.domain.usecase.GetAllPlaylistToListUseCase
 import com.example.playlistmaker.media.domain.usecase.RemoveTrackFromFavouriteUseCase
 import com.example.playlistmaker.media.domain.usecase.GetFavoriteIdsUseCase
 import com.example.playlistmaker.media.domain.usecase.AddTrackToFavouriteUseCase
+import com.example.playlistmaker.media.ui.PlaylistState
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.domain.usecase.*
 import com.example.playlistmaker.search.domain.models.Track
@@ -15,6 +19,8 @@ import com.example.playlistmaker.utility.Const
 import com.example.playlistmaker.utility.toTrackEntity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,11 +36,16 @@ class AudioPlayerViewModel(
     private val removeTrackFromFavouriteUseCase: RemoveTrackFromFavouriteUseCase,
     private val getFavoriteIdsUseCase: GetFavoriteIdsUseCase,
     private val addTrackToFavouriteUseCase: AddTrackToFavouriteUseCase,
+    private val getAllPlaylistToListUseCase: GetAllPlaylistToListUseCase,
+    private val updatePlaylistUseCase: UpdatePlaylistUseCase
 
     ) : ViewModel() {
 
     private val _playerState = MutableLiveData<PlayerState>()
     val playerState: LiveData<PlayerState> = _playerState
+
+    private val _toastMessage = MutableLiveData<String>()
+    val toastMessage: LiveData<String> = _toastMessage
 
     private val _playbackTime = MutableLiveData<String?>()
     val playbackTime: LiveData<String?> = _playbackTime
@@ -45,6 +56,29 @@ class AudioPlayerViewModel(
     private var mediaPlayer: MediaPlayer? = null
 
     private var timerJob: Job? = null
+
+    private val _state = MutableStateFlow<PlaylistState>(PlaylistState.Empty)
+    val state: StateFlow<PlaylistState> = _state
+
+    fun getAllPlaylist() {
+        viewModelScope.launch {
+            getAllPlaylistToListUseCase.getAllTracks().collect { tracks ->
+                if (tracks.isNotEmpty()) {
+                    _state.value= PlaylistState.PlaylistLoaded(tracks)
+                } else {
+                    _state.value= PlaylistState.Empty
+                }
+            }
+        }
+
+    }
+
+
+    fun updatePlaylist(playlistModel: PlaylistModel) {
+        viewModelScope.launch {
+            updatePlaylistUseCase(playlistModel)
+        }
+    }
 
     fun preparePlayer(track: Track) {
         viewModelScope.launch {
@@ -117,6 +151,7 @@ class AudioPlayerViewModel(
     fun onFavoriteClicked(track: Track) {
         viewModelScope.launch {
             if (track.isFavorite) {
+
                 removeTrackFromFavouriteUseCase.removeTrack(trackEntity = track.toTrackEntity())
             } else {
                 addTrackToFavouriteUseCase.addTrack(trackEntity = track.toTrackEntity())
@@ -127,6 +162,28 @@ class AudioPlayerViewModel(
     }
 
 
+
+
+    fun showTrackAddedToast(playlistName: String, track: Track?) {
+        val message = "Трек ${track?.trackName} добавлен в $playlistName плейлист"
+        _toastMessage.value = message
+    }
+
+    fun showTrackAlreadyAddedToast(playlistName: String,track: Track?) {
+        val message = "Трек ${track?.trackName} уже добавлен в $playlistName плейлист"
+        _toastMessage.value = message
+    }
+    fun onPlaylistClicked(playlistModel: PlaylistModel, isTrackAlreadyAdded: Boolean, track: Track?) {
+        if (isTrackAlreadyAdded) {
+            showTrackAlreadyAddedToast(playlistModel.name, track)
+        } else {
+            track?.let { playlistModel.tracks.add(it) }
+            updatePlaylist(playlistModel)
+            showTrackAddedToast(playlistModel.name, track)
+
+        }
+
+    }
 
     public override fun onCleared() {
         super.onCleared()

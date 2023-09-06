@@ -20,6 +20,20 @@
         android:layout_marginTop="16dp"
         android:textAllCaps="false"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPlaylist"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/dimen_16dp"
+        android:layout_marginEnd="@dimen/dimen_16dp"
+        android:layout_marginTop="@dimen/dimen_16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newPlayList"
+        tools:listitem="@layout/item_track"/>
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"

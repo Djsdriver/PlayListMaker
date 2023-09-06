@@ -20,10 +20,23 @@
     <string name="textNitFound">Ничего не найдено</string>
     <string name="youSearch">Вы искали</string>
     <string name="messageIsEmptyListHistory">Здесь будет музыка, \n которую вы искали</string>
-    <string name="textButtonClearHistoryList">Очистить</string>
+    <string name="textButtonClearHistoryList">Очистить историю</string>
     <string name="durationTrackText">2:55</string>
     <string name="NewPlayListText">Новый плейлист</string>
     <string name="playListNotFound">Вы не создали \n ни одного плейлиста</string>
     <string name="favorityTrackNotFound">Ваша медиатека пуста</string>
     <string name="noInternet">Отсутствует подключение к интернету</string>
+    <string name="quitting_question">Завершить создание плейлиста?</string>
+    <string name="finish">Завершить</string>
+    <string name="textButtonNewPlaylist">Создать</string>
+
+    <plurals name="plural_tracks">
+        <item quantity="zero">%1$d треков</item>
+        <item quantity="one">%1$d трек</item>
+        <item quantity="two">%1$d трека</item>
+        <item quantity="few">%1$d трека</item>
+        <item quantity="many">%1$d треков</item>
+        <item quantity="other">%1$d треков</item>
+    </plurals>
+
 </resources>
