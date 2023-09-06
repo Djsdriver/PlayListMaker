@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/addition_menu_bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet_rectangle"
+    app:behavior_hideable="true"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <ImageView
+        android:id="@+id/iv_bottom_sheet_bar"
+        android:layout_width="50dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/rectangle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/playlist_item"
+        layout="@layout/item_playlist_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="13dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_bottom_sheet_bar" />
+
+    <TextView
+        android:id="@+id/text_share_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:text="Поделиться"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playlist_item" />
+
+    <TextView
+        android:id="@+id/text_edit_info_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:text="Редактировать информацию"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_share_playlist" />
+
+    <TextView
+        android:id="@+id/tv_delete_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:text="Удалить плейлист"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_edit_info_playlist" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
