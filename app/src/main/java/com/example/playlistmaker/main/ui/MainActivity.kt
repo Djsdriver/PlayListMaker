@@ -34,6 +34,9 @@ class MainActivity : AppCompatActivity() {
                     hideBottomNav()
                     window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
                 }
+                R.id.playlistContentFragment ->{
+                    hideBottomNav()
+                }
 
                 else -> showBottomNav()
             }

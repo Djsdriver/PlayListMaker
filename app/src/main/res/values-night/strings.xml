@@ -29,6 +29,10 @@
     <string name="quitting_question">Завершить создание плейлиста?</string>
     <string name="finish">Завершить</string>
     <string name="textButtonNewPlaylist">Создать</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="quitting_question_playlist">Хотите удалить плейлист</string>
+    <string name="there_is_nothing_to_share">В данном плейлисте нет треков</string>
 
     <plurals name="plural_tracks">
         <item quantity="zero">%1$d треков</item>

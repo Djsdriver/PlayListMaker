@@ -14,8 +14,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 
 import com.example.playlistmaker.databinding.FragmentPlayListBinding
+import com.example.playlistmaker.di.playlist
 import com.example.playlistmaker.media.domain.models.PlaylistModel
 import com.example.playlistmaker.media.addPlayList.presention.ui.PlaylistAdapter
+import com.example.playlistmaker.media.playlistcontent.presentation.ui.PlaylistContentFragment
+import com.example.playlistmaker.utility.Const
+import com.example.playlistmaker.utility.toPlaylistEntity
 import com.example.playlistmaker.utility.toPlaylistModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -27,6 +31,7 @@ class PlayListFragment : Fragment(), PlaylistAdapter.ClickListener {
     }
     private val viewModel by viewModel<PlaylistViewModel>()
     private val playlistAdapter = PlaylistAdapter(this,true)
+    private val playlistModel:PlaylistModel?=null
 
 
     override fun onCreateView(
@@ -45,12 +50,12 @@ class PlayListFragment : Fragment(), PlaylistAdapter.ClickListener {
         binding.recyclerPlaylist.adapter = playlistAdapter
 
 
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.state.collect{state->
                 when (state){
                     is PlaylistState.Empty -> {
                         binding.linearLayout.visibility=View.VISIBLE
+                        binding.recyclerPlaylist.visibility=View.GONE
                     }
                     is PlaylistState.PlaylistLoaded -> {
                         val tracks = state.tracks.map { it.toPlaylistModel() }
@@ -76,11 +81,14 @@ class PlayListFragment : Fragment(), PlaylistAdapter.ClickListener {
     }
 
     companion object {
-
         fun newInstance() = PlayListFragment().apply {}
     }
 
     override fun onClick(playlistModel: PlaylistModel) {
+        val bundle = Bundle().apply {
+            putSerializable(Const.PUT_EXTRA_PLAYLIST, playlistModel)
+        }
 
+        findNavController().navigate(R.id.action_mediatekaFragment_to_playlistContentFragment,bundle)
     }
 }

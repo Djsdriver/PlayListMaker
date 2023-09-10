@@ -52,6 +52,12 @@
     <string name="playlist_created">Создан</string>
     <string name="textNewPlaylist">Новый плейлист</string>
     <string name="textButtonNewPlaylist">Создать</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+
+    <string name="quitting_question_playlist">Хотите удалить плейлист</string>
+    <string name="there_is_nothing_to_share">В данном плейлисте нет треков</string>
+
 
     <plurals name="plural_tracks">
         <item quantity="zero">%1$d треков</item>
@@ -60,6 +66,15 @@
         <item quantity="few">%1$d трека</item>
         <item quantity="many">%1$d треков</item>
         <item quantity="other">%1$d треков</item>
+    </plurals>
+
+    <plurals name="plural_minutes">
+        <item quantity="zero">%1$d минут</item>
+        <item quantity="one">%1$d минута</item>
+        <item quantity="two">%1$d минуты</item>
+        <item quantity="few">%1$d минуты</item>
+        <item quantity="many">%1$d минут</item>
+        <item quantity="other">%1$d минут</item>
     </plurals>
 
 

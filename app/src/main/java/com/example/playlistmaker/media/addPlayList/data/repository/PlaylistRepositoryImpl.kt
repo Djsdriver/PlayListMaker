@@ -26,13 +26,17 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
 
     override suspend fun createPlaylist(name: String, description: String, imagePath: String?) {
         val playlist = PlaylistEntity(
-            name = name.toString(),
-            description = description.toString(),
+            name = name,
+            description = description,
             imagePath = imagePath ?: "",
             tracks = mutableListOf(),
             trackCount = 0
         )
         insertPlaylist(playlist)
+    }
+
+    override suspend fun deletePlaylist(playlistModel: PlaylistModel) {
+        appDatabase.getPlaylistDao().deletePlaylist(playlistModel.toPlaylistEntity())
     }
 
 

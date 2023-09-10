@@ -19,13 +19,16 @@
     <dimen name="dimen_8dp">8dp</dimen>
     <dimen name="dimen_16dp">16dp</dimen>
     <dimen name="dimen_20dp">20dp</dimen>
+    <dimen name="dimen_24dp">24dp</dimen>
     <dimen name="dimen_26dp">26dp</dimen>
     <dimen name="dimen_32dp">32dp</dimen>
 
     <dimen name="dimen_8sp">8sp</dimen>
     <dimen name="dimen_16sp">16sp</dimen>
+    <dimen name="dimen_18sp">18sp</dimen>
     <dimen name="dimen_20sp">20sp</dimen>
     <dimen name="dimen_22sp">22sp</dimen>
+    <dimen name="dimen_24sp">24sp</dimen>
     <dimen name="dimen_26sp">26sp</dimen>
     <dimen name="dimen_32sp">32sp</dimen>
 </resources>
