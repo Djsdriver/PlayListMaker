@@ -13,7 +13,9 @@ import com.example.playlistmaker.media.data.db.TrackEntity
 import com.example.playlistmaker.media.domain.models.PlaylistModel
 import com.example.playlistmaker.media.playlistcontent.domain.GetPlaylistByIdUsecase
 import com.example.playlistmaker.media.playlistcontent.domain.usecase.RemoveTrackFromPlaylistUsecase
+import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utility.toPlaylistModel
+import com.example.playlistmaker.utility.toTrack
 import com.example.playlistmaker.utility.toTrackEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,7 +58,7 @@ class PlaylistContentFragmentViewModel(
     fun deletePlaylist(playlist: PlaylistModel) {
         viewModelScope.launch {
             deletePlaylistUseCase.deletePlaylist(playlist) // вызываем метод deletePlaylist из deletePlaylistUseCase
-            _state.value = PlaylistContentState.Empty
+           // _state.value = PlaylistContentState.Empty
         }
     }
 
@@ -78,7 +80,7 @@ class PlaylistContentFragmentViewModel(
             if (playlist.tracks.isEmpty()) {
                 _state.value = PlaylistContentState.Empty
             } else {
-                _state.value = PlaylistContentState.PlaylistLoaded(playlist.toPlaylistModel())
+                _state.value = PlaylistContentState.PlaylistLoaded(playlist.tracks.map { it.toTrack() })
                 updatePlaylistDuration(playlist.toPlaylistModel())
             }
 
@@ -86,7 +88,7 @@ class PlaylistContentFragmentViewModel(
             updatePlaylist(playlist.toPlaylistModel())
 
             // Добавить следующую строку:
-            _state.value = PlaylistContentState.PlaylistLoaded(playlist.toPlaylistModel())
+           // _state.value = PlaylistContentState.PlaylistLoaded(playlist.tracks.map { it.toTrack() })
         }
     }
 
@@ -97,5 +99,5 @@ class PlaylistContentFragmentViewModel(
 
 sealed class PlaylistContentState {
     object Empty : PlaylistContentState()
-    data class PlaylistLoaded(val tracks: PlaylistModel) : PlaylistContentState()
+    data class PlaylistLoaded(val tracks: List<Track>) : PlaylistContentState()
 }

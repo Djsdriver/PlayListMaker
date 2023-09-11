@@ -20,6 +20,7 @@ import com.example.playlistmaker.databinding.FragmentPlaylistContentBinding
 import com.example.playlistmaker.media.domain.models.PlaylistModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utility.Const
+import com.example.playlistmaker.utility.toPlaylistEntity
 import com.example.playlistmaker.utility.toTrackEntity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -94,11 +95,17 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
             val dialogBuilder = AlertDialog.Builder(requireContext())
                 .setMessage("Удалить трек?")
                 .setPositiveButton("ОК") { _, _ ->
-                    val position = adapter.tracks.indexOfFirst { it.trackId == track.trackId }
+                   val position = adapter.tracks.indexOfFirst { it.trackId == track.trackId }
                     if (playlistModel?.tracks?.isNotEmpty() == true) {
                         viewModel.removeTrackFromPlaylist(track.toTrackEntity(), playlistModel?.id ?: 0)
                         // removeTrackFromPlaylist будет обновлять продолжительность автоматически
                         adapter.removeTrack(position)
+                        playlistModel!!.tracks.remove(track)
+                        if (playlistModel?.tracks?.isEmpty() == true){
+                            binding.bottomSheetContainerTracks.linearLayout.visibility=View.VISIBLE
+                            adapter.notifyDataSetChanged()
+
+                        }
                     } else {
                         //
                     }
