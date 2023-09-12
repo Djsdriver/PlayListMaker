@@ -1,6 +1,7 @@
 package com.example.playlistmaker.media.playlistcontent.presentation.ui
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -100,6 +102,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
                         viewModel.removeTrackFromPlaylist(track.toTrackEntity(), playlistModel?.id ?: 0)
                         // removeTrackFromPlaylist будет обновлять продолжительность автоматически
                         adapter.removeTrack(position)
+                        adapter.notifyItemChanged(position)
                         playlistModel!!.tracks.remove(track)
                         if (playlistModel?.tracks?.isEmpty() == true){
                             binding.bottomSheetContainerTracks.linearLayout.visibility=View.VISIBLE
@@ -135,12 +138,13 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
         }
 
         binding.toolbarPlaylistContent.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().popBackStack(R.id.mediatekaFragment,false)
         }
 
         binding.menuPlaylistContent.setOnClickListener {
             bottomSheetBehaviorMenu.state = BottomSheetBehavior.STATE_COLLAPSED
         }
+
 
         bottomSheetBehaviorMenu.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -217,6 +221,13 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
         binding.sharePlaylistContent.setOnClickListener {
             sharePlaylist()
         }
+
+        binding.bottomSheetContainerMenu.textEditInfoPlaylist.setOnClickListener {
+            val bundle = Bundle().apply {
+                putSerializable(Const.PUT_EXTRA_PLAYLIST, playlistModel)
+            }
+            findNavController().navigate(R.id.action_playlistContentFragment_to_editPlaylistFragment,bundle)
+        }
     }
 
     private fun sharePlaylist() {
@@ -278,6 +289,22 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
                 findNavController().navigateUp()
             }.show()
     }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                myHandleOnBackPressed()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
+
+    private fun myHandleOnBackPressed() {
+
+        findNavController().popBackStack(R.id.mediatekaFragment,false)
+
+    }
+
 
 
 

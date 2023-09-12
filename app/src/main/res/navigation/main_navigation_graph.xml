@@ -70,5 +70,20 @@
         <action
             android:id="@+id/action_playlistContentFragment_to_audioPlayerFragment"
             app:destination="@id/audioPlayerFragment" />
+        <action
+            android:id="@+id/action_playlistContentFragment_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment" />
+        <action
+            android:id="@+id/action_playlistContentFragment_to_mediatekaFragment"
+            app:destination="@id/mediatekaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.example.playlistmaker.media.editPlaylistFragment.EditPlaylistFragment"
+        android:label="fragment_edit_playlist"
+        tools:layout="@layout/fragment_edit_playlist" >
+        <action
+            android:id="@+id/action_editPlaylistFragment_to_playlistContentFragment"
+            app:destination="@id/playlistContentFragment" />
     </fragment>
 </navigation>

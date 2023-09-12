@@ -23,9 +23,8 @@ class TrackAdapter(val listener: ClickListener) : RecyclerView.Adapter<TrackHold
         longClickListener = listener
     }
     override fun onBindViewHolder(holder: TrackHolder, position: Int) {
-
+        if (position >= 0 && position < tracks.size) {
             holder.bind(track = tracks[position], listener)
-        if (position in 0 until tracks.size) {
             holder.itemView.setOnLongClickListener {
                 val track = tracks[position]
                 longClickListener?.onLongClick(track)
