@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -122,7 +123,7 @@ class EditPlaylistFragment : Fragment() {
     }
 
     private fun editPlaylist() {
-
+        playlistModel?.let { deleteOldFile(it.imagePath) }
         val filepath = if (uriImage != null) {
             viewModel.saveImageToPrivateStorage(uriImage!!)
             viewModel.generationName
@@ -145,6 +146,7 @@ class EditPlaylistFragment : Fragment() {
             }
         }
 
+
         if (updatedPlaylist != null) {
             val bundle=Bundle().apply {
                 putSerializable(Const.PUT_EXTRA_PLAYLIST,updatedPlaylist)
@@ -153,9 +155,24 @@ class EditPlaylistFragment : Fragment() {
                 R.id.action_editPlaylistFragment_to_playlistContentFragment,bundle
             )
 
+        }
 
+    }
+
+    private fun deleteOldFile(nameOfFile: String) {
+        val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "my_album")
+        if (!filePath.exists()){
+            filePath.mkdirs()
+        }
+        val file = File(filePath, nameOfFile)
+
+        if (file.exists()) {
+            file.delete()
+        } else {
+            Log.d("EditPlaylistFragment", "File not found")
         }
     }
+
 
     private fun showDialog() {
         MaterialAlertDialogBuilder(requireContext())
@@ -196,12 +213,7 @@ class EditPlaylistFragment : Fragment() {
         private const val TAG = "EditPlaylistFragment"
 
         @JvmStatic
-        fun newInstance() = EditPlaylistFragment().apply {
-            arguments = Bundle().apply {
-                // Передача тега в аргументы фрагмента
-                putString("TAG", TAG)
-            }
-        }
+        fun newInstance() = EditPlaylistFragment().apply {}
     }
 
 }

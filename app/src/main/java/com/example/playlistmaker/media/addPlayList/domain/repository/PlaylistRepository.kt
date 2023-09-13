@@ -21,4 +21,6 @@ interface PlaylistRepository {
 
     suspend fun deletePlaylist(playlistModel: PlaylistModel)
 
+    suspend fun deleteImageFromStorage(imagePath: String?)
+
 }

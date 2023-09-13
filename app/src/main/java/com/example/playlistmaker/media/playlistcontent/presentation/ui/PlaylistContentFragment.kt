@@ -28,6 +28,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
 
@@ -100,7 +102,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
                    val position = adapter.tracks.indexOfFirst { it.trackId == track.trackId }
                     if (playlistModel?.tracks?.isNotEmpty() == true) {
                         viewModel.removeTrackFromPlaylist(track.toTrackEntity(), playlistModel?.id ?: 0)
-                        // removeTrackFromPlaylist будет обновлять продолжительность автоматически
+
                         adapter.removeTrack(position)
                         adapter.notifyItemChanged(position)
                         playlistModel!!.tracks.remove(track)
@@ -131,7 +133,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
             adapter.notifyDataSetChanged()
 
         } else{
-            val tracks = playlistModel?.tracks ?: emptyList()
+            val tracks = playlistModel?.tracks?.reversed() ?: emptyList()
             adapter.setTrackList(tracks)
             adapter.notifyDataSetChanged()
 
@@ -266,7 +268,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
             )
         }
         for (track in playlistModel?.tracks!!) {
-            str.add("${playlistModel!!.tracks.indexOf(track) + 1}. $track")
+            str.add("${playlistModel!!.tracks.indexOf(track) + 1}. ${track.trackName} ${track.artistName} ${track.trackTimeMillis}")
         }
 
         return str.joinToString("\n")
@@ -322,5 +324,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
         super.onResume()
         playlistModel?.let { viewModel.updatePlaylist(it) }
     }
+
+
 }
 

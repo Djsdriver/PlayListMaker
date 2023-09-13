@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import com.example.playlistmaker.media.addPlayList.data.db.AppDatabasePlayList
 import com.example.playlistmaker.media.addPlayList.data.db.PlaylistEntity
 import com.example.playlistmaker.media.domain.models.PlaylistModel
@@ -58,6 +59,21 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
 
         return  file.absolutePath
+    }
+
+    override suspend fun deleteImageFromStorage(imagePath: String?) {
+        Log.d("PlaylistRepositoryImpl", "Deleting image at path: $imagePath")
+        if (imagePath != null && imagePath.isNotEmpty()) {
+            val file = File(imagePath)
+            if (file.exists()) {
+                file.delete()
+                Log.d("PlaylistRepositoryImpl", "Image deleted successfully")
+            } else {
+                Log.d("PlaylistRepositoryImpl", "Image not found at path")
+            }
+        } else {
+            Log.d("PlaylistRepositoryImpl", "Invalid image path")
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package com.example.playlistmaker.di
 
 import com.example.playlistmaker.media.addPlayList.domain.usecase.CreateNewPlaylistUseCase
+import com.example.playlistmaker.media.addPlayList.domain.usecase.DeleteImageFromStorageUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.InsertPlayListToDatabaseUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.SaveImageToPrivateStorageUseCase
 import com.example.playlistmaker.media.addPlayList.presention.ui.NewPlaylistFragmentViewModel
@@ -12,7 +13,7 @@ import org.koin.dsl.module
 val editPlaylistModule = module {
 
     viewModel {
-        EditPlaylistFragmentViewModel(get(),get(),get(),get())
+        EditPlaylistFragmentViewModel(get(),get(),get(),get(),get())
     }
 
 
@@ -20,4 +21,5 @@ val editPlaylistModule = module {
     factory { SaveImageToPrivateStorageUseCase(playlistRepository = get()) }
     factory { CreateNewPlaylistUseCase(playlistRepository = get()) }
     factory { InsertPlayListToDatabaseUseCase(playlistRepository = get()) }
+    factory { DeleteImageFromStorageUseCase(playlistRepository = get()) }
 }
