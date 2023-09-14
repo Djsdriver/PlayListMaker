@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.playlistmaker.media.editPlaylistFragment.EditPlaylistFragment">
+    tools:context="com.example.playlistmaker.media.editPlaylistFragment.presentation.EditPlaylistFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
@@ -102,6 +102,7 @@
         android:fontFamily="@font/ys_display_regular"
         android:textSize="@dimen/dimen_16sp"
         android:textStyle="bold"
+        android:enabled="true"
         app:background="@drawable/tab_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"

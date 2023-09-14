@@ -46,6 +46,7 @@
     <string name="noInternet">Отсутствует подключение к интернету</string>
     <string name="newPlayListToolBar">Новый плейлист</string>
     <string name="quitting_question">Завершить создание плейлиста?</string>
+    <string name="quitting_question_edit">Завершить редактирование плейлиста?</string>
     <string name="unsaved_data_caution">Все несохраненные данные будут потеряны</string>
     <string name="cancel">Отмена</string>
     <string name="finish">Завершить</string>
@@ -57,6 +58,7 @@
 
     <string name="quitting_question_playlist">Хотите удалить плейлист</string>
     <string name="there_is_nothing_to_share">В данном плейлисте нет треков</string>
+    <string name="quitting_question_playlist2">Хотите удалить плейлист %1$s</string>
 
 
     <plurals name="plural_tracks">

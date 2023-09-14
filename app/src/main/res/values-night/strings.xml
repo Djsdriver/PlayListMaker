@@ -33,6 +33,7 @@
     <string name="no">Нет</string>
     <string name="quitting_question_playlist">Хотите удалить плейлист</string>
     <string name="there_is_nothing_to_share">В данном плейлисте нет треков</string>
+    <string name="quitting_question_playlist2">Хотите удалить плейлист %1$s</string>
 
     <plurals name="plural_tracks">
         <item quantity="zero">%1$d треков</item>

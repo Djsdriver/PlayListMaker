@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.editPlaylistFragment
+package com.example.playlistmaker.media.editPlaylistFragment.presentation
 
 import android.net.Uri
 import android.util.Log

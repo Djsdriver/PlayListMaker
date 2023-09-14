@@ -79,7 +79,7 @@
     </fragment>
     <fragment
         android:id="@+id/editPlaylistFragment"
-        android:name="com.example.playlistmaker.media.editPlaylistFragment.EditPlaylistFragment"
+        android:name="com.example.playlistmaker.media.editPlaylistFragment.presentation.EditPlaylistFragment"
         android:label="fragment_edit_playlist"
         tools:layout="@layout/fragment_edit_playlist" >
         <action

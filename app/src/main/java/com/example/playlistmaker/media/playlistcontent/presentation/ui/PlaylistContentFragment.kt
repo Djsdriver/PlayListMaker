@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -78,7 +79,13 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
             .centerCrop()
             .into(binding.coverPlaylistContent)
 
-        binding.descriptionPlaylist.text= playlistModel?.description ?: ""
+        if (playlistModel?.description?.isEmpty() == true){
+            binding.descriptionPlaylist.visibility=View.GONE
+        }else{
+            binding.descriptionPlaylist.visibility=View.VISIBLE
+            binding.descriptionPlaylist.text= playlistModel?.description ?: ""
+        }
+
 
         binding.namePlaylist.text=playlistModel?.name?: ""
 
@@ -96,9 +103,9 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
         playlistModel?.let { viewModel.updatePlaylist(it) }
 
         val longClickListener = TrackAdapter.LongClickListener { track ->
-            val dialogBuilder = AlertDialog.Builder(requireContext())
-                .setMessage("Удалить трек?")
-                .setPositiveButton("ОК") { _, _ ->
+            val dialogBuilder = MaterialAlertDialogBuilder(requireContext(),R.style.MyDialogTheme)
+                .setMessage(" Хотите удалить трек?")
+                .setPositiveButton(R.string.yes) { _, _ ->
                    val position = adapter.tracks.indexOfFirst { it.trackId == track.trackId }
                     if (playlistModel?.tracks?.isNotEmpty() == true) {
                         viewModel.removeTrackFromPlaylist(track.toTrackEntity(), playlistModel?.id ?: 0)
@@ -115,12 +122,14 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
                         //
                     }
                 }
-                .setNegativeButton(R.string.cancel) { dialog, _ ->
+                .setNegativeButton(R.string.no) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .create()
 
             dialogBuilder.show()
+            val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.dialog_background)
+            dialogBuilder.window?.setBackgroundDrawable(backgroundDrawable)
         }
 
         adapter.setClickListener(longClickListener)
@@ -188,6 +197,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
 
         binding.bottomSheetContainerMenu.textDeletePlaylist.setOnClickListener {
             showDeletePlaylistDialog()
+
         }
 
         bottomSheetBehaviorTracks.addBottomSheetCallback(object :
@@ -197,7 +207,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
 
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.overlay.visibility = View.GONE
+                       // binding.overlay.visibility = View.GONE
                     }
 
                     BottomSheetBehavior.STATE_COLLAPSED -> {
@@ -206,13 +216,13 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
                     }
 
                     else -> {
-                        binding.overlay.visibility = View.VISIBLE
+                        //binding.overlay.visibility = View.VISIBLE
                     }
                 }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding.overlay.alpha = slideOffset + 1f
+                //binding.overlay.alpha = slideOffset + 1f
             }
         })
 
@@ -222,6 +232,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
 
         binding.sharePlaylistContent.setOnClickListener {
             sharePlaylist()
+
         }
 
         binding.bottomSheetContainerMenu.textEditInfoPlaylist.setOnClickListener {
@@ -239,6 +250,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
                 resources.getText(R.string.there_is_nothing_to_share),
                 Toast.LENGTH_SHORT
             ).show()
+            bottomSheetBehaviorMenu.state=BottomSheetBehavior.STATE_HIDDEN
         } else {
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
@@ -281,8 +293,8 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
 
     }
     private fun showDeletePlaylistDialog() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(this@PlaylistContentFragment.resources.getText(R.string.quitting_question_playlist))
+        val dialog =MaterialAlertDialogBuilder(requireContext(),R.style.MyDialogTheme)
+            .setTitle(getString(R.string.quitting_question_playlist2, playlistModel?.name))
             .setNegativeButton(this@PlaylistContentFragment.resources.getText(R.string.no)) { dialog, which ->
 
             }
@@ -290,6 +302,9 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
                 playlistModel?.let { viewModel.deletePlaylist(it) }
                 findNavController().navigateUp()
             }.show()
+        val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.dialog_background)
+        dialog.window?.setBackgroundDrawable(backgroundDrawable)
+
     }
     override fun onAttach(context: Context) {
         super.onAttach(context)

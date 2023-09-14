@@ -1,0 +1,18 @@
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid
+        android:color="@color/white" /> <!-- Background color, e.g., #FFFFFF for white -->
+    <corners
+        android:radius="8dp" /> <!-- Corner radius, adjust as needed -->
+
+    <item
+        android:top="16dp"
+        android:bottom="16dp"
+        android:start="16dp"
+        android:end="16dp">
+
+        <solid
+            android:color="@color/black" /> <!-- Text color -->
+
+    </item>
+</shape>

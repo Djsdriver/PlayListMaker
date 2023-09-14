@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 
@@ -103,7 +104,7 @@ class NewPlaylistFragment : Fragment() {
         }
 
     private fun showDialog() {
-        MaterialAlertDialogBuilder(requireContext())
+        val dialog =MaterialAlertDialogBuilder(requireContext(),R.style.MyDialogTheme)
             .setTitle(this@NewPlaylistFragment.resources.getText(R.string.quitting_question))
             .setMessage(this@NewPlaylistFragment.resources.getText(R.string.unsaved_data_caution))
             .setNegativeButton(this@NewPlaylistFragment.resources.getText(R.string.cancel)) { dialog, which ->
@@ -111,6 +112,8 @@ class NewPlaylistFragment : Fragment() {
             .setPositiveButton(this@NewPlaylistFragment.resources.getText(R.string.finish)) { dialog, which ->
                 findNavController().navigateUp()
         }.show()
+        val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.dialog_background)
+        dialog.window?.setBackgroundDrawable(backgroundDrawable)
     }
 
     override fun onAttach(context: Context) {

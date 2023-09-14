@@ -4,8 +4,7 @@ import com.example.playlistmaker.media.addPlayList.domain.usecase.CreateNewPlayl
 import com.example.playlistmaker.media.addPlayList.domain.usecase.DeleteImageFromStorageUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.InsertPlayListToDatabaseUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.SaveImageToPrivateStorageUseCase
-import com.example.playlistmaker.media.addPlayList.presention.ui.NewPlaylistFragmentViewModel
-import com.example.playlistmaker.media.editPlaylistFragment.EditPlaylistFragmentViewModel
+import com.example.playlistmaker.media.editPlaylistFragment.presentation.EditPlaylistFragmentViewModel
 import com.example.playlistmaker.media.playlistcontent.domain.GetPlaylistByIdUsecase
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
