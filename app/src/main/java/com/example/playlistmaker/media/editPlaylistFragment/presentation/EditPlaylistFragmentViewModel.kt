@@ -27,6 +27,7 @@ class EditPlaylistFragmentViewModel(
     private val deleteImageFromStorageUseCase: DeleteImageFromStorageUseCase
 ) : ViewModel() {
 
+    private val playlistModel:PlaylistModel?=null
     private val _uriImage: MutableLiveData<Uri?> = MutableLiveData()
     val uriImage: LiveData<Uri?> get() = _uriImage
     fun setUriImage(uri: Uri?) {
@@ -39,6 +40,12 @@ class EditPlaylistFragmentViewModel(
         }
     }
 
+    fun deleteImageFromStorage(imagePath: String?) {
+        viewModelScope.launch {
+            deleteImageFromStorageUseCase.invoke(imagePath)
+        }
+    }
+
     val generationName = generateImageNameForStorage()
     fun generateImageNameForStorage(): String {
         return "cover_${System.currentTimeMillis()}.jpg"
@@ -46,6 +53,7 @@ class EditPlaylistFragmentViewModel(
 
     fun saveImageToPrivateStorage(uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
+            deleteImageFromStorage(uri.toString())
             val newPath = saveImageToPrivateStorageUseCase.invoke(uri, generationName)
             Log.d("EditPlaylistFragment", "New image path: $newPath")
         }

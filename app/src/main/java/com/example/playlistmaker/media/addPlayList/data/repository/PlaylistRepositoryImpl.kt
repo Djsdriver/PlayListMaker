@@ -62,9 +62,11 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
     }
 
     override suspend fun deleteImageFromStorage(imagePath: String?) {
+        val filePath =
+            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"my_album")
         Log.d("PlaylistRepositoryImpl", "Deleting image at path: $imagePath")
         if (imagePath != null && imagePath.isNotEmpty()) {
-            val file = File(imagePath)
+            val file = File(filePath,imagePath)
             if (file.exists()) {
                 file.delete()
                 Log.d("PlaylistRepositoryImpl", "Image deleted successfully")

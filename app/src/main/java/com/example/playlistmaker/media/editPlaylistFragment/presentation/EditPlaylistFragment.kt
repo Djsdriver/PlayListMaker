@@ -116,7 +116,6 @@ class EditPlaylistFragment : Fragment() {
     }
 
     private fun editPlaylist() {
-        playlistModel?.let { deleteOldFile(it.imagePath) }
         val filepath = if (uriImage != null) {
             viewModel.saveImageToPrivateStorage(uriImage!!)
             viewModel.generationName
@@ -152,6 +151,7 @@ class EditPlaylistFragment : Fragment() {
 
     }
 
+    //перенес удаление картинки в репозиторий
     private fun deleteOldFile(nameOfFile: String) {
         val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "my_album")
         if (!filePath.exists()){
