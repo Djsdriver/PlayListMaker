@@ -56,6 +56,7 @@ class EditPlaylistFragmentViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val imageName = generateImageNameForStorage()
             saveImageToPrivateStorageUseCase.invoke(uri, imageName)
+
         }
     }
 
@@ -66,16 +67,14 @@ class EditPlaylistFragmentViewModel(
         uriImage: Uri?,
         navigateToPlaylistContent: (PlaylistModel) -> Unit,
     ) {
-
+        viewModelScope.launch(Dispatchers.Main) {
             val updatedPlaylist = playlistModel?.copy(
                 name = name,
                 description = description
             )
-            val imagePath = if (uriImage.toString() != playlistModel!!.imagePath && uriImage != null) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    saveImageToPrivateStorage(uriImage)
-                }
-                 // Сохраняем новую картинку
+
+            val imagePath = if (uriImage != null) {
+                saveImageToPrivateStorage(uriImage )// Сохраняем новую картинку
                 generateImageNameForStorage() // Путь к новой сохраненной картинке
             } else {
                 updatedPlaylist?.imagePath ?: "" // Используем существующий путь к изображению
@@ -87,5 +86,6 @@ class EditPlaylistFragmentViewModel(
                 navigateToPlaylistContent(playlist.copy(imagePath = imagePath)) // Навигируем с обновленным плейлистом
             }
         }
+    }
     }
 

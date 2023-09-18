@@ -96,7 +96,6 @@ class EditPlaylistFragment : Fragment() {
                 if (uri != null) {
                     binding.imageNewPlaylistImage.setImageURI(uri)
                     viewModel.setUriImage(uri)
-
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
@@ -114,7 +113,6 @@ class EditPlaylistFragment : Fragment() {
             viewModel.deleteImageFromStorage(playlistModel!!.imagePath)
             val name = binding.namePlaylistEditText.text.toString()
             val description = binding.descriptionEditText.text.toString()
-            val isNewImageSelected = (uriImage != null && uriImage != playlistModel?.imagePath?.toUri())
 
             viewModel.editPlaylist(
                 name,
@@ -122,7 +120,7 @@ class EditPlaylistFragment : Fragment() {
                 playlistModel,
                 uriImage
             ) { updatedPlaylist ->
-                if (isNewImageSelected) {
+
                     // Здесь запускаете navigateToPlaylistContent только в случае выбора новой картинки
                     val bundle = Bundle().apply {
                         putSerializable(Const.PUT_EXTRA_PLAYLIST, updatedPlaylist)
@@ -131,8 +129,7 @@ class EditPlaylistFragment : Fragment() {
                         R.id.action_editPlaylistFragment_to_playlistContentFragment,
                         bundle
                     )
-                }
-                // Другие случаи без выбора новой картинки
+
             }
         }
 
