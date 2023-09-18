@@ -79,6 +79,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
             .centerCrop()
             .into(binding.coverPlaylistContent)
 
+
         if (playlistModel?.description?.isEmpty() == true){
             binding.descriptionPlaylist.visibility=View.GONE
         }else{
@@ -106,21 +107,12 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
             val dialogBuilder = MaterialAlertDialogBuilder(requireContext(),R.style.MyDialogTheme)
                 .setMessage(" Хотите удалить трек?")
                 .setPositiveButton(R.string.yes) { _, _ ->
-                   val position = adapter.tracks.indexOfFirst { it.trackId == track.trackId }
-                    if (playlistModel?.tracks?.isNotEmpty() == true) {
-                        viewModel.removeTrackFromPlaylist(track.toTrackEntity(), playlistModel?.id ?: 0)
+                    viewModel.removeTrackFromPlaylist(track.toTrackEntity(), playlistModel?.id ?: 0)
 
-                        adapter.removeTrack(position)
-                        adapter.notifyItemChanged(position)
-                        playlistModel!!.tracks.remove(track)
-                        if (playlistModel?.tracks?.isEmpty() == true){
-                            binding.bottomSheetContainerTracks.linearLayout.visibility=View.VISIBLE
-                            adapter.notifyDataSetChanged()
-
-                        }
-                    } else {
-                        //
-                    }
+                    // Дополнительная логика удаления трека из адаптера и обновления списка треков во фрагменте
+                    val position = adapter.tracks.indexOfFirst { it.trackId == track.trackId }
+                    adapter.removeTrack(position)
+                    adapter.notifyItemRemoved(position)
                 }
                 .setNegativeButton(R.string.no) { dialog, _ ->
                     dialog.dismiss()

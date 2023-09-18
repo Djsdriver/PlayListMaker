@@ -3,6 +3,7 @@ package com.example.playlistmaker.media.editPlaylistFragment.presentation
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,6 +19,7 @@ import com.example.playlistmaker.utility.toPlaylistEntity
 import com.example.playlistmaker.utility.toPlaylistModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class EditPlaylistFragmentViewModel(
     private val insertPlaylistToDatabaseUseCase: InsertPlayListToDatabaseUseCase,
@@ -27,9 +29,9 @@ class EditPlaylistFragmentViewModel(
     private val deleteImageFromStorageUseCase: DeleteImageFromStorageUseCase
 ) : ViewModel() {
 
-    private val playlistModel:PlaylistModel?=null
     private val _uriImage: MutableLiveData<Uri?> = MutableLiveData()
     val uriImage: LiveData<Uri?> get() = _uriImage
+
     fun setUriImage(uri: Uri?) {
         _uriImage.value = uri
     }
@@ -46,20 +48,44 @@ class EditPlaylistFragmentViewModel(
         }
     }
 
-    val generationName = generateImageNameForStorage()
-    fun generateImageNameForStorage(): String {
+    private fun generateImageNameForStorage(): String {
         return "cover_${System.currentTimeMillis()}.jpg"
     }
 
     fun saveImageToPrivateStorage(uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
-            deleteImageFromStorage(uri.toString())
-            val newPath = saveImageToPrivateStorageUseCase.invoke(uri, generationName)
-            Log.d("EditPlaylistFragment", "New image path: $newPath")
+            val imageName = generateImageNameForStorage()
+            saveImageToPrivateStorageUseCase.invoke(uri, imageName)
         }
     }
 
+    fun editPlaylist(
+        name: String,
+        description: String,
+        playlistModel: PlaylistModel?,
+        uriImage: Uri?,
+        navigateToPlaylistContent: (PlaylistModel) -> Unit,
+    ) {
 
+            val updatedPlaylist = playlistModel?.copy(
+                name = name,
+                description = description
+            )
+            val imagePath = if (uriImage.toString() != playlistModel!!.imagePath && uriImage != null) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    saveImageToPrivateStorage(uriImage)
+                }
+                 // Сохраняем новую картинку
+                generateImageNameForStorage() // Путь к новой сохраненной картинке
+            } else {
+                updatedPlaylist?.imagePath ?: "" // Используем существующий путь к изображению
+            }
 
+            updatedPlaylist?.let { playlist ->
+                val playlistEntity = playlist.toPlaylistEntity().copy(imagePath = imagePath)
+                insertPlaylistToDatabase(playlistEntity) // Вставляем обновленный плейлист в базу данных
+                navigateToPlaylistContent(playlist.copy(imagePath = imagePath)) // Навигируем с обновленным плейлистом
+            }
+        }
+    }
 
-}

@@ -194,7 +194,7 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
             viewModel.preparePlayer(track!!)
 
             Glide.with(requireContext())
-                .load(track!!.artworkUrl60.replaceAfterLast('/', "512x512bb.jpg"))
+                .load(track!!.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
                 .placeholder(R.drawable.placeholder)
                 .centerCrop()
                 .transform(

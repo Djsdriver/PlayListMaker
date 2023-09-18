@@ -15,6 +15,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -108,63 +109,36 @@ class EditPlaylistFragment : Fragment() {
 
         }
 
+
         binding.btnCreatePlaylist.setOnClickListener {
-            editPlaylist()
-        }
+            viewModel.deleteImageFromStorage(playlistModel!!.imagePath)
+            val name = binding.namePlaylistEditText.text.toString()
+            val description = binding.descriptionEditText.text.toString()
+            val isNewImageSelected = (uriImage != null && uriImage != playlistModel?.imagePath?.toUri())
 
-
-    }
-
-    private fun editPlaylist() {
-        val filepath = if (uriImage != null) {
-            viewModel.saveImageToPrivateStorage(uriImage!!)
-            viewModel.generationName
-        } else {
-            playlistModel!!.imagePath
-        }
-
-        val updatedPlaylist = playlistModel?.copy(
-            name = binding.namePlaylistEditText.text.toString(),
-            description = binding.descriptionEditText.text.toString(),
-            imagePath = filepath,
-            tracks= playlistModel!!.tracks,
-            trackCount = 0
-
-        )
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            if (updatedPlaylist != null) {
-                viewModel.insertPlaylistToDatabase(updatedPlaylist.toPlaylistEntity())
+            viewModel.editPlaylist(
+                name,
+                description,
+                playlistModel,
+                uriImage
+            ) { updatedPlaylist ->
+                if (isNewImageSelected) {
+                    // Здесь запускаете navigateToPlaylistContent только в случае выбора новой картинки
+                    val bundle = Bundle().apply {
+                        putSerializable(Const.PUT_EXTRA_PLAYLIST, updatedPlaylist)
+                    }
+                    findNavController().navigate(
+                        R.id.action_editPlaylistFragment_to_playlistContentFragment,
+                        bundle
+                    )
+                }
+                // Другие случаи без выбора новой картинки
             }
         }
 
 
-        if (updatedPlaylist != null) {
-            val bundle=Bundle().apply {
-                putSerializable(Const.PUT_EXTRA_PLAYLIST,updatedPlaylist)
-            }
-            findNavController().navigate(
-                R.id.action_editPlaylistFragment_to_playlistContentFragment,bundle
-            )
-
-        }
-
     }
 
-    //перенес удаление картинки в репозиторий
-    private fun deleteOldFile(nameOfFile: String) {
-        val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "my_album")
-        if (!filePath.exists()){
-            filePath.mkdirs()
-        }
-        val file = File(filePath, nameOfFile)
-
-        if (file.exists()) {
-            file.delete()
-        } else {
-            Log.d("EditPlaylistFragment", "File not found")
-        }
-    }
 
 
     private fun showDialog() {

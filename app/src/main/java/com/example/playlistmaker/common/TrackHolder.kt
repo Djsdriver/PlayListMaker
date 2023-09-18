@@ -17,13 +17,13 @@ class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     var trackName: TextView
     var artistName: TextView
     var trackTime: TextView
-    var artworkUrl100: ImageView
+    var artworkUrl60: ImageView
 
     init {
         trackName = itemView.findViewById(R.id.trackName)
         artistName = itemView.findViewById(R.id.artistName)
         trackTime = itemView.findViewById(R.id.trackTime)
-        artworkUrl100 = itemView.findViewById(R.id.imArtworkUrl100)
+        artworkUrl60 = itemView.findViewById(R.id.imArtworkUrl100)
     }
 
     fun bind(track: Track, listener: TrackAdapter.ClickListener) {
@@ -37,7 +37,7 @@ class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         artistName.text = track.artistName
 
         Glide.with(itemView)
-            .load(track.artworkUrl60)
+            .load(track!!.artworkUrl60.replaceAfterLast('/', "60x60bb.jpg"))
             .transform(
                 RoundedCorners(
                     itemView.resources.getDimensionPixelSize(
@@ -46,7 +46,7 @@ class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 )
             )
             .placeholder(R.drawable.placeholder)
-            .into(artworkUrl100)
+            .into(artworkUrl60)
         itemView.setOnClickListener {
             listener.onClick(track)
         }

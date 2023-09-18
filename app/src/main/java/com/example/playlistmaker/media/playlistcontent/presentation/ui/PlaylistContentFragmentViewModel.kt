@@ -42,6 +42,9 @@ class PlaylistContentFragmentViewModel(
     private val _stateCountTracks = MutableLiveData<String>()
     val stateCountTracks: LiveData<String> = _stateCountTracks
 
+    private val _playlistImage = MutableLiveData<String>()
+    val playlistImage: LiveData<String> = _playlistImage
+
     private fun updatePlaylistDuration(playlist: PlaylistModel) {
         val durationSum = playlist.tracks.sumBy { it.trackTimeMillis.toIntOrNull() ?: 0 }
         val format = SimpleDateFormat("mm", Locale.getDefault())
@@ -68,10 +71,16 @@ class PlaylistContentFragmentViewModel(
             updatePlaylistUseCase(playlistModel)
             updatePlaylistDuration(playlistModel)
             updatePlaylistCountTracks(playlistModel)
+            _playlistImage.postValue(playlistModel.imagePath)
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
+    fun removeTrackFromPlaylist(track: TrackEntity, playlistId: Int) {
+        viewModelScope.launch {
+            removeTrackFromPlaylistUsecase.invoke(track, playlistId)
+        }
+    }
+    /*@RequiresApi(Build.VERSION_CODES.N)
     fun removeTrackFromPlaylist(track: TrackEntity, playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val playlist = getPlaylistByIdUsecase(playlistId)
@@ -90,7 +99,7 @@ class PlaylistContentFragmentViewModel(
             // Добавить следующую строку:
            // _state.value = PlaylistContentState.PlaylistLoaded(playlist.tracks.map { it.toTrack() })
         }
-    }
+    }*/
 
 
 
