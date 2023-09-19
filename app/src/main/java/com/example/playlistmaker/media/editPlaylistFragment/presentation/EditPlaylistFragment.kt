@@ -64,7 +64,10 @@ class EditPlaylistFragment : Fragment() {
         binding.namePlaylistEditText.setText(playlistModel?.name)
         binding.descriptionEditText.setText(playlistModel?.description)
         val filePath =
-            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "my_album")
+            File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                Const.IMAGE_PATH
+            )
         val imageFile = playlistModel?.imagePath?.let { File(filePath, it) }
 
         Glide.with(requireContext())
@@ -80,7 +83,6 @@ class EditPlaylistFragment : Fragment() {
         binding.namePlaylistEditText.doOnTextChanged { s, _, _, _ ->
             binding.btnCreatePlaylist.isEnabled = s?.isNotEmpty() == true
         }
-
 
         binding.toolbarNewPlaylistCreate.setOnClickListener {
             findNavController().popBackStack()
@@ -104,45 +106,29 @@ class EditPlaylistFragment : Fragment() {
 
         }
 
-          binding.btnCreatePlaylist.setOnClickListener {
-             viewModel.deleteImageFromStorage(playlistModel!!.imagePath)
-             val name = binding.namePlaylistEditText.text.toString()
-             val description = binding.descriptionEditText.text.toString()
+        binding.btnCreatePlaylist.setOnClickListener {
+            viewModel.deleteImageFromStorage(playlistModel!!.imagePath)
+            val name = binding.namePlaylistEditText.text.toString()
+            val description = binding.descriptionEditText.text.toString()
 
-             viewModel.editPlaylist(
-                 name,
-                 description,
-                 playlistModel,
-                 uriImage
-             ) { updatedPlaylist ->
-                     // Здесь запускаете navigateToPlaylistContent только в случае выбора новой картинки
-                     val bundle = Bundle().apply {
-                         putSerializable(Const.PUT_EXTRA_PLAYLIST, updatedPlaylist)
-                     }
-                     findNavController().navigate(
-                         R.id.action_editPlaylistFragment_to_playlistContentFragment,
-                         bundle
-                     )
+            viewModel.editPlaylist(
+                name,
+                description,
+                playlistModel,
+                uriImage
+            ) { updatedPlaylist ->
+                // Здесь запускаете navigateToPlaylistContent только в случае выбора новой картинки
+                val bundle = Bundle().apply {
+                    putSerializable(Const.PUT_EXTRA_PLAYLIST, updatedPlaylist)
+                }
+                findNavController().navigate(
+                    R.id.action_editPlaylistFragment_to_playlistContentFragment,
+                    bundle
+                )
 
-             }
-         }
-
-    }
-
-
-
-    private fun showDialog() {
-        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.MyDialogTheme)
-            .setTitle(this@EditPlaylistFragment.resources.getText(R.string.quitting_question_edit))
-            .setMessage(this@EditPlaylistFragment.resources.getText(R.string.unsaved_data_caution))
-            .setNegativeButton(this@EditPlaylistFragment.resources.getText(R.string.cancel)) { dialog, which ->
             }
-            .setPositiveButton(this@EditPlaylistFragment.resources.getText(R.string.finish)) { dialog, which ->
-                findNavController().navigateUp()
-            }.show()
-        val backgroundDrawable =
-            ContextCompat.getDrawable(requireContext(), R.drawable.dialog_background)
-        dialog.window?.setBackgroundDrawable(backgroundDrawable)
+        }
+
     }
 
     override fun onAttach(context: Context) {
@@ -157,12 +143,6 @@ class EditPlaylistFragment : Fragment() {
 
     private fun myHandleOnBackPressed() {
         findNavController().popBackStack()
-    }
-
-    companion object {
-
-        @JvmStatic
-        fun newInstance() = EditPlaylistFragment().apply {}
     }
 
 }

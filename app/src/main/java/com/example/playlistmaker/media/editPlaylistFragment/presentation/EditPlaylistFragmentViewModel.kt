@@ -43,7 +43,7 @@ class EditPlaylistFragmentViewModel(
 
     val generationName = generateImageNameForStorage()
     fun insertPlaylistToDatabase(playlist: PlaylistEntity) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             insertPlaylistToDatabaseUseCase.invoke(playlist)
         }
     }
@@ -60,8 +60,7 @@ class EditPlaylistFragmentViewModel(
 
     fun saveImageToPrivateStorage(uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
-            val isSuccess =saveImageToPrivateStorageUseCase.invoke(uri, generationName)
-            Log.d("isSuccess" , isSuccess.toBoolean().toString())
+            saveImageToPrivateStorageUseCase.invoke(uri, generationName)
         }
     }
 
@@ -90,7 +89,6 @@ class EditPlaylistFragmentViewModel(
             updatedPlaylist?.let { playlist ->
                 val playlistEntity = playlist.toPlaylistEntity().copy(imagePath = imagePath)
                 insertPlaylistToDatabase(playlistEntity)
-                // Вставляем обновленный плейлист в базу данных
                 delay(300)
                 navigateToPlaylistContent(playlist.copy(imagePath = imagePath)) // Навигируем с обновленным плейлистом
             }

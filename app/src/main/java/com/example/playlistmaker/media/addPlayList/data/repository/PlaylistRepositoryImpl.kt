@@ -18,8 +18,12 @@ import java.io.File
 import java.io.FileOutputStream
 
 
-class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, private val context: Context): PlaylistRepository {
-    override fun getAllPlaylists(): Flow<List<PlaylistEntity>> = appDatabase.getPlaylistDao().getAllPlaylists()
+class PlaylistRepositoryImpl(
+    private val appDatabase: AppDatabasePlayList,
+    private val context: Context
+) : PlaylistRepository {
+    override fun getAllPlaylists(): Flow<List<PlaylistEntity>> =
+        appDatabase.getPlaylistDao().getAllPlaylists()
 
 
     override suspend fun insertPlaylist(playlist: PlaylistEntity) {
@@ -75,7 +79,7 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
             if (playlist.imagePath != null) {
                 deleteImageFromStorage(playlist.imagePath)
             }
-            imageFileName = saveImageToPrivateStorage(imageUri,nameImage)
+            imageFileName = saveImageToPrivateStorage(imageUri, nameImage)
         }
 
         appDatabase
@@ -94,7 +98,7 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
 
     override suspend fun saveImageToPrivateStorage(uri: Uri, nameOfImage: String): String {
         val filePath =
-            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"my_album")
+            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "my_album")
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
@@ -105,15 +109,15 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
 
-        return  file.absolutePath
+        return file.absolutePath
     }
 
     override suspend fun deleteImageFromStorage(imagePath: String?) {
         val filePath =
-            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"my_album")
+            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "my_album")
         Log.d("PlaylistRepositoryImpl", "Deleting image at path: $imagePath")
         if (imagePath != null && imagePath.isNotEmpty()) {
-            val file = File(filePath,imagePath)
+            val file = File(filePath, imagePath)
             if (file.exists()) {
                 file.delete()
                 Log.d("PlaylistRepositoryImpl", "Image deleted successfully")
@@ -124,7 +128,6 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
             Log.d("PlaylistRepositoryImpl", "Invalid image path")
         }
     }
-
 
 
 }
