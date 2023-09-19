@@ -11,11 +11,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -24,8 +24,8 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentEditPlaylistBinding
 import com.example.playlistmaker.media.domain.models.PlaylistModel
 import com.example.playlistmaker.utility.Const
-import com.example.playlistmaker.utility.toPlaylistEntity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -38,7 +38,7 @@ class EditPlaylistFragment : Fragment() {
     }
 
     private val viewModel by viewModel<EditPlaylistFragmentViewModel>()
-    private var playlistModel: PlaylistModel?=null
+    private var playlistModel: PlaylistModel? = null
 
     private var uriImage: Uri? = null
     override fun onCreateView(
@@ -59,12 +59,8 @@ class EditPlaylistFragment : Fragment() {
             arguments?.getSerializable(Const.PUT_EXTRA_PLAYLIST) as PlaylistModel?
         }
 
-       // val playlistModelEdit= playlistModel?.let { viewModel.getPlaylist(it.id) }
-
-
-
-        binding.toolbarNewPlaylistCreate.setTitle("Редактировать")
-        binding.btnCreatePlaylist.setText("Сохранить")
+        binding.toolbarNewPlaylistCreate.setTitle(getString(R.string.text_edit_playlist))
+        binding.btnCreatePlaylist.setText(getString(R.string.text_title_save_edit_playlist))
         binding.namePlaylistEditText.setText(playlistModel?.name)
         binding.descriptionEditText.setText(playlistModel?.description)
         val filePath =
@@ -87,7 +83,7 @@ class EditPlaylistFragment : Fragment() {
 
 
         binding.toolbarNewPlaylistCreate.setOnClickListener {
-           findNavController().popBackStack()
+            findNavController().popBackStack()
         }
 
         val pickMedia =
@@ -108,38 +104,35 @@ class EditPlaylistFragment : Fragment() {
 
         }
 
+          binding.btnCreatePlaylist.setOnClickListener {
+             viewModel.deleteImageFromStorage(playlistModel!!.imagePath)
+             val name = binding.namePlaylistEditText.text.toString()
+             val description = binding.descriptionEditText.text.toString()
 
-        binding.btnCreatePlaylist.setOnClickListener {
-            viewModel.deleteImageFromStorage(playlistModel!!.imagePath)
-            val name = binding.namePlaylistEditText.text.toString()
-            val description = binding.descriptionEditText.text.toString()
+             viewModel.editPlaylist(
+                 name,
+                 description,
+                 playlistModel,
+                 uriImage
+             ) { updatedPlaylist ->
+                     // Здесь запускаете navigateToPlaylistContent только в случае выбора новой картинки
+                     val bundle = Bundle().apply {
+                         putSerializable(Const.PUT_EXTRA_PLAYLIST, updatedPlaylist)
+                     }
+                     findNavController().navigate(
+                         R.id.action_editPlaylistFragment_to_playlistContentFragment,
+                         bundle
+                     )
 
-            viewModel.editPlaylist(
-                name,
-                description,
-                playlistModel,
-                uriImage
-            ) { updatedPlaylist ->
-
-                    // Здесь запускаете navigateToPlaylistContent только в случае выбора новой картинки
-                    val bundle = Bundle().apply {
-                        putSerializable(Const.PUT_EXTRA_PLAYLIST, updatedPlaylist)
-                    }
-                    findNavController().navigate(
-                        R.id.action_editPlaylistFragment_to_playlistContentFragment,
-                        bundle
-                    )
-
-            }
-        }
-
+             }
+         }
 
     }
 
 
 
     private fun showDialog() {
-        val dialog = MaterialAlertDialogBuilder(requireContext(),R.style.MyDialogTheme)
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.MyDialogTheme)
             .setTitle(this@EditPlaylistFragment.resources.getText(R.string.quitting_question_edit))
             .setMessage(this@EditPlaylistFragment.resources.getText(R.string.unsaved_data_caution))
             .setNegativeButton(this@EditPlaylistFragment.resources.getText(R.string.cancel)) { dialog, which ->
@@ -147,7 +140,8 @@ class EditPlaylistFragment : Fragment() {
             .setPositiveButton(this@EditPlaylistFragment.resources.getText(R.string.finish)) { dialog, which ->
                 findNavController().navigateUp()
             }.show()
-        val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.dialog_background)
+        val backgroundDrawable =
+            ContextCompat.getDrawable(requireContext(), R.drawable.dialog_background)
         dialog.window?.setBackgroundDrawable(backgroundDrawable)
     }
 
@@ -162,7 +156,7 @@ class EditPlaylistFragment : Fragment() {
     }
 
     private fun myHandleOnBackPressed() {
-            findNavController().popBackStack()
+        findNavController().popBackStack()
     }
 
     companion object {
@@ -172,3 +166,4 @@ class EditPlaylistFragment : Fragment() {
     }
 
 }
+

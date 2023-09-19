@@ -2,8 +2,6 @@ package com.example.playlistmaker.media.editPlaylistFragment.presentation
 
 import android.net.Uri
 import android.util.Log
-import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,13 +9,18 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.addPlayList.data.db.PlaylistEntity
 import com.example.playlistmaker.media.addPlayList.domain.usecase.CreateNewPlaylistUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.DeleteImageFromStorageUseCase
+import com.example.playlistmaker.media.addPlayList.domain.usecase.EditPlaylistUseCase
+import com.example.playlistmaker.media.addPlayList.domain.usecase.EditUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.InsertPlayListToDatabaseUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.SaveImageToPrivateStorageUseCase
+import com.example.playlistmaker.media.addPlayList.domain.usecase.UpdatePlaylistUseCase
 import com.example.playlistmaker.media.domain.models.PlaylistModel
 import com.example.playlistmaker.media.playlistcontent.domain.GetPlaylistByIdUsecase
+import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utility.toPlaylistEntity
 import com.example.playlistmaker.utility.toPlaylistModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -26,16 +29,19 @@ class EditPlaylistFragmentViewModel(
     private val saveImageToPrivateStorageUseCase: SaveImageToPrivateStorageUseCase,
     private val createNewPlaylistUseCase: CreateNewPlaylistUseCase,
     private val getPlaylistByIdUsecase: GetPlaylistByIdUsecase,
-    private val deleteImageFromStorageUseCase: DeleteImageFromStorageUseCase
+    private val deleteImageFromStorageUseCase: DeleteImageFromStorageUseCase,
+    private val editPlaylistUseCase: EditPlaylistUseCase,
+    private val updatePlaylistUseCase: UpdatePlaylistUseCase,
+    private val editUseCase: EditUseCase
 ) : ViewModel() {
 
     private val _uriImage: MutableLiveData<Uri?> = MutableLiveData()
     val uriImage: LiveData<Uri?> get() = _uriImage
-
     fun setUriImage(uri: Uri?) {
         _uriImage.value = uri
     }
 
+    val generationName = generateImageNameForStorage()
     fun insertPlaylistToDatabase(playlist: PlaylistEntity) {
         viewModelScope.launch {
             insertPlaylistToDatabaseUseCase.invoke(playlist)
@@ -54,11 +60,11 @@ class EditPlaylistFragmentViewModel(
 
     fun saveImageToPrivateStorage(uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
-            val imageName = generateImageNameForStorage()
-            saveImageToPrivateStorageUseCase.invoke(uri, imageName)
-
+            val isSuccess =saveImageToPrivateStorageUseCase.invoke(uri, generationName)
+            Log.d("isSuccess" , isSuccess.toBoolean().toString())
         }
     }
+
 
     fun editPlaylist(
         name: String,
@@ -74,18 +80,23 @@ class EditPlaylistFragmentViewModel(
             )
 
             val imagePath = if (uriImage != null) {
-                saveImageToPrivateStorage(uriImage )// Сохраняем новую картинку
-                generateImageNameForStorage() // Путь к новой сохраненной картинке
+                saveImageToPrivateStorage(uriImage)
+                generationName
             } else {
-                updatedPlaylist?.imagePath ?: "" // Используем существующий путь к изображению
+                updatedPlaylist?.imagePath ?: ""
             }
+
 
             updatedPlaylist?.let { playlist ->
                 val playlistEntity = playlist.toPlaylistEntity().copy(imagePath = imagePath)
-                insertPlaylistToDatabase(playlistEntity) // Вставляем обновленный плейлист в базу данных
+                insertPlaylistToDatabase(playlistEntity)
+                // Вставляем обновленный плейлист в базу данных
+                delay(300)
                 navigateToPlaylistContent(playlist.copy(imagePath = imagePath)) // Навигируем с обновленным плейлистом
             }
         }
+
     }
-    }
+}
+
 

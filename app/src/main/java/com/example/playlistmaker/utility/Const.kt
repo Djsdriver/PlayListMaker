@@ -18,4 +18,5 @@ object Const {
     const val PUT_EXTRA_PLAYLIST = "PUT_EXTRA_PLAYLIST"
 
     const val API_RETROFIT_KOIN= "api"
+    const val IMAGE_PATH= "my_album"
 }

@@ -19,8 +19,12 @@ interface PlaylistRepository {
 
     suspend fun createPlaylist(name: String, description: String, imagePath: String?)
 
+    suspend fun editPlaylist(name: String, description: String, imagePath: String?)
+
     suspend fun deletePlaylist(playlistModel: PlaylistModel)
 
     suspend fun deleteImageFromStorage(imagePath: String?)
+
+    suspend fun updatePlaylist(playlistId: Int, playlistName: String, playlistDescription: String, imageUri: Uri?,nameImage: String)
 
 }

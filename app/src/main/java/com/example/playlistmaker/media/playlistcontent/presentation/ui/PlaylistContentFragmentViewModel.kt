@@ -32,18 +32,12 @@ class PlaylistContentFragmentViewModel(
 ):
     ViewModel() {
 
-
-    private val _state = MutableStateFlow<PlaylistContentState>(PlaylistContentState.Empty)
-    val state: StateFlow<PlaylistContentState> = _state
-
     private val _stateDuration = MutableLiveData<String>()
     val stateDuration: LiveData<String> = _stateDuration
 
     private val _stateCountTracks = MutableLiveData<String>()
     val stateCountTracks: LiveData<String> = _stateCountTracks
 
-    private val _playlistImage = MutableLiveData<String>()
-    val playlistImage: LiveData<String> = _playlistImage
 
     private fun updatePlaylistDuration(playlist: PlaylistModel) {
         val durationSum = playlist.tracks.sumBy { it.trackTimeMillis.toIntOrNull() ?: 0 }
@@ -61,7 +55,6 @@ class PlaylistContentFragmentViewModel(
     fun deletePlaylist(playlist: PlaylistModel) {
         viewModelScope.launch {
             deletePlaylistUseCase.deletePlaylist(playlist) // вызываем метод deletePlaylist из deletePlaylistUseCase
-           // _state.value = PlaylistContentState.Empty
         }
     }
 
@@ -71,7 +64,7 @@ class PlaylistContentFragmentViewModel(
             updatePlaylistUseCase(playlistModel)
             updatePlaylistDuration(playlistModel)
             updatePlaylistCountTracks(playlistModel)
-            _playlistImage.postValue(playlistModel.imagePath)
+
         }
     }
 
@@ -80,33 +73,5 @@ class PlaylistContentFragmentViewModel(
             removeTrackFromPlaylistUsecase.invoke(track, playlistId)
         }
     }
-    /*@RequiresApi(Build.VERSION_CODES.N)
-    fun removeTrackFromPlaylist(track: TrackEntity, playlistId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val playlist = getPlaylistByIdUsecase(playlistId)
-            playlist.tracks.removeIf { it.trackId == track.trackId }
 
-            if (playlist.tracks.isEmpty()) {
-                _state.value = PlaylistContentState.Empty
-            } else {
-                _state.value = PlaylistContentState.PlaylistLoaded(playlist.tracks.map { it.toTrack() })
-                updatePlaylistDuration(playlist.toPlaylistModel())
-            }
-
-            // Update the playlist in the database
-            updatePlaylist(playlist.toPlaylistModel())
-
-            // Добавить следующую строку:
-           // _state.value = PlaylistContentState.PlaylistLoaded(playlist.tracks.map { it.toTrack() })
-        }
-    }*/
-
-
-
-
-}
-
-sealed class PlaylistContentState {
-    object Empty : PlaylistContentState()
-    data class PlaylistLoaded(val tracks: List<Track>) : PlaylistContentState()
 }

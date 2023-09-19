@@ -37,7 +37,7 @@ class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         artistName.text = track.artistName
 
         Glide.with(itemView)
-            .load(track!!.artworkUrl60.replaceAfterLast('/', "60x60bb.jpg"))
+            .load(track.artworkUrl60.replaceAfterLast('/', "60x60bb.jpg"))
             .transform(
                 RoundedCorners(
                     itemView.resources.getDimensionPixelSize(

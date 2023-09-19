@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import java.io.File
 import java.io.FileOutputStream
 
+
 class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, private val context: Context): PlaylistRepository {
     override fun getAllPlaylists(): Flow<List<PlaylistEntity>> = appDatabase.getPlaylistDao().getAllPlaylists()
 
@@ -36,6 +37,18 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
         insertPlaylist(playlist)
     }
 
+    override suspend fun editPlaylist(name: String, description: String, imagePath: String?) {
+        val playlist = PlaylistModel(
+            name = name,
+            description = description,
+            imagePath = imagePath ?: "",
+            tracks = mutableListOf(),
+            trackCount = 0
+        )
+        insertPlaylist(playlist.toPlaylistEntity())
+    }
+
+
     override suspend fun deletePlaylist(playlistModel: PlaylistModel) {
         appDatabase.getPlaylistDao().deletePlaylist(playlistModel.toPlaylistEntity())
     }
@@ -43,6 +56,40 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabasePlayList, priva
 
     override suspend fun updatePlaylist(playlistModel: PlaylistModel) {
         appDatabase.getPlaylistDao().updatePlaylist(playlistModel.toPlaylistEntity())
+    }
+
+
+    override suspend fun updatePlaylist(
+        playlistId: Int,
+        playlistName: String,
+        playlistDescription: String,
+        imageUri: Uri?,
+        nameImage: String
+    ) {
+        val playlist = appDatabase
+            .getPlaylistDao()
+            .getPlaylistById(playlistId)
+
+        var imageFileName = playlist.imagePath
+        if (imageUri != null) {
+            if (playlist.imagePath != null) {
+                deleteImageFromStorage(playlist.imagePath)
+            }
+            imageFileName = saveImageToPrivateStorage(imageUri,nameImage)
+        }
+
+        appDatabase
+            .getPlaylistDao()
+            .updatePlaylist(
+                PlaylistEntity(
+                    playlistId,
+                    playlistName,
+                    playlistDescription,
+                    imageFileName,
+                    mutableListOf(),
+                    trackCount = 0
+                )
+            )
     }
 
     override suspend fun saveImageToPrivateStorage(uri: Uri, nameOfImage: String): String {

@@ -59,6 +59,12 @@
     <string name="quitting_question_playlist">Хотите удалить плейлист</string>
     <string name="there_is_nothing_to_share">В данном плейлисте нет треков</string>
     <string name="quitting_question_playlist2">Хотите удалить плейлист %1$s</string>
+    <string name="text_edit_playlist">Редактировать</string>
+    <string name="text_title_save_edit_playlist">Сохранить</string>
+    <string name="question_delete_track">Хотите удалить трек?</string>
+    <string name="text_share_bottom_menu">Поделиться</string>
+    <string name="text_edit_bottom_menu">Редактировать информацию</string>
+    <string name="text_delete_bottom_menu">Удалить плейлист</string>
 
 
     <plurals name="plural_tracks">

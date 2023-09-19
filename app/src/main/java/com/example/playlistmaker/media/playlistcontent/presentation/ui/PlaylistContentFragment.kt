@@ -13,10 +13,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.TrackAdapter
 import com.example.playlistmaker.databinding.FragmentPlaylistContentBinding
@@ -70,23 +72,25 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
             arguments?.getSerializable(Const.PUT_EXTRA_PLAYLIST) as PlaylistModel?
         }
         val filePath =
-            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "my_album")
+            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), Const.IMAGE_PATH)
         val imageFile = playlistModel?.imagePath?.let { File(filePath, it) }
 
         Glide.with(requireContext())
             .load(imageFile)
+            .apply(RequestOptions().centerCrop().override(binding.coverPlaylistContent.width, binding.coverPlaylistContent.height))
             .placeholder(R.drawable.placeholder)
-            .centerCrop()
             .into(binding.coverPlaylistContent)
 
 
         if (playlistModel?.description?.isEmpty() == true){
             binding.descriptionPlaylist.visibility=View.GONE
         }else{
+
             binding.descriptionPlaylist.visibility=View.VISIBLE
             binding.descriptionPlaylist.text= playlistModel?.description ?: ""
         }
 
+        updateBottomSheetHeight()
 
         binding.namePlaylist.text=playlistModel?.name?: ""
 
@@ -105,7 +109,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
 
         val longClickListener = TrackAdapter.LongClickListener { track ->
             val dialogBuilder = MaterialAlertDialogBuilder(requireContext(),R.style.MyDialogTheme)
-                .setMessage(" Хотите удалить трек?")
+                .setMessage(getString(R.string.question_delete_track))
                 .setPositiveButton(R.string.yes) { _, _ ->
                     viewModel.removeTrackFromPlaylist(track.toTrackEntity(), playlistModel?.id ?: 0)
 
@@ -158,7 +162,6 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         binding.overlay.visibility = View.GONE
                     }
-
                     BottomSheetBehavior.STATE_COLLAPSED -> {
 
                         binding.bottomSheetContainerMenu.playlistItem.textTitle.text=playlistModel?.name?: ""
@@ -173,7 +176,6 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
                             .placeholder(R.drawable.placeholder)
                             .centerCrop()
                             .into(binding.bottomSheetContainerMenu.playlistItem.ivPlaylistBigImage)
-
                     }
 
                     else -> {
@@ -199,7 +201,7 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
 
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                       // binding.overlay.visibility = View.GONE
+
                     }
 
                     BottomSheetBehavior.STATE_COLLAPSED -> {
@@ -208,13 +210,13 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
                     }
 
                     else -> {
-                        //binding.overlay.visibility = View.VISIBLE
+
                     }
                 }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                //binding.overlay.alpha = slideOffset + 1f
+
             }
         })
 
@@ -272,18 +274,15 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
             )
         }
         for (track in playlistModel?.tracks!!) {
-            str.add("${playlistModel!!.tracks.indexOf(track) + 1}. ${track.trackName} ${track.artistName} ${track.trackTimeMillis}")
+            val duration = SimpleDateFormat("mm:ss", Locale.getDefault())
+                .format(track.trackTimeMillis.toLong())
+            str.add("${playlistModel!!.tracks.indexOf(track) + 1}. ${track.artistName} - ${track.trackName} ($duration)")
         }
 
         return str.joinToString("\n")
     }
 
 
-
-    companion object {
-
-
-    }
     private fun showDeletePlaylistDialog() {
         val dialog =MaterialAlertDialogBuilder(requireContext(),R.style.MyDialogTheme)
             .setTitle(getString(R.string.quitting_question_playlist2, playlistModel?.name))
@@ -315,9 +314,6 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
     }
 
 
-
-
-
     override fun onClick(track: Track) {
         val bundle = Bundle().apply {
             putSerializable(Const.PUT_EXTRA_TRACK, track)
@@ -326,10 +322,23 @@ class PlaylistContentFragment : Fragment(),TrackAdapter.ClickListener {
 
     }
 
-    // В PlaylistContentFragment
     override fun onResume() {
         super.onResume()
         playlistModel?.let { viewModel.updatePlaylist(it) }
+    }
+
+    private fun updateBottomSheetHeight() {
+        val layoutParams = binding.bottomSheetContainerTracks.bottomSheetTracks.layoutParams as CoordinatorLayout.LayoutParams
+
+        if (playlistModel?.description?.isNullOrEmpty() == true) {
+            val bottomSheetHeight = resources.getDimensionPixelOffset(R.dimen.bottom_sheet_height_isEmpty)
+            layoutParams.height = bottomSheetHeight
+        } else {
+            val bottomSheetHeight = resources.getDimensionPixelOffset(R.dimen.bottom_sheet_height_notIsEmpty)
+            layoutParams.height = bottomSheetHeight
+        }
+
+        binding.bottomSheetContainerTracks.bottomSheetTracks.layoutParams = layoutParams
     }
 
 
