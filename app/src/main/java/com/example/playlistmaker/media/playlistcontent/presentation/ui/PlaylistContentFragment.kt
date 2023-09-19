@@ -317,7 +317,7 @@ class PlaylistContentFragment : Fragment(), TrackAdapter.ClickListener {
             }
             .setPositiveButton(this@PlaylistContentFragment.resources.getText(R.string.yes)) { dialog, which ->
                 playlistModel?.let { viewModel.deletePlaylist(it) }
-                findNavController().navigateUp()
+                findNavController().popBackStack(R.id.mediatekaFragment, false)
             }.show()
         val backgroundDrawable =
             ContextCompat.getDrawable(requireContext(), R.drawable.dialog_background)
@@ -341,7 +341,6 @@ class PlaylistContentFragment : Fragment(), TrackAdapter.ClickListener {
 
     }
 
-
     override fun onClick(track: Track) {
         val bundle = Bundle().apply {
             putSerializable(Const.PUT_EXTRA_TRACK, track)
@@ -352,7 +351,6 @@ class PlaylistContentFragment : Fragment(), TrackAdapter.ClickListener {
         )
 
     }
-
     override fun onResume() {
         super.onResume()
         playlistModel?.let { viewModel.updatePlaylist(it) }

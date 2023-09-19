@@ -110,7 +110,7 @@ class EditPlaylistFragment : Fragment() {
             viewModel.deleteImageFromStorage(playlistModel!!.imagePath)
             val name = binding.namePlaylistEditText.text.toString()
             val description = binding.descriptionEditText.text.toString()
-
+            binding.btnCreatePlaylist.isEnabled=false
             viewModel.editPlaylist(
                 name,
                 description,
