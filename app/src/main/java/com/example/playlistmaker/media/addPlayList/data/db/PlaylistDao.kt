@@ -1,6 +1,7 @@
 package com.example.playlistmaker.media.addPlayList.data.db
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -22,9 +23,12 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlist_table")
     fun getAllPlaylists(): Flow<List<PlaylistEntity>>
 
-    @Update
+    @Update(entity = PlaylistEntity::class)
     suspend fun updatePlaylist(playlist: PlaylistEntity)
+    @Delete
+    suspend fun deletePlaylist(playlistEntity: PlaylistEntity)
 
-
+    @Query("SELECT * FROM playlist_table WHERE id = :id")
+    fun getPlaylistById(id: Int): PlaylistEntity
 
 }

@@ -243,7 +243,7 @@
 
     <style name="PlayListCreateButton">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">54dp</item>
         <item name="android:layout_marginBottom">32dp</item>
         <item name="android:visibility">visible</item>
         <item name="android:enabled">false</item>
@@ -256,6 +256,28 @@
     <style name="ShapeAppearanceOverlay.AppCompat.ImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">32dp</item>
+    </style>
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/white</item>
+        <item name="android:textSize">@dimen/dimen_16sp</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <!-- Style for negative button -->
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <!-- text color for the button -->
+        <item name="android:textColor">@color/blue</item>
+        <!-- Background tint for the button -->
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <!-- text color for the button -->
+        <item name="android:textColor">@color/blue</item>
+        <!-- Background tint for the button -->
+        <item name="android:backgroundTint">@color/white</item>
     </style>
 
 </resources>

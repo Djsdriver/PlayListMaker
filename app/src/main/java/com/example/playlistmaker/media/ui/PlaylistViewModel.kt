@@ -7,12 +7,17 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.addPlayList.data.db.PlaylistEntity
 import com.example.playlistmaker.media.addPlayList.domain.usecase.GetAllPlaylistToListUseCase
 import com.example.playlistmaker.media.addPlayList.domain.usecase.InsertPlayListToDatabaseUseCase
+import com.example.playlistmaker.media.addPlayList.domain.usecase.UpdatePlaylistUseCase
+import com.example.playlistmaker.media.domain.models.PlaylistModel
+import com.example.playlistmaker.utility.toPlaylistEntity
+import com.example.playlistmaker.utility.toPlaylistModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
-    private val getAllPlaylistToListUseCase: GetAllPlaylistToListUseCase
+    private val getAllPlaylistToListUseCase: GetAllPlaylistToListUseCase,
+    private val updatePlaylistUseCase: UpdatePlaylistUseCase,
     ) : ViewModel() {
 
     private val _state = MutableStateFlow<PlaylistState>(PlaylistState.Empty)
@@ -29,6 +34,7 @@ class PlaylistViewModel(
                 }
             }
     }
+
 
 
 }

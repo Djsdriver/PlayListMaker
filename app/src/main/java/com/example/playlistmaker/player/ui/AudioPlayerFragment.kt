@@ -42,7 +42,7 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
     private val playlistAdapter = PlaylistAdapter(this, false)
 
     val bottomSheetBehavior
-        get() = BottomSheetBehavior.from(binding.bottomSheetContainer.bottomSheet).apply {
+        get() = BottomSheetBehavior.from(binding.bottomSheetContainer.bottomSheetTracks).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
@@ -236,8 +236,8 @@ class AudioPlayerFragment : Fragment(), PlaylistAdapter.ClickListener {
             viewModel.toastMessage.observe(viewLifecycleOwner) { message ->
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
             }
+        bottomSheetBehavior.state=BottomSheetBehavior.STATE_HIDDEN
 
     }
 }
-
 

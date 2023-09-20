@@ -12,12 +12,13 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
 import com.example.playlistmaker.media.domain.models.PlaylistModel
+import com.example.playlistmaker.search.domain.models.Track
 
 import java.io.File
 
 class PlaylistAdapter(private val listenerItemPlaylist: ClickListener, private val isVertical: Boolean) :
     RecyclerView.Adapter<PlaylistViewHolder>() {
-    var tracks = ArrayList<PlaylistModel>()
+    var tracks = mutableListOf<PlaylistModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
 
@@ -34,6 +35,7 @@ class PlaylistAdapter(private val listenerItemPlaylist: ClickListener, private v
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         holder.bind(tracks[position], listenerItemPlaylist)
     }
+
 
     fun setTrackList(list: List<PlaylistModel>) {
         tracks.clear()
@@ -81,4 +83,5 @@ class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             listenerItemPlaylist.onClick(playlistModel)
         }
     }
+
 }

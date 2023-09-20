@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.di.addPlaylistModule
 import com.example.playlistmaker.di.dataModule
+import com.example.playlistmaker.di.editPlaylistModule
 import com.example.playlistmaker.di.mediaModule
 import com.example.playlistmaker.di.playerModule
 import com.example.playlistmaker.di.playlist
@@ -36,7 +37,8 @@ class App : Application() {
                 repositoryModule,
                 playerModule,
                 playlist,
-                addPlaylistModule) )
+                addPlaylistModule,
+                editPlaylistModule) )
         }
 
         val sharedPrefs = getSharedPreferences(PRACTICUM_EXAMPLE_PREFERENCES, MODE_PRIVATE)

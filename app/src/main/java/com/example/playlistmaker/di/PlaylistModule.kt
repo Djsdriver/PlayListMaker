@@ -13,7 +13,7 @@ val playlist = module {
 
 
     viewModel {
-        PlaylistViewModel(get())
+        PlaylistViewModel(get(),get())
     }
 
     single<PlaylistRepository> { PlaylistRepositoryImpl(get(),get()) }

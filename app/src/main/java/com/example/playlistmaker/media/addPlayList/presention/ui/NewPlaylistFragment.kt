@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 
@@ -27,7 +28,6 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-
 class NewPlaylistFragment : Fragment() {
 
     private var _binding: FragmentNewPlaylistBinding? = null
@@ -36,12 +36,11 @@ class NewPlaylistFragment : Fragment() {
     private var uriImage: Uri? = null
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding=FragmentNewPlaylistBinding.inflate(inflater,container,false)
+        _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -59,9 +58,9 @@ class NewPlaylistFragment : Fragment() {
 
 
         binding.toolbarNewPlaylistCreate.setOnClickListener {
-            if (checkIfThereAreUnsavedData()){
+            if (checkIfThereAreUnsavedData()) {
                 showDialog()
-            } else{
+            } else {
                 findNavController().navigateUp()
             }
 
@@ -91,7 +90,10 @@ class NewPlaylistFragment : Fragment() {
             val description = binding.descriptionEditText.text.toString()
 
             lifecycleScope.launch {
-                newPlaylistFragmentViewModel.createNewPlaylist(name = name, description = description)
+                newPlaylistFragmentViewModel.createNewPlaylist(
+                    name = name,
+                    description = description
+                )
 
                 val message = resources.getString(R.string.playlist_created, name)
                 findNavController().navigateUp()
@@ -100,17 +102,20 @@ class NewPlaylistFragment : Fragment() {
         }
 
 
-        }
+    }
 
     private fun showDialog() {
-        MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.MyDialogTheme)
             .setTitle(this@NewPlaylistFragment.resources.getText(R.string.quitting_question))
             .setMessage(this@NewPlaylistFragment.resources.getText(R.string.unsaved_data_caution))
             .setNegativeButton(this@NewPlaylistFragment.resources.getText(R.string.cancel)) { dialog, which ->
             }
             .setPositiveButton(this@NewPlaylistFragment.resources.getText(R.string.finish)) { dialog, which ->
                 findNavController().navigateUp()
-        }.show()
+            }.show()
+        val backgroundDrawable =
+            ContextCompat.getDrawable(requireContext(), R.drawable.dialog_background)
+        dialog.window?.setBackgroundDrawable(backgroundDrawable)
     }
 
     override fun onAttach(context: Context) {
@@ -130,12 +135,14 @@ class NewPlaylistFragment : Fragment() {
             findNavController().popBackStack()
         }
     }
+
     private fun checkIfThereAreUnsavedData(): Boolean {
         return binding.namePlaylistEditText.text.toString().isNotEmpty()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding=null
+        _binding = null
     }
 
 

@@ -54,7 +54,7 @@ class NewPlaylistFragmentViewModel(
                 )
             }
 
-        } else{
+        } else {
             saveImageToPrivateStorage(uriImage.value!!)
             viewModelScope.launch {
                 createNewPlaylistUseCase.createNewPlaylist(

@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setupWithNavController(navController)
 
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.addFragment ->{
@@ -33,6 +34,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.audioPlayerFragment ->{
                     hideBottomNav()
                     window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+                }
+                R.id.playlistContentFragment ->{
+                    hideBottomNav()
                 }
 
                 else -> showBottomNav()
